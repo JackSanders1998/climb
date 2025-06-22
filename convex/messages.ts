@@ -1,14 +1,18 @@
-import { mutation, query } from "./_generated/server";
+import { v } from 'convex/values';
+import { mutation, query } from './_generated/server';
 
 export const list = query({
   handler: async (ctx) => {
-    return await ctx.db.query("messages").collect();
+    return await ctx.db.query('messages').collect();
   },
 });
 
 export const send = mutation({
-  handler: async (ctx, { body, author }) => {
-    const message = { body, author };
-    await ctx.db.insert("messages", message);
+  args: {
+    body: v.string(),
+    author: v.string(),
+  },
+  handler: async (ctx, message) => {
+    await ctx.db.insert('messages', message);
   },
 });
