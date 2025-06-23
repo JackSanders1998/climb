@@ -3,7 +3,20 @@ import { mutation, query } from "./_generated/server";
 
 export const list = query({
   handler: async (ctx) => {
-    return await ctx.db.query("messages").collect();
+
+    const messages = await ctx.db.query("messages").collect();
+    const hydratedMessage = messages.map(async (message) => {
+      let imageUrl = null;
+      if (message.imageUrlId) {
+        imageUrl = await ctx.storage.getUrl(message.imageUrlId);
+      }
+      return {
+        imageUrl,
+        ...message,
+      };
+    });
+
+    return await Promise.all(hydratedMessage);
   },
 });
 

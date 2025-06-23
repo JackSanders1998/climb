@@ -1,7 +1,6 @@
 import { SignIn } from "@/components/signin";
 import { api } from "@/convex/_generated/api";
 import { useAuth, useUser } from "@clerk/clerk-expo";
-import styled from "@emotion/native";
 import {
   Authenticated,
   Unauthenticated,
@@ -22,16 +21,9 @@ import {
   SafeAreaView,
   Text,
   TextInput,
-  View,
+  View
 } from "react-native";
 import styles from "./styles";
-
-const ImageTouchable = styled.TouchableOpacity`
-  padding: 8px;
-
-  justify-content: center;
-  align-items: center;
-`;
 
 export default function Index() {
   const messages = useQuery(api.messages.list) || [];
@@ -108,16 +100,23 @@ export default function Index() {
             {user?.primaryEmailAddress?.emailAddress}
           </Text>
         </View>
-        <ImageTouchable activeOpacity={0.7} onPress={handleImagePressed}>
-          <Image
-            source={{ uri: image || "" }}
-          />
-          {!image ? (
-            <div>
+        {/* <View style={styles.name}>
+          <ImageTouchable activeOpacity={0.7} onPress={handleImagePressed}>
+            <Image
+              style={{
+                width: 148,
+                height: 148,
+                borderRadius: 80,
+              }}
+              source={{ uri: image || "" }}
+            />
+            <Text style={styles.nameText} testID="NameField">
               camera icon
-            </div>
-          ) : null}
-        </ImageTouchable>
+              {image ? " (tap to change)" : ""}
+              {image}
+            </Text>
+          </ImageTouchable>
+        </View> */}
         <FlatList
           data={messages.slice(-10)}
           testID="MessagesList"
@@ -131,6 +130,15 @@ export default function Index() {
                   </Text>{" "}
                   {message.body}
                 </Text>
+                {message.imageUrl ? (
+                  <Image
+                    style={{
+                      width: 100,
+                      height: 100,
+                    }}
+                    source={{ uri: message.imageUrl }}
+                  />
+                ) : null}
                 <Text style={styles.timestamp}>
                   {new Date(message._creationTime).toLocaleTimeString()}
                 </Text>
@@ -138,14 +146,45 @@ export default function Index() {
             );
           }}
         />
-        <TextInput
-          placeholder="Write a message…"
-          style={styles.input}
-          onSubmitEditing={handleSendMessage}
-          onChangeText={(newText) => setNewMessageText(newText)}
-          defaultValue={newMessageText}
-          testID="MessageInput"
-        />
+        {image && (
+          <View style={{ alignItems: "center", marginBottom: 12 }}>
+            <Image
+              style={{ width: 148, height: 148, borderRadius: 80, marginBottom: 4 }}
+              source={{ uri: image }}
+            />
+            <Text style={styles.nameText}>Selected photo preview</Text>
+          </View>
+        )}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 12,
+          }}
+        >
+          {/* Message input */}
+          <TextInput
+            placeholder="Write a message…"
+            style={[styles.input, { flex: 1, marginRight: 8 }]}
+            onSubmitEditing={handleSendMessage}
+            onChangeText={(newText) => setNewMessageText(newText)}
+            defaultValue={newMessageText}
+            testID="MessageInput"
+          />
+          {/* Photo selector button */}
+          <Button
+            title={image ? "Change Photo" : "Add Photo"}
+            onPress={handleImagePressed}
+            testID="PhotoSelectorButton"
+          />
+          {/* Send button */}
+          <Button
+            title="Send"
+            onPress={handleSendMessage}
+            disabled={!newMessageText && !image}
+            testID="SendButton"
+          />
+        </View>
       </Authenticated>
     </SafeAreaView>
   );
