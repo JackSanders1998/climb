@@ -1,17 +1,18 @@
 import { SignIn } from "@/components/signin";
 import { api } from "@/convex/_generated/api";
-import { useAuth, useUser } from "@clerk/clerk-expo";
+import { useUser } from "@clerk/clerk-expo";
 import {
   Authenticated,
   Unauthenticated,
   useMutation,
   useQuery,
 } from "convex/react";
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import {
-  Button,
   FlatList,
-  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
   Text,
   TextInput,
   View,
@@ -26,8 +27,6 @@ export default function Index() {
 
   const { user } = useUser();
 
-  const { signOut } = useAuth();
-
   async function handleSendMessage(event: { preventDefault: () => void }) {
     event.preventDefault();
     setNewMessageText("");
@@ -35,24 +34,35 @@ export default function Index() {
   }
 
   return (
-    <SafeAreaView style={styles.body}>
-      <Text style={styles.title}>Convex Chat</Text>
+    <Fragment>
       <Unauthenticated>
-        <SignIn />
+        <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
+          style={{}}
+          contentContainerStyle={{
+            padding: 16,
+          }}
+        >
+          <SignIn />
+        </ScrollView>
       </Unauthenticated>
       <Authenticated>
-        <Button title="Sign out" onPress={() => signOut()} />
-        <View style={styles.name}>
-          <Text style={styles.nameText} testID="NameField">
-            {user?.id}
-          </Text>
-          <Text style={styles.nameText} testID="NameField">
-            {user?.primaryEmailAddress?.emailAddress}
-          </Text>
-        </View>
         <FlatList
+          contentInsetAdjustmentBehavior="automatic"
           data={messages.slice(-10)}
           testID="MessagesList"
+          ListHeaderComponent={() => (
+            <Fragment>
+              <View style={styles.name}>
+                <Text style={styles.nameText} testID="NameField">
+                  {user?.id}
+                </Text>
+                <Text style={styles.nameText} testID="NameField">
+                  {user?.primaryEmailAddress?.emailAddress}
+                </Text>
+              </View>
+            </Fragment>
+          )}
           renderItem={(x) => {
             const message = x.item;
             return (
@@ -70,15 +80,20 @@ export default function Index() {
             );
           }}
         />
-        <TextInput
-          placeholder="Write a message…"
-          style={styles.input}
-          onSubmitEditing={handleSendMessage}
-          onChangeText={(newText) => setNewMessageText(newText)}
-          defaultValue={newMessageText}
-          testID="MessageInput"
-        />
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          style={{ position: "fixed", bottom: 0 }}
+        >
+          <TextInput
+            placeholder="Write a message…"
+            style={{ ...styles.input }}
+            onSubmitEditing={handleSendMessage}
+            onChangeText={(newText) => setNewMessageText(newText)}
+            defaultValue={newMessageText}
+            testID="MessageInput"
+          />
+        </KeyboardAvoidingView>
       </Authenticated>
-    </SafeAreaView>
+    </Fragment>
   );
 }
