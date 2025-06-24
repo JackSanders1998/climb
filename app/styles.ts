@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     flexGrow: 1,
     flexShrink: 0,
-    marginVertical: 100,
+    marginVertical: 10,
   },
   timestamp: {
     color: "#6c757d",

@@ -7,6 +7,13 @@ import {
   useMutation,
   useQuery,
 } from "convex/react";
+import { Image } from "expo-image";
+import {
+  ImagePickerAsset,
+  launchImageLibraryAsync,
+  MediaTypeOptions,
+  requestMediaLibraryPermissionsAsync,
+} from "expo-image-picker";
 import React, { useState } from "react";
 import {
   Button,
@@ -14,7 +21,7 @@ import {
   SafeAreaView,
   Text,
   TextInput,
-  View,
+  View
 } from "react-native";
 import styles from "./styles";
 
@@ -23,19 +30,64 @@ export default function Index() {
 
   const [newMessageText, setNewMessageText] = useState("");
   const sendMessage = useMutation(api.messages.send);
+  const [imagePickerAsset, setImagePickerAsset] =
+    useState<ImagePickerAsset | null>(null);
+  const generateUploadUrl = useMutation(api.messages.generateUploadUrl);
+  const sendImage = useMutation(api.messages.sendImage);
 
   const { user } = useUser();
 
   const { signOut } = useAuth();
 
-  async function handleSendMessage(event: { preventDefault: () => void }) {
-    event.preventDefault();
+  const handleImagePressed = async () => {
+    const { granted } = await requestMediaLibraryPermissionsAsync();
+
+    if (granted) {
+      const image = await launchImageLibraryAsync({
+        ...{
+          quality: 1,
+          aspect: [1, 1],
+          mediaTypes: MediaTypeOptions.Images,
+        },
+      });
+
+      setImagePickerAsset(image.assets?.[0] || null);
+    }
+  };
+
+  async function handleSendMessage(event?: any) {
+    let imageUrlId;
+
+    if (imagePickerAsset) {
+      const url = await generateUploadUrl();
+      const response = await fetch(imagePickerAsset.uri);
+      const blob = await response.blob();
+
+      const result = await fetch(url, {
+        method: "POST",
+        headers: imagePickerAsset.type
+          ? { "Content-Type": `${imagePickerAsset.type}/*` }
+          : {},
+        body: blob,
+      });
+
+      const { storageId } = await result.json();
+      await sendImage({ storageId });
+
+      imageUrlId = storageId;
+    }
+
     setNewMessageText("");
-    await sendMessage({ body: newMessageText });
+    setImagePickerAsset(null); // Hide the preview after sending
+    await sendMessage({ body: newMessageText, imageUrlId });
   }
 
+  const image = imagePickerAsset?.uri;
+
+  const flatListRef = React.useRef<FlatList<any>>(null);
+
   return (
-    <SafeAreaView style={styles.body}>
+    <SafeAreaView style={[styles.body, { flex: 1 }]}>
       <Text style={styles.title}>Convex Chat</Text>
       <Unauthenticated>
         <SignIn />
@@ -51,7 +103,8 @@ export default function Index() {
           </Text>
         </View>
         <FlatList
-          data={messages.slice(-10)}
+          ref={flatListRef}
+          data={messages.slice(-100)}
           testID="MessagesList"
           renderItem={(x) => {
             const message = x.item;
@@ -63,21 +116,90 @@ export default function Index() {
                   </Text>{" "}
                   {message.body}
                 </Text>
+                {message.imageUrl ? (
+                  <Image
+                    style={{
+                      width: 100,
+                      height: 100,
+                    }}
+                    source={{ uri: message.imageUrl }}
+                  />
+                ) : null}
                 <Text style={styles.timestamp}>
                   {new Date(message._creationTime).toLocaleTimeString()}
                 </Text>
               </View>
             );
           }}
+          contentContainerStyle={{ paddingBottom: (image ? 320 : 120) + 48 }}
+          style={{ flex: 1 }}
+          onContentSizeChange={() => {
+            if (flatListRef.current) {
+              flatListRef.current.scrollToEnd({ animated: true });
+            }
+          }}
+          getItemLayout={(_data, index) => ({
+            length: 60,
+            offset: 60 * index,
+            index,
+          })}
         />
-        <TextInput
-          placeholder="Write a message…"
-          style={styles.input}
-          onSubmitEditing={handleSendMessage}
-          onChangeText={(newText) => setNewMessageText(newText)}
-          defaultValue={newMessageText}
-          testID="MessageInput"
-        />
+        {/* Pin input and preview to bottom */}
+        <View style={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "#fff",
+          padding: 12,
+          borderTopWidth: 1,
+          borderColor: "#eee",
+          zIndex: 10,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.05,
+          shadowRadius: 4,
+        }}>
+          {image && (
+            <View style={{ alignItems: "center", marginBottom: 12 }}>
+              <Image
+                style={{ width: 148, height: 148, borderRadius: 80, marginBottom: 4 }}
+                source={{ uri: image }}
+              />
+              <Text style={styles.nameText}>Selected photo preview</Text>
+              <Button
+                title="Remove Photo"
+                onPress={() => setImagePickerAsset(null)}
+                color="#d32f2f"
+                testID="RemovePhotoButton"
+              />
+            </View>
+          )}
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            {/* Message input */}
+            <TextInput
+              placeholder="Write a message…"
+              style={[styles.input, { flex: 1, marginRight: 8 }]}
+              onSubmitEditing={handleSendMessage}
+              onChangeText={(newText) => setNewMessageText(newText)}
+              defaultValue={newMessageText}
+              testID="MessageInput"
+            />
+            {/* Photo selector button */}
+            <Button
+              title={image ? "Change Photo" : "Add Photo"}
+              onPress={handleImagePressed}
+              testID="PhotoSelectorButton"
+            />
+            {/* Send button */}
+            <Button
+              title="Send"
+              onPress={handleSendMessage}
+              disabled={!newMessageText && !image}
+              testID="SendButton"
+            />
+          </View>
+        </View>
       </Authenticated>
     </SafeAreaView>
   );
