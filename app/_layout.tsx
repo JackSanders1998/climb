@@ -40,7 +40,7 @@ export default function RootLayout() {
                 backgroundColor: "transparent",
               },
 
-              headerRight: ({ tintColor }) => (
+              headerLeft: ({ tintColor }) => (
                 <SignOutButton tintColor={tintColor} />
               ),
             }}

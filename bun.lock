@@ -5,7 +5,7 @@
       "name": "climb",
       "dependencies": {
         "@clerk/clerk-expo": "^2.13.1",
-        "@expo/ui": "~0.1.1-alpha.9",
+        "@expo/ui": "^0.1.1-alpha.9",
         "@expo/vector-icons": "^14.1.0",
         "@react-navigation/bottom-tabs": "^7.3.10",
         "@react-navigation/elements": "^2.3.8",

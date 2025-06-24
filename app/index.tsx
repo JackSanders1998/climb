@@ -1,11 +1,15 @@
 import { SignIn } from "@/components/signin";
 import { api } from "@/convex/_generated/api";
+import { useUser } from "@clerk/clerk-expo";
+import { Button, ContextMenu, Picker, Switch } from "@expo/ui/swift-ui";
 import {
   Authenticated,
   Unauthenticated,
   useMutation,
   useQuery,
 } from "convex/react";
+import { Image } from "expo-image";
+import { Stack } from "expo-router";
 import React, { Fragment, useState } from "react";
 import {
   FlatList,
@@ -20,12 +24,22 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import styles from "./styles";
 
 export default function Index() {
-  const messages = useQuery(api.messages.list) || [];
+  const sortOptions = ["Newest", "Oldest"];
+
+  const [sortIndex, setSortIndex] = useState(0);
+
+  const sort = sortOptions[sortIndex] === "Newest" ? "desc" : "asc";
+
+  const [funMode, setFunMode] = useState(false);
+
+  const messages = useQuery(api.messages.list, { sort }) || [];
 
   const [newMessageText, setNewMessageText] = useState("");
   const sendMessage = useMutation(api.messages.send);
 
   const { bottom } = useSafeAreaInsets();
+
+  const { user } = useUser();
 
   async function handleSendMessage(event: { preventDefault: () => void }) {
     event.preventDefault();
@@ -35,6 +49,28 @@ export default function Index() {
 
   return (
     <Fragment>
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <ContextMenu>
+              <ContextMenu.Items>
+                <Picker
+                  label="Sort"
+                  options={sortOptions}
+                  variant="menu"
+                  selectedIndex={sortIndex}
+                  onOptionSelected={({ nativeEvent: { index } }) =>
+                    setSortIndex(index)
+                  }
+                />
+              </ContextMenu.Items>
+              <ContextMenu.Trigger>
+                <Button style={{ width: 90, height: 50 }}>Options</Button>
+              </ContextMenu.Trigger>
+            </ContextMenu>
+          ),
+        }}
+      />
       <Unauthenticated>
         <ScrollView
           contentInsetAdjustmentBehavior="automatic"
@@ -78,22 +114,64 @@ export default function Index() {
             />
           ))}
         </List> */}
+
         <FlatList
           contentInsetAdjustmentBehavior="automatic"
-          data={messages.slice(-10)}
+          data={messages}
           testID="MessagesList"
-          // ListHeaderComponent={() => (
-          //   <Fragment>
-          //     <View style={styles.name}>
-          //       <Text style={styles.nameText} testID="NameField">
-          //         {user?.id}
-          //       </Text>
-          //       <Text style={styles.nameText} testID="NameField">
-          //         {user?.primaryEmailAddress?.emailAddress}
-          //       </Text>
-          //     </View>
-          //   </Fragment>
-          // )}
+          extraData={{ funMode }}
+          ListHeaderComponent={
+            <View
+              style={{
+                width: "100%",
+                paddingHorizontal: 4,
+                paddingVertical: 16,
+              }}
+            >
+              <View
+                style={{
+                  width: "100%",
+                  paddingVertical: 8,
+                  paddingHorizontal: 8,
+                  borderTopColor: "rgba(0,0,0,.25)",
+                  borderTopWidth: 1,
+                  borderStyle: "solid",
+                  borderBottomColor: "rgba(0,0,0,.25)",
+                  borderBottomWidth: 1,
+                  marginVertical: 16,
+                }}
+              >
+                <Switch
+                  value={funMode}
+                  onValueChange={(val) => setFunMode(val)}
+                  label={funMode ? "I warned you" : "Don't click me"}
+                  variant="switch"
+                  style={{
+                    width: "100%",
+                  }}
+                />
+              </View>
+              <Image
+                source={{
+                  uri: "https://media4.giphy.com/media/v1.Y2lkPTZjMDliOTUydW4wNGs1emY5bDIyNTNnMHNpaGtxNWttdTFoYTM5djhidzhheDZwOSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Vuw9m5wXviFIQ/source.gif",
+                }}
+                style={{
+                  width: "100%",
+                  aspectRatio: 1,
+                  height: funMode ? "auto" : 0,
+                }}
+              />
+
+              <View style={styles.name}>
+                <Text style={styles.nameText} testID="NameField">
+                  {user?.id}
+                </Text>
+                <Text style={styles.nameText} testID="NameField">
+                  {user?.primaryEmailAddress?.emailAddress}
+                </Text>
+              </View>
+            </View>
+          }
           renderItem={(x) => {
             const message = x.item;
             return (

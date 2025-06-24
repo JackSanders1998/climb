@@ -19,8 +19,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     alignSelf: "flex-start",
-    marginHorizontal: 4,
-    marginVertical: 16,
+    width: "100%",
   },
   nameText: {
     color: "#ffffff",
