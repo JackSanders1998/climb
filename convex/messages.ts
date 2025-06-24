@@ -2,8 +2,14 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
 export const list = query({
-  handler: async (ctx) => {
-    return await ctx.db.query("messages").collect();
+  args: {
+    sort: v.optional(v.union(v.literal("asc"), v.literal("desc"))),
+  },
+  handler: async (ctx, { sort }) => {
+    return await ctx.db
+      .query("messages")
+      .order(sort ?? "asc")
+      .collect();
   },
 });
 
