@@ -1,4 +1,4 @@
-import { SignIn } from "@/components/signin";
+import { SignIn } from "@/lib/components/signin";
 import { api } from "@/convex/_generated/api";
 import { useAuth, useUser } from "@clerk/clerk-expo";
 import {
@@ -16,7 +16,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import styles from "./styles";
+import styles from "../lib/components/styles";
 
 export default function Index() {
   const messages = useQuery(api.messages.list) || [];
