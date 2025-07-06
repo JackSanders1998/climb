@@ -9,11 +9,11 @@ export const Header: React.FC = () => {
 
   return (
     <View className="flex-row items-center justify-between px-4 pt-16 pb-3">
-      <View>
-        <Text className="text-xl font-bold text-[#212529]">{title}</Text>
+      <View className="flex-1">
+        <Text className="text-3xl font-extrabold text-[#212529] mt-10">{title}</Text>
       </View>
       <Link href="/preferences" asChild>
-        <TouchableOpacity>
+        <TouchableOpacity className="-mt-8 mr-4">
           <MaterialCommunityIcons name="cog" size={24} color="#212529" />
         </TouchableOpacity>
       </Link>

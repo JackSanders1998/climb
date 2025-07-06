@@ -1,9 +1,11 @@
+import { AddClimbModal } from "@/lib/components/AddClimbModal";
 import { Placeholder } from "@/lib/components/Placeholder";
 import { LinearGradient } from "expo-linear-gradient";
-import { Link } from "expo-router";
-import { ScrollView, View } from "react-native";
+import React, { useState } from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function Climbs() {
+  const [modalVisible, setModalVisible] = useState(false);
   return (
     <View className="flex-1">
       <ScrollView className="flex-1">
@@ -18,14 +20,15 @@ export default function Climbs() {
           pointerEvents="none"
         />
         <View className="bottom-8 absolute left-0 right-0 items-center">
-          <Link
-            href="/preferences"
-            className="bg-black text-white py-2.5 px-7 rounded-full font-bold text-lg overflow-hidden"
+          <TouchableOpacity
+            onPress={() => setModalVisible(true)}
+            className="bg-black py-2.5 px-7 rounded-full font-bold text-lg overflow-hidden"
           >
-            Add Climbs
-          </Link>
+            <Text className="text-white font-bold text-lg">Add Climbs</Text>
+          </TouchableOpacity>
         </View>
       </View>
+      <AddClimbModal visible={modalVisible} onClose={() => setModalVisible(false)} />
     </View>
   );
 }
