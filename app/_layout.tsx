@@ -20,9 +20,10 @@ export default function RootLayout() {
           screenOptions={{
             headerShown: true,
             headerLargeTitle: true,
-            headerTransparent: false,
+            headerTransparent: true,
             headerLargeTitleShadowVisible: false,
             headerShadowVisible: true,
+            headerBlurEffect: "regular",
             headerStyle: { backgroundColor: "rgba(255, 255, 255, 0.01)" },
             headerLargeStyle: { backgroundColor: "transparent" },
             headerRight: () => (

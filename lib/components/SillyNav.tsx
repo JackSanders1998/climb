@@ -12,7 +12,7 @@ export default function SillyNav({ pageName }: SillyNavProps) {
   };
 
   return (
-    <ScrollView>
+    <ScrollView contentInsetAdjustmentBehavior="automatic">
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Text style={{ fontSize: 24, fontWeight: "bold" }}>
           {pageName} Page
