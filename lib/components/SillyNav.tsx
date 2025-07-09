@@ -1,5 +1,6 @@
 import { Link } from "expo-router";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { PlatformColor, ScrollView, StyleSheet, View } from "react-native";
+import { Text } from "../ui/Text";
 
 interface SillyNavProps {
   pageName: string;
@@ -13,14 +14,25 @@ export default function SillyNav({ pageName }: SillyNavProps) {
 
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Text style={{ fontSize: 24, fontWeight: "bold" }}>
-          {pageName} Page
-        </Text>
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 24,
+          gap: 24,
+        }}
+      >
+        <Text level="title1">{pageName} Page</Text>
         <View style={styles.linksContainer}>
           <Link href="/">
             <Text
-              style={isCurrentPage("Summary") ? styles.activeLink : styles.link}
+              style={
+                isCurrentPage("Summary") ? { color: PlatformColor("link") } : {}
+              }
+              level="body"
+              dim={false}
+              emphasized={isCurrentPage("Summary")}
             >
               Go to Summary
             </Text>
@@ -28,8 +40,13 @@ export default function SillyNav({ pageName }: SillyNavProps) {
           <Link href="/insights">
             <Text
               style={
-                isCurrentPage("Insights") ? styles.activeLink : styles.link
+                isCurrentPage("Insights")
+                  ? { color: PlatformColor("link") }
+                  : {}
               }
+              level="body"
+              dim={false}
+              emphasized={isCurrentPage("Insights")}
             >
               Go to Insights
             </Text>
@@ -37,8 +54,13 @@ export default function SillyNav({ pageName }: SillyNavProps) {
           <Link href="/locations">
             <Text
               style={
-                isCurrentPage("Locations") ? styles.activeLink : styles.link
+                isCurrentPage("Locations")
+                  ? { color: PlatformColor("link") }
+                  : {}
               }
+              level="body"
+              dim={false}
+              emphasized={isCurrentPage("Locations")}
             >
               Go to Locations
             </Text>
@@ -46,8 +68,13 @@ export default function SillyNav({ pageName }: SillyNavProps) {
           <Link href="/settings">
             <Text
               style={
-                isCurrentPage("Settings") ? styles.activeLink : styles.link
+                isCurrentPage("Settings")
+                  ? { color: PlatformColor("link") }
+                  : {}
               }
+              level="body"
+              dim={false}
+              emphasized={isCurrentPage("Settings")}
             >
               Go to Settings
             </Text>
@@ -60,17 +87,7 @@ export default function SillyNav({ pageName }: SillyNavProps) {
 
 const styles = StyleSheet.create({
   linksContainer: {
-    marginTop: 20,
     alignItems: "center",
-  },
-  link: {
-    fontSize: 16,
-    marginVertical: 8,
-  },
-  activeLink: {
-    fontSize: 16,
-    marginVertical: 8,
-    color: "blue",
-    fontWeight: "bold",
+    gap: 16,
   },
 });

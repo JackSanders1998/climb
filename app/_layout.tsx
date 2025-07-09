@@ -1,9 +1,10 @@
+import { Text } from "@/lib/ui/Text";
 import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
+import { sand, sandA } from "@radix-ui/colors";
 import { ConvexReactClient } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { Link, Stack } from "expo-router";
-import { Text } from "react-native";
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
   unsavedChangesWarning: false,
@@ -18,9 +19,15 @@ export default function RootLayout() {
       <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
         <Stack
           screenOptions={{
+            contentStyle: {
+              backgroundColor: sand.sand3,
+            },
             headerShown: true,
             headerLargeTitle: true,
             headerTransparent: true,
+            headerTitleStyle: {
+              color: sandA.sandA12,
+            },
             headerLargeTitleShadowVisible: false,
             headerShadowVisible: true,
             headerBlurEffect: "regular",
