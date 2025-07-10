@@ -15,7 +15,7 @@ export type SearchParams = Infer<typeof params>;
 
 export const search = action({
   args: { params },
-  returns: v.array(v.any()), // Adjust the return type as needed
+  // returns: v.array(v.any()) || v.null(), // Adjust the return type as needed
   handler: async (ctx, args) => {
     const token = await ctx.runAction(internal.map_utils.generateToken);
     const params = new URLSearchParams({
@@ -42,3 +42,34 @@ export const search = action({
     return data.results;
   },
 });
+
+export const autocomplete = action({
+  args: { params },
+  returns: v.array(v.any()), // Adjust the return type as needed
+  handler: async (ctx, args) => {
+    const token = await ctx.runAction(internal.map_utils.generateToken);
+    const params = new URLSearchParams({
+      q: args.params.q,
+      includePoiCategories: args.params.includePoiCategories?.join(",") || "",
+      excludePoiCategories: args.params.excludePoiCategories?.join(",") || "",
+      searchLocation: args.params.searchLocation || "",
+      searchRegion: args.params.searchRegion || "",
+      userLocation: args.params.userLocation || "",
+    });
+
+    const response = await fetch(
+      `https://maps-api.apple.com/v1/searchAutoComplete?${params.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const data: { results: any[] } = await response.json();
+    return data.results;
+  },
+});
+

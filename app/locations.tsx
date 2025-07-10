@@ -1,8 +1,8 @@
 import { api } from "@/convex/_generated/api";
-import AppleMapsView from "@/lib/components/AppleMapsView";
+import SearchBar from "@/lib/components/SearchBar";
 import { useAction } from "convex/react";
+import { AppleMaps } from "expo-maps";
 import React, { Fragment, useEffect, useState } from "react";
-import { Text } from "react-native";
 
 export default function Locations() {
   const [mapResults, setMapResults] = useState<any>();
@@ -30,8 +30,9 @@ export default function Locations() {
 
   return (
     <Fragment>
-      <Text>Search Results: {JSON.stringify(mapResults)}</Text>
-      <AppleMapsView />
+      {/* <Text>Search Results: {JSON.stringify(mapResults)}</Text> */}
+      <SearchBar />
+      <AppleMaps.View style={{ flex: 1 }} />;
     </Fragment>
   );
 }
