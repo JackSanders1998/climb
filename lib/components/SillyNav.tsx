@@ -1,6 +1,9 @@
-import { Link } from "expo-router";
-import { PlatformColor, ScrollView, StyleSheet, View } from "react-native";
+import { SignedIn, SignedOut, useAuth, useUser } from "@clerk/clerk-expo";
+import { ScrollView, View } from "react-native";
+import { Button } from "../ui/Button";
+import { Card } from "../ui/Card";
 import { Text } from "../ui/Text";
+import { SignIn } from "./signin";
 
 interface SillyNavProps {
   pageName: string;
@@ -12,82 +15,75 @@ export default function SillyNav({ pageName }: SillyNavProps) {
     return pageName === linkText;
   };
 
+  const { user } = useUser();
+
+  const { signOut } = useAuth();
+
   return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic">
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      style={{
+        flex: 1,
+      }}
+    >
       <View
         style={{
           flex: 1,
-          alignItems: "center",
-          justifyContent: "center",
-          padding: 24,
-          gap: 24,
+          padding: 12,
+          gap: 8,
         }}
       >
-        <Text level="title1">{pageName} Page</Text>
-        <View style={styles.linksContainer}>
-          <Link href="/">
-            <Text
-              style={
-                isCurrentPage("Summary") ? { color: PlatformColor("link") } : {}
-              }
-              level="body"
-              dim={false}
-              emphasized={isCurrentPage("Summary")}
-            >
-              Go to Summary
-            </Text>
-          </Link>
-          <Link href="/insights">
-            <Text
-              style={
-                isCurrentPage("Insights")
-                  ? { color: PlatformColor("link") }
-                  : {}
-              }
-              level="body"
-              dim={false}
-              emphasized={isCurrentPage("Insights")}
-            >
-              Go to Insights
-            </Text>
-          </Link>
-          <Link href="/locations">
-            <Text
-              style={
-                isCurrentPage("Locations")
-                  ? { color: PlatformColor("link") }
-                  : {}
-              }
-              level="body"
-              dim={false}
-              emphasized={isCurrentPage("Locations")}
-            >
-              Go to Locations
-            </Text>
-          </Link>
-          <Link href="/settings">
-            <Text
-              style={
-                isCurrentPage("Settings")
-                  ? { color: PlatformColor("link") }
-                  : {}
-              }
-              level="body"
-              dim={false}
-              emphasized={isCurrentPage("Settings")}
-            >
-              Go to Settings
-            </Text>
-          </Link>
-        </View>
+        <Button
+          selected={pageName === "Summary"}
+          title="Summary"
+          as="link"
+          href="/"
+          variant="surface"
+        />
+        <Button
+          selected={pageName === "Insights"}
+          title="Insights"
+          as="link"
+          href="/insights"
+          variant="surface"
+        />
+        <Button
+          selected={pageName === "Locations"}
+          title="Locations"
+          as="link"
+          href="/locations"
+          variant="surface"
+        />
+        <Button
+          selected={pageName === "Settings"}
+          title="Settings"
+          as="link"
+          href="/settings"
+          variant="surface"
+        />
+
+        <SignedOut>
+          <View
+            style={{
+              paddingVertical: 32,
+            }}
+          >
+            <SignIn />
+          </View>
+        </SignedOut>
+        <SignedIn>
+          <View style={{ paddingVertical: 32 }}>
+            <Button title="Sign out" onPress={() => signOut()} />
+          </View>
+          {user &&
+            Object.entries(user).map(([key, value], index) => (
+              <Card key={index}>
+                <Text level="title3">{key}</Text>
+                <Text>{JSON.stringify(value, null, 2)}</Text>
+              </Card>
+            ))}
+        </SignedIn>
       </View>
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  linksContainer: {
-    alignItems: "center",
-    gap: 16,
-  },
-});
