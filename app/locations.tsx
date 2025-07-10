@@ -1,36 +1,37 @@
-import React, { Fragment } from "react";
-
-
-
-
-
+import { api } from "@/convex/_generated/api";
+import AppleMapsView from "@/lib/components/AppleMapsView";
+import { useAction } from "convex/react";
+import React, { Fragment, useEffect, useState } from "react";
+import { Text } from "react-native";
 
 export default function Locations() {
+  const [mapResults, setMapResults] = useState<any>();
+  const searchMap = useAction(api.maps.search);
 
-  // const appleMaps = new AppleMaps({
-  //   authorizationToken: "L8DXKT63P9",
-  // });
-
-  // Call the geocode function
-  // appleMaps
-  //   .geocode({
-  //     q: "1600 Pennsylvania Avenue NW NW, Washington, D.C., 20500,",
-  //   })
-  //   .then((response) => {
-  //     console.log(response);
-  //   })
-  //   .catch((err) => {
-  //     console.log("BIG FAIL:", JSON.stringify(err, null, 2));
-  //   });
-  // call generate token
-
-  //  const test = api.map_utils.generateToken();
+  useEffect(() => {
+    // Define and call handleSearch only once when component mounts
+    const handleSearch = async () => {
+      try {
+        const results = await searchMap({
+          params: {
+            q: "climbing",
+          },
+        });
+        setMapResults(results);
+      } catch (error) {
+        console.error("Error fetching map results:", error);
+      }
+    };
+    
+    handleSearch();
+    // Including searchMap in the dependency array to satisfy ESLint
+    // Since searchMap is a Convex action reference, it should be stable across renders
+  }, [searchMap]);
 
   return (
     <Fragment>
-      
-      </Fragment>
-    // <AppleMapsView  />
-    // <GoogleMapsView />
-);
+      <Text>Search Results: {JSON.stringify(mapResults)}</Text>
+      <AppleMapsView />
+    </Fragment>
+  );
 }

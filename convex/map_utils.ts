@@ -4,7 +4,7 @@ import { internalAction } from "./_generated/server";
 
 export const generateToken = internalAction({
   args: {},
-  handler: async () => {
+  handler: async (): Promise<string> => {
     const privateKey = Buffer.from(
       process.env.MAPKIT_PRIVATE_KEY!,
       "base64"
