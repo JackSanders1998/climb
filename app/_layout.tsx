@@ -78,12 +78,6 @@ export default function RootLayout() {
               title: "Settings",
             }}
           />
-          <Stack.Screen
-            name="(locations)/[name]"
-            options={({ route }) => ({
-              title: route.params?.name || "Location Detail",
-            })}
-          />
         </Stack>
       </ConvexProviderWithClerk>
     </ClerkProvider>

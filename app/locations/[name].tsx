@@ -1,11 +1,11 @@
 import { AppleMaps } from "expo-maps";
-import { useLocalSearchParams } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function LocationDetail() {
   const params = useLocalSearchParams();
-  
+
   // Parse the parameters
   const location = {
     id: params.id as string,
@@ -19,6 +19,16 @@ export default function LocationDetail() {
 
   return (
     <View style={styles.container}>
+      <Stack.Screen
+        options={{
+          title: location.name || "Location Detail",
+          headerRight: () => (
+            <Text onPress={() => router.back()} style={styles.backButtonText}>
+              ← Back
+            </Text>
+          ),
+        }}
+      />
       <ScrollView style={styles.content}>
         {/* Large Map View */}
         <View style={styles.mapContainer}>
@@ -100,27 +110,27 @@ export default function LocationDetail() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: "#f8f9fa",
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 15,
     paddingTop: 50,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
   },
   backButton: {
     marginRight: 15,
   },
   backButtonText: {
     fontSize: 16,
-    color: '#007AFF',
+    color: "#007AFF",
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   content: {
     flex: 1,
@@ -129,67 +139,67 @@ const styles = StyleSheet.create({
     height: 300,
     margin: 15,
     borderRadius: 12,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   fullMap: {
     flex: 1,
   },
   infoContainer: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     margin: 15,
     borderRadius: 12,
     padding: 20,
   },
   titleRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: 20,
   },
   locationName: {
     fontSize: 24,
-    fontWeight: '700',
-    color: '#333',
+    fontWeight: "700",
+    color: "#333",
     flex: 1,
     marginRight: 10,
   },
   environmentBadge: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 15,
   },
   badgeText: {
-    color: 'white',
+    color: "white",
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   detailSection: {
     marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: "600",
+    color: "#333",
     marginBottom: 8,
   },
   addressLine: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
     marginBottom: 4,
   },
   coordinateText: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
     marginBottom: 4,
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
   },
   categoryText: {
     fontSize: 14,
-    color: '#007AFF',
+    color: "#007AFF",
   },
   countryText: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
   },
 });

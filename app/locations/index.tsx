@@ -31,7 +31,7 @@ export default function Locations() {
               <Link
                 key={index}
                 href={{
-                  pathname: '/[name]',
+                  pathname: '/locations/[name]',
                   params: {
                     id: location._id,
                     name: location.name,
