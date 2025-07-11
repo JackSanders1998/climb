@@ -1,38 +1,61 @@
 import { api } from "@/convex/_generated/api";
-import SearchBar from "@/lib/components/SearchBar";
-import { useAction } from "convex/react";
+import { useQuery } from "convex/react";
 import { AppleMaps } from "expo-maps";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useState } from "react";
+import { ScrollView, Text, TextInput, View } from "react-native";
 
 export default function Locations() {
-  const [mapResults, setMapResults] = useState<any>();
-  const searchMap = useAction(api.maps.search);
+  // Using movement as a plceholder for testing
+  const [searchTerm, setSearchTerm] = useState("movement");
 
-  useEffect(() => {
-    // Define and call handleSearch only once when component mounts
-    const handleSearch = async () => {
-      try {
-        const results = await searchMap({
-          params: {
-            q: "climbing",
-          },
-        });
-        setMapResults(results);
-      } catch (error) {
-        console.error("Error fetching map results:", error);
-      }
-    };
-    
-    handleSearch();
-    // Including searchMap in the dependency array to satisfy ESLint
-    // Since searchMap is a Convex action reference, it should be stable across renders
-  }, [searchMap]);
+  const data = useQuery(api.locations.locations.search, { searchTerm });
 
   return (
     <Fragment>
-      {/* <Text>Search Results: {JSON.stringify(mapResults)}</Text> */}
-      <SearchBar />
-      <AppleMaps.View style={{ flex: 1 }} />;
+      <TextInput
+        placeholder="Search..."
+        value={searchTerm}
+        onChangeText={setSearchTerm}
+      />
+      <ScrollView>
+        <Fragment>
+          {data && data.length > 0 ? (
+            data.map((location, index) => (
+              <View
+                key={index}
+                style={{ height: 200, margin: 10 }}
+                pointerEvents="none"
+              >
+                <AppleMaps.View
+                  style={{ flex: 1 }}
+                  cameraPosition={{
+                    coordinates: {
+                      latitude: location.coordinate.latitude,
+                      longitude: location.coordinate.longitude,
+                    },
+                    zoom: 15,
+                  }}
+                  markers={[
+                    {
+                      coordinates: {
+                        latitude: location.coordinate.latitude,
+                        longitude: location.coordinate.longitude,
+                      },
+                      systemImage: "figure.climbing",
+                      title:
+                        location.name ||
+                        location.formattedAddressLines.join(", "),
+                      tintColor: "purple",
+                    },
+                  ]}
+                />
+              </View>
+            ))
+          ) : (
+            <Text>Add some locations!</Text>
+          )}
+        </Fragment>
+      </ScrollView>
     </Fragment>
   );
 }

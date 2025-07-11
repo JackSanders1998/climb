@@ -196,3 +196,22 @@ export const search = query({
     return uniqueResults;
   },
 });
+
+export const getById = query({
+  args: { id: v.id("locations") },
+  handler: async (ctx, args) => {
+    const location = await ctx.db.get(args.id);
+    if (!location) {
+      throw new Error(`Location with id ${args.id} not found`);
+    }
+    return location;
+  },
+});
+
+export const list = query({
+  args: { limit: v.optional(v.number()) },
+  handler: async (ctx, args) => {
+    const limit = args.limit || 100; // Default to 100 if no limit is provided
+    return await ctx.db.query("locations").take(limit);
+  }
+});
