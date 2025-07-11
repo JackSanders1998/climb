@@ -1,6 +1,6 @@
 import { Infer, v } from "convex/values";
-import { internal } from "./_generated/api";
-import { action } from "./_generated/server";
+import { internal } from "../_generated/api";
+import { action } from "../_generated/server";
 
 const params = v.object({
   q: v.string(),
@@ -17,7 +17,7 @@ export const search = action({
   args: { params },
   // returns: v.array(v.any()) || v.null(), // Adjust the return type as needed
   handler: async (ctx, args) => {
-    const token = await ctx.runAction(internal.map_utils.generateToken);
+    const token = await ctx.runAction(internal.locations.utils.generateToken);
     const params = new URLSearchParams({
       q: args.params.q,
       includePoiCategories: args.params.includePoiCategories?.join(",") || "",
@@ -47,7 +47,7 @@ export const autocomplete = action({
   args: { params },
   returns: v.array(v.any()), // Adjust the return type as needed
   handler: async (ctx, args) => {
-    const token = await ctx.runAction(internal.map_utils.generateToken);
+    const token = await ctx.runAction(internal.locations.utils.generateToken);
     const params = new URLSearchParams({
       q: args.params.q,
       includePoiCategories: args.params.includePoiCategories?.join(",") || "",

@@ -10,9 +10,9 @@
 
 import type * as climbs from "../climbs.js";
 import type * as images from "../images.js";
-import type * as locations from "../locations.js";
-import type * as map_utils from "../map_utils.js";
-import type * as maps from "../maps.js";
+import type * as locations_appleMaps from "../locations/appleMaps.js";
+import type * as locations_locations from "../locations/locations.js";
+import type * as locations_utils from "../locations/utils.js";
 
 import type {
   ApiFromModules,
@@ -31,9 +31,9 @@ import type {
 declare const fullApi: ApiFromModules<{
   climbs: typeof climbs;
   images: typeof images;
-  locations: typeof locations;
-  map_utils: typeof map_utils;
-  maps: typeof maps;
+  "locations/appleMaps": typeof locations_appleMaps;
+  "locations/locations": typeof locations_locations;
+  "locations/utils": typeof locations_utils;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 
@@ -181,6 +181,48 @@ export declare const components: {
           distance: number;
           key: string;
         }>
+      >;
+    };
+  };
+  actionCache: {
+    crons: {
+      purge: FunctionReference<
+        "mutation",
+        "internal",
+        { expiresAt?: number },
+        null
+      >;
+    };
+    lib: {
+      get: FunctionReference<
+        "query",
+        "internal",
+        { args: any; name: string; ttl: number | null },
+        { kind: "hit"; value: any } | { expiredEntry?: string; kind: "miss" }
+      >;
+      put: FunctionReference<
+        "mutation",
+        "internal",
+        {
+          args: any;
+          expiredEntry?: string;
+          name: string;
+          ttl: number | null;
+          value: any;
+        },
+        { cacheHit: boolean; deletedExpiredEntry: boolean }
+      >;
+      remove: FunctionReference<
+        "mutation",
+        "internal",
+        { args: any; name: string },
+        null
+      >;
+      removeAll: FunctionReference<
+        "mutation",
+        "internal",
+        { batchSize?: number; before?: number; name?: string },
+        null
       >;
     };
   };

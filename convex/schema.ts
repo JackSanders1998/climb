@@ -16,7 +16,18 @@ export default defineSchema({
     format: v.string(),
   }),
   locations: defineTable({
-    appleMapsId: v.optional(v.string()),
+    // >>>>>> Custom fields (not in Apple Maps) <<<<<<<
+    author: v.optional(v.id("users")),  // TODO: make this required
+    description: v.string(),
+    images: v.optional(v.array(v.id("images"))),
+    metadata: v.optional(v.object({})),
+    environment: v.string(), // e.g. "indoor", "outdoor"
+    // Concatenated version of formattedAddressLines
+    // Keeping this dupliate information because search indexes are only available on strings
+    concatenatedAddressLines: v.string(),
+
+    // >>>>> Apple Maps data <<<<<<
+    appleMapsId: v.optional(v.string()),    // called ID when querying Apple Maps directly
     coordinate: v.object({
       latitude: v.number(),
       longitude: v.number(),
@@ -43,45 +54,11 @@ export default defineSchema({
       thoroughfare: v.optional(v.string()),
     }),
     poiCategory: v.optional(v.string()),
-    images: v.optional(v.array(v.id("images"))),
+  }).searchIndex("search_name", {
+    searchField: "name",
+  }).searchIndex("search_address", {
+    searchField: "concatenatedAddressLines",
+  }).searchIndex("search_description", {
+    searchField: "description",
   })
 });
-
-
-/**
-[
-  {
-    coordinate: {
-      latitude: 41.9079051,
-      longitude: -87.6496381,
-    },
-    country: "United States",
-    countryCode: "US",
-    displayMapRegion: {
-      eastLongitude: -87.643596,
-      northLatitude: 41.9124017,
-      southLatitude: 41.9034084,
-      westLongitude: -87.6556801,
-    },
-    formattedAddressLines: [
-      "1460 N Dayton St",
-      "Chicago, IL  60642",
-      "United States",
-    ],
-    id: "I155267A846494FFA",
-    name: "Movement",
-    poiCategory: "RockClimbing",
-    structuredAddress: {
-      administrativeArea: "Illinois",
-      administrativeAreaCode: "IL",
-      dependentLocalities: ["Old Town"],
-      fullThoroughfare: "1460 N Dayton St",
-      locality: "Chicago",
-      postCode: "60642",
-      subLocality: "Old Town",
-      subThoroughfare: "1460",
-      thoroughfare: "N Dayton St",
-    },
-  },
-]
-*/

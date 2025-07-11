@@ -1,10 +1,24 @@
 "use node";
+import { ActionCache } from "@convex-dev/action-cache";
 import jwt from "jsonwebtoken";
-import { internalAction } from "./_generated/server";
+import { components, internal } from "../_generated/api";
+import { internalAction } from "../_generated/server";
 
+// Is it worth caching the token?
+const tokenCache = new ActionCache(components.actionCache, {
+  action: internal.locations.utils.generateToken,
+  name: "generateMapKitToken",
+  ttl: 1000 * 60 * 60 * 24 * 5, // 5 days
+});
+
+/**
+ * Generates a MapKit JS token for Apple Maps API access.
+ * This token is used to authenticate requests to the Apple Maps API.
+ * 
+ * @returns {Promise<string>} A promise that resolves to the generated token.
+ */
 export const generateToken = internalAction({
-  args: {},
-  handler: async (): Promise<string> => {
+  handler: async (ctx): Promise<string> => {
     const privateKey = Buffer.from(
       process.env.MAPKIT_PRIVATE_KEY!,
       "base64"
@@ -12,7 +26,7 @@ export const generateToken = internalAction({
     const teamId = "L8DXKT63P9";
     const keyId = "NPZQ796H9Q";
 
-    const iat = Math.floor(Date.now() / 1000); // Current time in seconds
+    const iat = Math.floor(Date.now() / 1000);
     const exp = iat + 3600; // Set expiration to 1 hour later (3600 seconds)
 
     const token = jwt.sign(
