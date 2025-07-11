@@ -135,14 +135,7 @@ export const insert = mutation({
       { ...locationBody, ...displayMapRegion, ...structuredAddress } // The data to associate with the key,
     );
 
-    const result = await geospatial.get(ctx, locationId);
-    console.log({
-      locationId,
-      result,
-      args,
-    });
-    return result;
-    // await geospatial.remove(ctx, cityId);
+    return geospatial.get(ctx, locationId);
   },
 });
 

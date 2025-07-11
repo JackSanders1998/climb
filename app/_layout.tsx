@@ -9,12 +9,18 @@ import { Text } from "react-native";
 // to properly use the usePathname hook
 function HeaderRightContent() {
   const pathname = usePathname();
-  
+
   // Don't show Settings link if we're already on settings or locations
-  if (pathname === "/settings" || pathname === "/locations") {
+  if (
+    !(
+      pathname.toLowerCase().includes("index") ||
+      pathname.toLowerCase().includes("summary") ||
+      pathname.toLowerCase().includes("insights")
+    )
+  ) {
     return null;
   }
-  
+
   return (
     <Link href="/settings">
       <Text>Settings</Text>
@@ -61,7 +67,7 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
-            name="locations"
+            name="locations/index"
             options={{
               title: "Locations",
             }}
@@ -71,6 +77,12 @@ export default function RootLayout() {
             options={{
               title: "Settings",
             }}
+          />
+          <Stack.Screen
+            name="(locations)/[name]"
+            options={({ route }) => ({
+              title: route.params?.name || "Location Detail",
+            })}
           />
         </Stack>
       </ConvexProviderWithClerk>

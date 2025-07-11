@@ -55,7 +55,6 @@ const SearchBar = ({ onSelectLocation }: SearchBarProps) => {
           userLocation: "37.7749,-122.4194", // Example user location
         },
       });
-      console.log("Search results:", results);
 
       setSearchResults(results || []);
       setShowDropdown(results && results.length > 0);
