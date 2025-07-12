@@ -1,36 +1,16 @@
+import { Button } from "@/lib/ui/Button";
 import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
+import { sand, sandA } from "@radix-ui/colors";
 import { ConvexReactClient } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
-import { Link, Stack, usePathname } from "expo-router";
-import { Text } from "react-native";
-
-// Component for the header right content - needs to be outside the main component
-// to properly use the usePathname hook
-function HeaderRightContent() {
-  const pathname = usePathname();
-
-  // Don't show Settings link if we're already on settings or locations
-  if (
-    !(
-      pathname.toLowerCase().includes("index") ||
-      pathname.toLowerCase().includes("summary") ||
-      pathname.toLowerCase().includes("insights")
-    )
-  ) {
-    return null;
-  }
-
-  return (
-    <Link href="/settings">
-      <Text>Settings</Text>
-    </Link>
-  );
-}
+import { Stack } from "expo-router";
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
   unsavedChangesWarning: false,
 });
+
+const settingsPath = "/settings" as const;
 
 export default function RootLayout() {
   return (
@@ -41,17 +21,24 @@ export default function RootLayout() {
       <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
         <Stack
           screenOptions={{
+            contentStyle: {
+              backgroundColor: sand.sand3,
+            },
             headerShown: true,
             headerLargeTitle: true,
-            headerTransparent: false,
+            headerTransparent: true,
+            headerTitleStyle: {
+              color: sandA.sandA12,
+            },
+            headerTintColor: sandA.sandA12,
             headerLargeTitleShadowVisible: false,
             headerShadowVisible: true,
+            headerBlurEffect: "regular",
             headerStyle: { backgroundColor: "rgba(255, 255, 255, 0.01)" },
             headerLargeStyle: { backgroundColor: "transparent" },
-            headerRight: () => {
-              // We need to create a component that uses the usePathname hook
-              return <HeaderRightContent />;
-            },
+            headerRight: () => (
+              <Button href={settingsPath} as="link" title="Settings" />
+            ),
           }}
         >
           <Stack.Screen

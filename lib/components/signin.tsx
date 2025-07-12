@@ -2,7 +2,8 @@ import { useSSO } from "@clerk/clerk-expo";
 import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import React, { useCallback, useEffect } from "react";
-import { Button, View } from "react-native";
+import { View } from "react-native";
+import { Button } from "../ui/Button";
 
 const useWarmUpBrowser = () => {
   useEffect(() => {
@@ -54,7 +55,7 @@ export const SignIn = () => {
 
   return (
     <View>
-      <Button title="Sign in with Google" onPress={onPress} />
+      <Button variant="primary" title="Sign in with Google" onPress={onPress} />
     </View>
   );
 };

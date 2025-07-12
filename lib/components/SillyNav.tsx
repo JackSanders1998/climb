@@ -1,5 +1,9 @@
-import { Link } from "expo-router";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { SignedIn, SignedOut, useAuth, useUser } from "@clerk/clerk-expo";
+import { ScrollView, View } from "react-native";
+import { Button } from "../ui/Button";
+import { Card } from "../ui/Card";
+import { Text } from "../ui/Text";
+import { SignIn } from "./signin";
 
 interface SillyNavProps {
   pageName: string;
@@ -11,66 +15,75 @@ export default function SillyNav({ pageName }: SillyNavProps) {
     return pageName === linkText;
   };
 
+  const { user } = useUser();
+
+  const { signOut } = useAuth();
+
   return (
-    <ScrollView>
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Text style={{ fontSize: 24, fontWeight: "bold" }}>
-          {pageName} Page
-        </Text>
-        <View style={styles.linksContainer}>
-          <Link href="/">
-            <Text
-              style={isCurrentPage("Summary") ? styles.activeLink : styles.link}
-            >
-              Go to Summary
-            </Text>
-          </Link>
-          <Link href="/insights">
-            <Text
-              style={
-                isCurrentPage("Insights") ? styles.activeLink : styles.link
-              }
-            >
-              Go to Insights
-            </Text>
-          </Link>
-          <Link href="/locations">
-            <Text
-              style={
-                isCurrentPage("Locations") ? styles.activeLink : styles.link
-              }
-            >
-              Go to Locations
-            </Text>
-          </Link>
-          <Link href="/settings">
-            <Text
-              style={
-                isCurrentPage("Settings") ? styles.activeLink : styles.link
-              }
-            >
-              Go to Settings
-            </Text>
-          </Link>
-        </View>
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      style={{
+        flex: 1,
+      }}
+    >
+      <View
+        style={{
+          flex: 1,
+          padding: 12,
+          gap: 8,
+        }}
+      >
+        <Button
+          selected={pageName === "Summary"}
+          title="Summary"
+          as="link"
+          href="/"
+          variant="surface"
+        />
+        <Button
+          selected={pageName === "Insights"}
+          title="Insights"
+          as="link"
+          href="/insights"
+          variant="surface"
+        />
+        <Button
+          selected={pageName === "Locations"}
+          title="Locations"
+          as="link"
+          href="/locations"
+          variant="surface"
+        />
+        <Button
+          selected={pageName === "Settings"}
+          title="Settings"
+          as="link"
+          href="/settings"
+          variant="surface"
+        />
+
+        <SignedOut>
+          <View
+            style={{
+              paddingVertical: 32,
+            }}
+          >
+            <SignIn />
+          </View>
+        </SignedOut>
+        <SignedIn>
+          <View style={{ paddingVertical: 32 }}>
+            <Button title="Sign out" onPress={() => signOut()} />
+          </View>
+          {user &&
+            Object.entries(user).map(([key, value], index) => (
+              <Card key={index}>
+                <Text level="title3">{key}</Text>
+                <Text>{JSON.stringify(value, null, 2)}</Text>
+              </Card>
+            ))}
+        </SignedIn>
       </View>
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  linksContainer: {
-    marginTop: 20,
-    alignItems: "center",
-  },
-  link: {
-    fontSize: 16,
-    marginVertical: 8,
-  },
-  activeLink: {
-    fontSize: 16,
-    marginVertical: 8,
-    color: "blue",
-    fontWeight: "bold",
-  },
-});
