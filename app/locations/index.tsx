@@ -1,7 +1,8 @@
 import { api } from "@/convex/_generated/api";
+import NewLocationModal from "@/lib/components/NewLocationModal";
 import { useQuery } from "convex/react";
 import { AppleMaps } from "expo-maps";
-import { Link } from "expo-router";
+import { Link, Stack } from "expo-router";
 import React, { Fragment, useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
@@ -15,10 +16,30 @@ const addressFormatter = (addressLines: string[]) => {
 export default function Locations() {
   // Using movement as a plceholder for testing
   const [searchTerm, setSearchTerm] = useState("movement");
+  const [showNewLocationModal, setShowNewLocationModal] = useState(false);
   const data = useQuery(api.locations.locations.search, { searchTerm });
+
+  const handleLocationCreated = (locationData: { name: string; address: string; type: string }) => {
+    // Here you would typically call your API to create the location
+    console.log("New location data:", locationData);
+    // You can add API call here later
+  };
 
   return (
     <Fragment>
+      <Stack.Screen
+        options={{
+          title: "Locations",
+          headerRight: () => (
+            <TouchableOpacity 
+              onPress={() => setShowNewLocationModal(true)} 
+              style={styles.newButton}
+            >
+              <Text style={styles.newButtonText}>New +</Text>
+            </TouchableOpacity>
+          ),
+        }}
+      />
       <TextInput
         placeholder="Search..."
         value={searchTerm}
@@ -85,6 +106,13 @@ export default function Locations() {
           )}
         </Fragment>
       </ScrollView>
+
+      {/* New Location Modal */}
+      <NewLocationModal
+        visible={showNewLocationModal}
+        onClose={() => setShowNewLocationModal(false)}
+        onCreateLocation={handleLocationCreated}
+      />
     </Fragment>
   );
 }
@@ -177,5 +205,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     marginTop: 50,
+  },
+  // Header button styles
+  newButton: {
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  newButtonText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });

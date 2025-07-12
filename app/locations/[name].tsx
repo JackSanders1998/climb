@@ -1,10 +1,12 @@
+import NewLocationModal from "@/lib/components/NewLocationModal";
 import { AppleMaps } from "expo-maps";
-import { router, Stack, useLocalSearchParams } from "expo-router";
-import React from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Stack, useLocalSearchParams } from "expo-router";
+import React, { useState } from "react";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function LocationDetail() {
   const params = useLocalSearchParams();
+  const [showNewLocationModal, setShowNewLocationModal] = useState(false);
 
   // Parse the parameters
   const location = {
@@ -17,15 +19,24 @@ export default function LocationDetail() {
     country: params.country as string,
   };
 
+  const handleLocationCreated = (locationData: { name: string; address: string; type: string }) => {
+    // Here you would typically call your API to create the location
+    console.log("New location data:", locationData);
+    // You can add API call here later
+  };
+
   return (
     <View style={styles.container}>
       <Stack.Screen
         options={{
           title: location.name || "Location Detail",
           headerRight: () => (
-            <Text onPress={() => router.back()} style={styles.backButtonText}>
-              ← Back
-            </Text>
+            <TouchableOpacity 
+              onPress={() => setShowNewLocationModal(true)} 
+              style={styles.newButton}
+            >
+              <Text style={styles.newButtonText}>New +</Text>
+            </TouchableOpacity>
           ),
         }}
       />
@@ -103,6 +114,13 @@ export default function LocationDetail() {
           )}
         </View>
       </ScrollView>
+
+      {/* New Location Modal */}
+      <NewLocationModal
+        visible={showNewLocationModal}
+        onClose={() => setShowNewLocationModal(false)}
+        onCreateLocation={handleLocationCreated}
+      />
     </View>
   );
 }
@@ -201,5 +219,17 @@ const styles = StyleSheet.create({
   countryText: {
     fontSize: 14,
     color: "#666",
+  },
+  // Header button styles
+  newButton: {
+    backgroundColor: "#007AFF",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  newButtonText: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });
