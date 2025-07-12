@@ -1,13 +1,16 @@
+import { Button } from "@/lib/ui/Button";
 import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
+import { sand, sandA } from "@radix-ui/colors";
 import { ConvexReactClient } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
-import { Link, Stack } from "expo-router";
-import { Text } from "react-native";
+import { Stack } from "expo-router";
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
   unsavedChangesWarning: false,
 });
+
+const settingsPath = "/settings" as const;
 
 export default function RootLayout() {
   return (
@@ -18,17 +21,23 @@ export default function RootLayout() {
       <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
         <Stack
           screenOptions={{
+            contentStyle: {
+              backgroundColor: sand.sand3,
+            },
             headerShown: true,
             headerLargeTitle: true,
-            headerTransparent: false,
+            headerTransparent: true,
+            headerTitleStyle: {
+              color: sandA.sandA12,
+            },
+            headerTintColor: sandA.sandA12,
             headerLargeTitleShadowVisible: false,
             headerShadowVisible: true,
+            headerBlurEffect: "regular",
             headerStyle: { backgroundColor: "rgba(255, 255, 255, 0.01)" },
             headerLargeStyle: { backgroundColor: "transparent" },
             headerRight: () => (
-              <Link href="/settings">
-                <Text>Settings</Text>
-              </Link>
+              <Button href={settingsPath} as="link" title="Settings" />
             ),
           }}
         >
