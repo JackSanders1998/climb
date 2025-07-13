@@ -22,14 +22,17 @@ const customSchema = {
    */
   searchIdentifiers: v.string(),
 };
-const customSchemaType = v.object({ ...customSchema });
+// eslint erroneously throwing an unused var error: https://github.com/typescript-eslint/typescript-eslint/issues/10266#issuecomment-2551361581
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const customSchemaType = v.object(customSchema);
 export type CustomSchemaType = Infer<typeof customSchemaType>;
 
 export const coordinateSchema = {
   latitude: v.number(),
   longitude: v.number(),
 };
-const coordinateSchemaType = v.object({ ...coordinateSchema });
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const coordinateSchemaType = v.object(coordinateSchema);
 export type CoordinateSchemaType = Infer<typeof coordinateSchemaType>;
 
 export const displayMapRegionSchema = {
@@ -38,7 +41,8 @@ export const displayMapRegionSchema = {
   southLatitude: v.number(),
   westLongitude: v.number(),
 };
-const displayMapRegionSchemaType = v.object({ ...displayMapRegionSchema });
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const displayMapRegionSchemaType = v.object(displayMapRegionSchema);
 export type DisplayMapRegionSchemaType = Infer<
   typeof displayMapRegionSchemaType
 >;
@@ -55,7 +59,8 @@ export const structuredAddressSchema = {
   thoroughfare: v.optional(v.string()),
   areasOfInterest: v.optional(v.array(v.string())),
 };
-const structuredAddressSchemaType = v.object({ ...structuredAddressSchema });
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const structuredAddressSchemaType = v.object(structuredAddressSchema);
 export type StructuredAddressSchemaType = Infer<
   typeof structuredAddressSchemaType
 >;
@@ -68,7 +73,8 @@ export const appleMapsMetadataSchema = {
   name: v.string(),
   poiCategory: v.optional(v.string()),
 };
-const appleMapsMetadataSchemaType = v.object({ ...appleMapsMetadataSchema });
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const appleMapsMetadataSchemaType = v.object(appleMapsMetadataSchema);
 export type AppleMapsMetadataSchemaType = Infer<
   typeof appleMapsMetadataSchemaType
 >;
@@ -88,7 +94,8 @@ export const appleMapsSchema = {
     ...structuredAddressSchema,
   }),
 };
-const appleMapsSchemaType = v.object({ ...appleMapsSchema });
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const appleMapsSchemaType = v.object(appleMapsSchema);
 export type AppleMapsSchemaType = Infer<typeof appleMapsSchemaType>;
 
 export const locationInsertPayload = {
@@ -103,5 +110,6 @@ export const locationSchema = {
   ...customSchema,
   ...appleMapsSchema,
 };
-const locationSchemaType = v.object({ ...locationSchema });
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const locationSchemaType = v.object(locationSchema);
 export type LocationSchemaType = Infer<typeof locationSchemaType>;
