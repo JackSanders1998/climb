@@ -1,5 +1,4 @@
 import { api } from "@/convex/_generated/api";
-import { useUser } from "@clerk/clerk-expo";
 import { useAction, useMutation } from "convex/react";
 import * as Location from "expo-location";
 import { AppleMaps } from "expo-maps";
@@ -57,12 +56,6 @@ export default function NewLocationModal({
 
   const appleMapsSearch = useAction(api.locations.appleMaps.search);
   const locationCreate = useMutation(api.locations.locations.insert);
-
-  const { user } = useUser();
-  if (!user?.id) {
-    console.error("User ID is not available");
-    return null; // or handle the error appropriately
-  }
 
   // Request location permissions and get user location
   useEffect(() => {
