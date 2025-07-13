@@ -4,29 +4,45 @@ import { components } from "../_generated/api";
 import { Id } from "../_generated/dataModel";
 import { mutation, query } from "../_generated/server";
 import {
-  appleMapsSchemaType,
-  coordinateSchemaType,
-  customSchemaType,
-  displayMapRegionSchemaType,
-  locationSchema,
+  AppleMapsMetadataSchemaType,
+  AppleMapsSchemaType,
+  CoordinateSchemaType,
+  CustomSchemaType,
+  DisplayMapRegionSchemaType,
+  locationInsertPayload,
+  StructuredAddressSchemaType
 } from "./models";
 
 const geospatial = new GeospatialIndex<
   Id<"locations">,
-  coordinateSchemaType &
-    displayMapRegionSchemaType &
-    Pick<customSchemaType, "author" | "environment" | "description"> &
+  CoordinateSchemaType &
+    DisplayMapRegionSchemaType &
+    Pick<CustomSchemaType, "author" | "environment" | "description"> &
     Pick<
-      appleMapsSchemaType,
+      AppleMapsSchemaType,
       "appleMapsId" | "formattedAddressLines" | "name" | "poiCategory"
     >
 >(components.geospatial);
 
 export const insert = mutation({
   args: {
-    ...locationSchema,
+    ...locationInsertPayload,
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Must be signed in to create a location");
+    }
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
+      .unique();
+    if (!user) {
+      throw new Error("Unauthenticated call to mutation");
+    }
+
     // Check if a record with the same appleMapsId already exists
     if (args.appleMapsId) {
       const existingRecord = await ctx.db
@@ -40,13 +56,26 @@ export const insert = mutation({
       }
     }
 
-    const locationBody = {
-      author: args.author,
+    const generateSearchIdentifiers = () => {
+      const identifiers = [
+        args.name.toLowerCase(),
+        args.description.toLowerCase(),
+        args.formattedAddressLines.join(" ").toLowerCase(),
+        args.poiCategory?.toLowerCase() || "",
+      ];
+      return identifiers.join(" ");
+    }
+
+    const customSchemaBody: CustomSchemaType = {
+      author: user._id,
       description: args.description,
       images: args.images,
       metadata: args.metadata,
       environment: args.environment,
-      concatenatedAddressLines: args.formattedAddressLines.join(" "),
+      searchIdentifiers: generateSearchIdentifiers(),
+    };
+
+    const appleMapsMetadataSchemaBody: AppleMapsMetadataSchemaType = {
       appleMapsId: args.appleMapsId,
       country: args.country,
       countryCode: args.countryCode,
@@ -55,19 +84,19 @@ export const insert = mutation({
       poiCategory: args.poiCategory,
     };
 
-    const coordinate = {
+    const coordinate: CoordinateSchemaType = {
       latitude: args.coordinate.latitude,
       longitude: args.coordinate.longitude,
     };
 
-    const displayMapRegion = {
+    const displayMapRegion: DisplayMapRegionSchemaType = {
       eastLongitude: args.displayMapRegion.eastLongitude,
       northLatitude: args.displayMapRegion.northLatitude,
       southLatitude: args.displayMapRegion.southLatitude,
       westLongitude: args.displayMapRegion.westLongitude,
     };
 
-    const structuredAddress = {
+    const structuredAddress: StructuredAddressSchemaType = {
       administrativeArea: args.structuredAddress.administrativeArea,
       administrativeAreaCode: args.structuredAddress.administrativeAreaCode,
       dependentLocalities: args.structuredAddress.dependentLocalities,
@@ -80,14 +109,11 @@ export const insert = mutation({
     };
 
     const locationId = await ctx.db.insert("locations", {
-      ...locationBody,
-      displayMapRegion,
+      ...customSchemaBody,
+      ...appleMapsMetadataSchemaBody,
       coordinate,
-      author: args.author,
-      environment: args.environment,
-      description: args.description,
-      searchIdentifiers: "",
-      structuredAddress: args.structuredAddress
+      displayMapRegion,
+      structuredAddress,
     });
 
     // This whole geospatial index may not be necessary --> TODO: figure out of it is needed
@@ -96,13 +122,14 @@ export const insert = mutation({
       locationId, // The unique string key to associate with the coordinate -- pk on locations table
       {
         // The geographic coordinate `{ latitude, longitude }` to associate with the key
-        ...coordinate
+        ...coordinate,
       },
       {
-        ...locationBody,
+        ...customSchemaBody,
+        ...appleMapsMetadataSchemaBody,
         ...displayMapRegion,
         ...structuredAddress,
-        ...coordinate
+        ...coordinate,
       }
     );
 

@@ -1,18 +1,19 @@
 import { api } from "@/convex/_generated/api";
+import { useUser } from "@clerk/clerk-expo";
 import { useAction, useMutation } from "convex/react";
 import * as Location from "expo-location";
 import { AppleMaps } from "expo-maps";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    Modal,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 interface NewLocationModalProps {
@@ -56,6 +57,12 @@ export default function NewLocationModal({
 
   const appleMapsSearch = useAction(api.locations.appleMaps.search);
   const locationCreate = useMutation(api.locations.locations.insert);
+
+  const { user } = useUser();
+  if (!user?.id) {
+    console.error("User ID is not available");
+    return null; // or handle the error appropriately
+  }
 
   // Request location permissions and get user location
   useEffect(() => {
@@ -187,48 +194,25 @@ export default function NewLocationModal({
       // Insert location into database using Convex mutation
       await locationCreate({
         appleMapsId: selectedLocationData?.id || "",
-        name: newLocationAddress || "Selected location",
+        name: newLocationAddress,
         description: `${newLocationType} climbing location`,
         coordinate: {
           latitude: selectedCoordinates.latitude,
           longitude: selectedCoordinates.longitude,
         },
-        formattedAddressLines: selectedLocationData?.formattedAddressLines || [
-          newLocationAddress || "Selected location",
-          "",
-          "",
-        ],
-        poiCategory: newLocationType === "Gym" ? "RockClimbing" : "Outdoor",
+        formattedAddressLines: selectedLocationData.formattedAddressLines,
+        poiCategory: selectedLocationData.poiCategory,
         environment: newLocationType as "Gym" | "Outdoor",
-        country: selectedLocationData?.country || "",
-        countryCode: selectedLocationData?.countryCode || "",
-        displayMapRegion: selectedLocationData?.displayMapRegion || {
+        country: selectedLocationData.country,
+        countryCode: selectedLocationData.countryCode,
+        displayMapRegion: selectedLocationData.displayMapRegion || {
           eastLongitude: selectedCoordinates.longitude + 0.005,
           westLongitude: selectedCoordinates.longitude - 0.005,
           northLatitude: selectedCoordinates.latitude + 0.005,
           southLatitude: selectedCoordinates.latitude - 0.005,
         },
-        structuredAddress: selectedLocationData?.structuredAddress || {
-          thoroughfare: "",
-          subThoroughfare: "",
-          locality: "",
-          subLocality: "",
-          administrativeArea: "",
-          administrativeAreaCode: "",
-          dependentLocalities: [],
-          postCode: "",
-        },
+        structuredAddress: selectedLocationData.structuredAddress,
       });
-
-      // Call the callback function if provided
-      if (onCreateLocation) {
-        onCreateLocation({
-          name: newLocationAddress || "Selected location",
-          address: newLocationAddress || "Selected location",
-          type: newLocationType,
-          coordinates: selectedCoordinates,
-        });
-      }
 
       // Show success message and close modal
       Alert.alert("Success", "Location created successfully!", [
