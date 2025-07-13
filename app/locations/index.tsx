@@ -21,8 +21,7 @@ const addressFormatter = (addressLines: string[]) => {
 };
 
 export default function Locations() {
-  // Using movement as a plceholder for testing
-  const [searchTerm, setSearchTerm] = useState("movement");
+  const [searchTerm, setSearchTerm] = useState("");
   const [showNewLocationModal, setShowNewLocationModal] = useState(false);
   const data = useQuery(api.locations.locations.search, { searchTerm });
 
