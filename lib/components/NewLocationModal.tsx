@@ -18,21 +18,11 @@ import {
 interface NewLocationModalProps {
   visible: boolean;
   onClose: () => void;
-  onCreateLocation?: (locationData: {
-    name: string;
-    address: string;
-    type: string;
-    coordinates?: {
-      latitude: number;
-      longitude: number;
-    };
-  }) => void;
 }
 
 export default function NewLocationModal({
   visible,
   onClose,
-  onCreateLocation,
 }: NewLocationModalProps) {
   const [newLocationAddress, setNewLocationAddress] = useState("");
   const [newLocationType, setNewLocationType] = useState("Gym");

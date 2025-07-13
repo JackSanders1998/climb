@@ -10,7 +10,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 
 const addressFormatter = (addressLines: string[]) => {
@@ -130,7 +130,12 @@ export default function Locations() {
               </Link>
             ))
           ) : (
-            <Text style={styles.emptyText}>This would default to locations near you or your recent ones or popular ones or something. For now, search for chicago or sf or portland or movement. This is totally powered by convex db, not apple maps.</Text>
+            <Text style={styles.emptyText}>
+              This would default to locations near you or your recent ones or
+              popular ones or something. For now, search for chicago or sf or
+              portland or movement. This is totally powered by convex db, not
+              apple maps.
+            </Text>
           )}
         </Fragment>
       </ScrollView>
