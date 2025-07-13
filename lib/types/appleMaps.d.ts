@@ -1,7 +1,7 @@
 // https://developer.apple.com/documentation/applemapsserverapi/-v1-search
 export interface SearchInput extends BaseInput {
   /**
-   * A comma-separated list of strings that describes the kind of result types to include in the response. 
+   * A comma-separated list of strings that describes the kind of result types to include in the response.
    * For example, resultTypeFilter=Poi.
    */
   resultTypeFilter?: SearchResultType;
@@ -19,7 +19,7 @@ export interface SearchInput extends BaseInput {
 // https://developer.apple.com/documentation/applemapsserverapi/-v1-searchautocomplete
 export interface SearchACInput extends BaseInput {
   /**
-   * A comma-separated list of strings that describes the kind of result types to include in the response. 
+   * A comma-separated list of strings that describes the kind of result types to include in the response.
    * For example, resultTypeFilter=Poi.
    */
   resultTypeFilter?: SearchACResultType;
@@ -27,12 +27,12 @@ export interface SearchACInput extends BaseInput {
 
 interface BaseInput {
   /**
-   * (Required) The place to search for. 
+   * (Required) The place to search for.
    * For example, q=eiffel tower.
    */
   q: string;
   /**
-   * A comma-separated list of strings that describes the points of interest to exclude from the search results. 
+   * A comma-separated list of strings that describes the points of interest to exclude from the search results.
    * For example, excludePoiCategories=Restaurant,Cafe.
    */
   excludePoiCategories?: PoiCategory[];
@@ -42,19 +42,19 @@ interface BaseInput {
    */
   includePoiCategories?: PoiCategory[];
   /**
-   * comma-separated list of two-letter ISO 3166-1 codes of the countries to limit the results to. 
+   * comma-separated list of two-letter ISO 3166-1 codes of the countries to limit the results to.
    * For example, limitToCountries=US,CA limits the search to the United States and Canada.
    * If you specify two or more countries, the results reflect the best available results for some or all of the countries rather than everything related to the query for those countries.
    */
   limitToCountries?: string[];
   /**
-   * The language the server should use when returning the response, specified using a BCP 47 language code. 
+   * The language the server should use when returning the response, specified using a BCP 47 language code.
    * For example, for English use lang=en-US. Defaults to en-US.
    */
   lang?: string;
   /**
-   * A location defined by the application as a hint. 
-   * Specify the location as a comma-separated string containing the latitude and longitude. 
+   * A location defined by the application as a hint.
+   * Specify the location as a comma-separated string containing the latitude and longitude.
    * For example, searchLocation=37.78,-122.42.
    */
   searchLocation?: string;
@@ -87,11 +87,10 @@ interface BaseInput {
   excludeAddressCategories?: AddressCategory;
 }
 
-
 // // https://developer.apple.com/documentation/applemapsserverapi/searchresponse
 // export interface SearchResponse {
 //   /**
-//    * Represents a rectangular region on a map expressed as south-west and north-east points. 
+//    * Represents a rectangular region on a map expressed as south-west and north-east points.
 //    * More specifically south latitude, west longitude, north latitude and east longitude.
 //    */
 //   displayMapRegion: MapRegion;
@@ -107,19 +106,19 @@ export interface ErrorResponse {
   response: {
     data: {
       error: {
-        details: string[];  // An array of strings with additional details about the error
-        message: string;    // A message that provides details about the error.
-      }
-    }
-  }
+        details: string[]; // An array of strings with additional details about the error
+        message: string; // A message that provides details about the error.
+      };
+    };
+  };
 }
 
 // https://developer.apple.com/documentation/applemapsserverapi/searchmapregion
 interface SearchMapRegion {
-  eastLongitude: number;  // A double value that describes the east longitude of the map region.
-  northLatitude: number;  // A double value that describes the north latitude of the map region.
-  southLatitude: number;  // A double value that describes the south latitude of the map region.
-  westLongitude: number;  // A double value that describes the west longitude of the map region.
+  eastLongitude: number; // A double value that describes the east longitude of the map region.
+  northLatitude: number; // A double value that describes the north latitude of the map region.
+  southLatitude: number; // A double value that describes the south latitude of the map region.
+  westLongitude: number; // A double value that describes the west longitude of the map region.
 }
 
 interface Location {
@@ -127,15 +126,13 @@ interface Location {
   longitude: number;
 }
 
-
 type AddressCategory =
-  | "Country"               // Countries and regions.
-  | "AdministrativeArea"    // The primary administrative divisions of countries or regions.
+  | "Country" // Countries and regions.
+  | "AdministrativeArea" // The primary administrative divisions of countries or regions.
   | "SubAdministrativeArea" // The secondary administrative divisions of countries or regions.
-  | "Locality"              // Local administrative divisions, postal cities and populated places.
-  | "SubLocality"           // Local administrative sub-divisions, postal city sub-districts, and neighborhoods.
-  | "PostalCode"            // A code assigned to addresses for mail sorting and delivery.
-
+  | "Locality" // Local administrative divisions, postal cities and populated places.
+  | "SubLocality" // Local administrative sub-divisions, postal city sub-districts, and neighborhoods.
+  | "PostalCode"; // A code assigned to addresses for mail sorting and delivery.
 
 interface StructuredAddress {
   administrativeArea: string;
@@ -207,14 +204,12 @@ export interface ETAResponse {
 }
 
 type SearchResultType =
-  | "poi"               //  physical feature or a point of interest.
-  | "address"           //  An address such as a street address, suburb, city, state, or country.
-  | "physicalFeature"   //  A natural physical feature, such as a river, mountain, or delta.
-  | "pointOfInterest";  // A point of interest such as a cafe or grocery store.
+  | "poi" //  physical feature or a point of interest.
+  | "address" //  An address such as a street address, suburb, city, state, or country.
+  | "physicalFeature" //  A natural physical feature, such as a river, mountain, or delta.
+  | "pointOfInterest"; // A point of interest such as a cafe or grocery store.
 
-type SearchACResultType =
-  SearchResultType
-  | "query";            // A search query string.
+type SearchACResultType = SearchResultType | "query"; // A search query string.
 
 type TransportType = "Automobile" | "Transit" | "Walking";
 

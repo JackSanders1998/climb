@@ -212,7 +212,7 @@ export default function NewLocationModal({
       Alert.alert(
         "Error",
         JSON.stringify((error as Error).message) ||
-          "Failed to create location. Please try again."
+          "Failed to create location. Please try again.",
       );
     }
   };

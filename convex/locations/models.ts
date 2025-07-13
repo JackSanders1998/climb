@@ -28,7 +28,7 @@ export type CustomSchemaType = Infer<typeof customSchemaType>;
 export const coordinateSchema = {
   latitude: v.number(),
   longitude: v.number(),
-}
+};
 const coordinateSchemaType = v.object({ ...coordinateSchema });
 export type CoordinateSchemaType = Infer<typeof coordinateSchemaType>;
 
@@ -39,7 +39,9 @@ export const displayMapRegionSchema = {
   westLongitude: v.number(),
 };
 const displayMapRegionSchemaType = v.object({ ...displayMapRegionSchema });
-export type DisplayMapRegionSchemaType = Infer<typeof displayMapRegionSchemaType>;
+export type DisplayMapRegionSchemaType = Infer<
+  typeof displayMapRegionSchemaType
+>;
 
 export const structuredAddressSchema = {
   administrativeArea: v.optional(v.string()),
@@ -54,7 +56,9 @@ export const structuredAddressSchema = {
   areasOfInterest: v.optional(v.array(v.string())),
 };
 const structuredAddressSchemaType = v.object({ ...structuredAddressSchema });
-export type StructuredAddressSchemaType = Infer<typeof structuredAddressSchemaType>;
+export type StructuredAddressSchemaType = Infer<
+  typeof structuredAddressSchemaType
+>;
 
 export const appleMapsMetadataSchema = {
   appleMapsId: v.optional(v.string()), // called ID when querying Apple Maps directly
@@ -65,7 +69,9 @@ export const appleMapsMetadataSchema = {
   poiCategory: v.optional(v.string()),
 };
 const appleMapsMetadataSchemaType = v.object({ ...appleMapsMetadataSchema });
-export type AppleMapsMetadataSchemaType = Infer<typeof appleMapsMetadataSchemaType>;
+export type AppleMapsMetadataSchemaType = Infer<
+  typeof appleMapsMetadataSchemaType
+>;
 
 /**
  * Schema for Apple Maps data.
@@ -97,6 +103,5 @@ export const locationSchema = {
   ...customSchema,
   ...appleMapsSchema,
 };
-const locationSchemaType = v.object({...locationSchema});
+const locationSchemaType = v.object({ ...locationSchema });
 export type LocationSchemaType = Infer<typeof locationSchemaType>;
-

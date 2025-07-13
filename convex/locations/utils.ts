@@ -14,14 +14,14 @@ const tokenCache = new ActionCache(components.actionCache, {
 /**
  * Generates a MapKit JS token for Apple Maps API access.
  * This token is used to authenticate requests to the Apple Maps API.
- * 
+ *
  * @returns {Promise<string>} A promise that resolves to the generated token.
  */
 export const generateToken = internalAction({
   handler: async (ctx): Promise<string> => {
     const privateKey = Buffer.from(
       process.env.MAPKIT_PRIVATE_KEY!,
-      "base64"
+      "base64",
     ).toString("utf8");
     const teamId = "L8DXKT63P9";
     const keyId = "NPZQ796H9Q";
@@ -43,7 +43,7 @@ export const generateToken = internalAction({
           kid: keyId,
           typ: "JWT",
         },
-      }
+      },
     );
 
     const appleMapKitResponse = await fetch(
@@ -52,7 +52,7 @@ export const generateToken = internalAction({
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
 
     const { accessToken } = await appleMapKitResponse.json();
