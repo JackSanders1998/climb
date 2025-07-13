@@ -25,20 +25,6 @@ export default function LocationDetail() {
     country: params.country as string,
   };
 
-  const handleLocationCreated = (locationData: {
-    name: string;
-    address: string;
-    type: string;
-    coordinates?: { latitude: number; longitude: number };
-  }) => {
-    // Here you would typically call your API to create the location
-    console.log("New location data:", locationData);
-    if (locationData.coordinates) {
-      console.log("Selected coordinates:", locationData.coordinates);
-    }
-    // You can add API call here later
-  };
-
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
@@ -138,7 +124,6 @@ export default function LocationDetail() {
       <NewLocationModal
         visible={showNewLocationModal}
         onClose={() => setShowNewLocationModal(false)}
-        onCreateLocation={handleLocationCreated}
       />
     </ScrollView>
   );

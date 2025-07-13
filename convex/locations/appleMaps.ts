@@ -35,7 +35,7 @@ export const search = action({
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     const data: { results: any[] } = await response.json();
@@ -65,11 +65,10 @@ export const autocomplete = action({
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     const data: { results: any[] } = await response.json();
     return data.results;
   },
 });
-

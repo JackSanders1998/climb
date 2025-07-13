@@ -10,7 +10,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 
 const addressFormatter = (addressLines: string[]) => {
@@ -24,20 +24,6 @@ export default function Locations() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showNewLocationModal, setShowNewLocationModal] = useState(false);
   const data = useQuery(api.locations.locations.search, { searchTerm });
-
-  const handleLocationCreated = (locationData: {
-    name: string;
-    address: string;
-    type: string;
-    coordinates?: { latitude: number; longitude: number };
-  }) => {
-    // Here you would typically call your API to create the location
-    console.log("New location data:", locationData);
-    if (locationData.coordinates) {
-      console.log("Selected coordinates:", locationData.coordinates);
-    }
-    // You can add API call here later
-  };
 
   return (
     <ScrollView
@@ -130,7 +116,12 @@ export default function Locations() {
               </Link>
             ))
           ) : (
-            <Text style={styles.emptyText}>This would default to locations near you or your recent ones or popular ones or something. For now, search for chicago or sf or portland or movement. This is totally powered by convex db, not apple maps.</Text>
+            <Text style={styles.emptyText}>
+              This would default to locations near you or your recent ones or
+              popular ones or something. For now, search for chicago or sf or
+              portland or movement. This is totally powered by convex db, not
+              apple maps.
+            </Text>
           )}
         </Fragment>
       </ScrollView>
@@ -139,7 +130,6 @@ export default function Locations() {
       <NewLocationModal
         visible={showNewLocationModal}
         onClose={() => setShowNewLocationModal(false)}
-        onCreateLocation={handleLocationCreated}
       />
     </ScrollView>
   );

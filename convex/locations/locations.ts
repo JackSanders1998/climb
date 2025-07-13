@@ -10,7 +10,7 @@ import {
   CustomSchemaType,
   DisplayMapRegionSchemaType,
   locationInsertPayload,
-  StructuredAddressSchemaType
+  StructuredAddressSchemaType,
 } from "./models";
 
 const geospatial = new GeospatialIndex<
@@ -36,7 +36,7 @@ export const insert = mutation({
     const user = await ctx.db
       .query("users")
       .withIndex("by_token", (q) =>
-        q.eq("tokenIdentifier", identity.tokenIdentifier)
+        q.eq("tokenIdentifier", identity.tokenIdentifier),
       )
       .unique();
     if (!user) {
@@ -51,7 +51,7 @@ export const insert = mutation({
         .first();
       if (existingRecord) {
         throw new Error(
-          `A location with the appleMapsId "${args.appleMapsId}" already exists.`
+          `A location with the appleMapsId "${args.appleMapsId}" already exists.`,
         );
       }
     }
@@ -64,7 +64,7 @@ export const insert = mutation({
         args.poiCategory?.toLowerCase() || "",
       ];
       return identifiers.join(" ");
-    }
+    };
 
     const customSchemaBody: CustomSchemaType = {
       author: user._id,
@@ -130,7 +130,7 @@ export const insert = mutation({
         ...displayMapRegion,
         ...structuredAddress,
         ...coordinate,
-      }
+      },
     );
 
     return geospatial.get(ctx, locationId);
@@ -162,7 +162,7 @@ export const search = query({
     return ctx.db
       .query("locations")
       .withSearchIndex("location_search", (q) =>
-        q.search("searchIdentifiers", args.searchTerm)
+        q.search("searchIdentifiers", args.searchTerm),
       )
       .take(10);
   },
