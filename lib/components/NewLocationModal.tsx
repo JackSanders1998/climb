@@ -186,7 +186,7 @@ export default function NewLocationModal({
     try {
       // Insert location into database using Convex mutation
       await locationCreate({
-        appleMapsId: selectedLocationData?.id || null,
+        appleMapsId: selectedLocationData?.id || "",
         name: newLocationAddress || "Selected location",
         description: `${newLocationType} climbing location`,
         coordinate: {
@@ -367,9 +367,6 @@ export default function NewLocationModal({
 
           <View style={styles.formSection}>
             <Text style={styles.fieldLabel}>Location Preview</Text>
-            <Text style={styles.helpText}>
-              Map shows your searched location and nearby results
-            </Text>
             <View style={styles.mapContainer}>
               <AppleMaps.View
                 style={styles.mapView}

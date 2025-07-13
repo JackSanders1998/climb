@@ -2,7 +2,13 @@ import NewLocationModal from "@/lib/components/NewLocationModal";
 import { AppleMaps } from "expo-maps";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function LocationDetail() {
   const params = useLocalSearchParams();
@@ -19,11 +25,11 @@ export default function LocationDetail() {
     country: params.country as string,
   };
 
-  const handleLocationCreated = (locationData: { 
-    name: string; 
-    address: string; 
-    type: string; 
-    coordinates?: { latitude: number; longitude: number; }; 
+  const handleLocationCreated = (locationData: {
+    name: string;
+    address: string;
+    type: string;
+    coordinates?: { latitude: number; longitude: number };
   }) => {
     // Here you would typically call your API to create the location
     console.log("New location data:", locationData);
@@ -34,13 +40,18 @@ export default function LocationDetail() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      style={{
+        flex: 1,
+      }}
+    >
       <Stack.Screen
         options={{
           title: location.name || "Location Detail",
           headerRight: () => (
-            <TouchableOpacity 
-              onPress={() => setShowNewLocationModal(true)} 
+            <TouchableOpacity
+              onPress={() => setShowNewLocationModal(true)}
               style={styles.newButton}
             >
               <Text style={styles.newButtonText}>New +</Text>
@@ -48,7 +59,7 @@ export default function LocationDetail() {
           ),
         }}
       />
-      <ScrollView style={styles.content}>
+      <View style={styles.content}>
         {/* Large Map View */}
         <View style={styles.mapContainer}>
           <AppleMaps.View
@@ -121,7 +132,7 @@ export default function LocationDetail() {
             </View>
           )}
         </View>
-      </ScrollView>
+      </View>
 
       {/* New Location Modal */}
       <NewLocationModal
@@ -129,7 +140,7 @@ export default function LocationDetail() {
         onClose={() => setShowNewLocationModal(false)}
         onCreateLocation={handleLocationCreated}
       />
-    </View>
+    </ScrollView>
   );
 }
 

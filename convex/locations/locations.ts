@@ -8,9 +8,8 @@ import { mutation, query } from "../_generated/server";
 const geospatial = new GeospatialIndex<
   Id<"locations">,
   {
-    author?: string;  // TODO: make this required
+    author: string;  // TODO: make this required
     description: string;
-    images?: string[];
     environment: string; // e.g. "indoor", "outdoor"
     appleMapsId?: string;
     country: string;
@@ -18,11 +17,11 @@ const geospatial = new GeospatialIndex<
     formattedAddressLines: string[];
     name: string;
     administrativeArea: string;
-    administrativeAreaCode: string;
-    dependentLocalities: string[];
+    administrativeAreaCode?: string;
+    dependentLocalities?: string[];
     fullThoroughfare?: string;
     locality: string;
-    subLocality: string;
+    subLocality?: string;
     postCode?: string;
     subThoroughfare?: string;
     thoroughfare?: string;
@@ -59,11 +58,11 @@ export const insert = mutation({
     formattedAddressLines: v.array(v.string()),
     name: v.string(),
     structuredAddress: v.object({
-      administrativeArea: v.string(),
-      administrativeAreaCode: v.string(),
-      dependentLocalities: v.array(v.string()),
-      locality: v.string(),
-      subLocality: v.string(),
+      administrativeArea: v.optional(v.string()),
+      administrativeAreaCode: v.optional(v.string()),
+      dependentLocalities: v.optional(v.array(v.string())),
+      locality: v.optional(v.string()),
+      subLocality: v.optional(v.string()),
       postCode: v.optional(v.string()),
       subThoroughfare: v.optional(v.string()),
       thoroughfare: v.optional(v.string()),
