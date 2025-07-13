@@ -16,6 +16,7 @@ export default function SillyNav({ pageName }: SillyNavProps) {
   };
 
   const { user } = useUser();
+  console.log(user)
 
   const { signOut } = useAuth();
 
