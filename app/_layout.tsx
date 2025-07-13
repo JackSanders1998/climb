@@ -54,7 +54,7 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
-            name="locations"
+            name="locations/index"
             options={{
               title: "Locations",
             }}
