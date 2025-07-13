@@ -1,5 +1,6 @@
 node_modules/
-pnpm-lock
+pnpm-lock.yaml
+expo-env.d.ts
 
 ios/
 convex/_generated/
