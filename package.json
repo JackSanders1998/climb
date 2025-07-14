@@ -10,7 +10,8 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "prettier": "npx prettier . --check",
-    "lint:fix": "bun lint . --fix && npx prettier . --write"
+    "lint:fix": "bun lint . --fix && npx prettier . --write",
+    "prepare": "husky"
   },
   "dependencies": {
     "@clerk/clerk-expo": "^2.14.3",
@@ -60,6 +61,7 @@
     "eslint-config-expo": "~9.2.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.1",
+    "husky": "^9.1.7",
     "prettier": "^3.6.2",
     "typescript": "~5.8.3"
   },
