@@ -10,8 +10,7 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "prettier": "npx prettier . --check",
-    "lint:fix": "bun lint . --fix && npx prettier . --write",
-    "prepare": "husky"
+    "lint:fix": "bun lint . --fix && npx prettier . --write"
   },
   "dependencies": {
     "@clerk/clerk-expo": "^2.14.3",
