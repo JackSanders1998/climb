@@ -1,4 +1,5 @@
 import { api } from "@/convex/_generated/api";
+import { Button } from "@/lib/ui/Button";
 import { useAction, useMutation } from "convex/react";
 import * as Location from "expo-location";
 import { AppleMaps } from "expo-maps";
@@ -246,16 +247,13 @@ export default function NewLocationModal({
     >
       <View style={styles.modalContainer}>
         <View style={styles.modalHeader}>
-          <TouchableOpacity onPress={handleClose} style={styles.cancelButton}>
-            <Text style={styles.cancelButtonText}>Cancel</Text>
-          </TouchableOpacity>
+          <Button title="Cancel" variant="ghost" onPress={handleClose} />
           <Text style={styles.modalTitle}>New Location</Text>
-          <TouchableOpacity
+          <Button
+            title="Create"
+            variant="primary"
             onPress={handleCreateLocation}
-            style={styles.createButton}
-          >
-            <Text style={styles.createButtonText}>Create</Text>
-          </TouchableOpacity>
+          />
         </View>
 
         <ScrollView style={styles.modalContent}>
@@ -410,24 +408,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
     color: "#333",
-  },
-  cancelButton: {
-    padding: 8,
-  },
-  cancelButtonText: {
-    fontSize: 16,
-    color: "#666",
-  },
-  createButton: {
-    backgroundColor: "#007AFF",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-  },
-  createButtonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "600",
   },
   modalContent: {
     flex: 1,

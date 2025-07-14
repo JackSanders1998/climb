@@ -14,10 +14,14 @@ import {
 } from "react-native";
 
 const addressFormatter = (addressLines: string[]) => {
-  const line = addressLines[1].trim() || "";
-  const city = line.split(",")[0] || "";
-  const state = line.split(",")[1].trim().split(" ")[0] || "";
-  return { locale: `${city}, ${state}`, country: addressLines[2] || "" };
+  try {
+    const line = addressLines[1].trim() || "";
+    const city = line.split(",")[0] || "";
+    const state = line.split(",")[1].trim().split(" ")[0] || "";
+    return { locale: `${city}, ${state}`, country: addressLines[2] || "" };
+  } catch {
+    return { locale: addressLines[1] || "", country: addressLines[2] || "" };
+  }
 };
 
 export default function Locations() {
