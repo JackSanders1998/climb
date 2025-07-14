@@ -40,6 +40,8 @@
     "expo-system-ui": "~5.0.10",
     "expo-web-browser": "~14.2.0",
     "jsonwebtoken": "^9.0.2",
+    "lint-staged": "^16.1.2",
+    "mrm": "^4.1.22",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.80.1",
@@ -61,5 +63,7 @@
     "prettier": "^3.6.2",
     "typescript": "~5.8.3"
   },
-  "private": true
+  "lint-staged": {
+    "*": "lint:fix"
+  }
 }
