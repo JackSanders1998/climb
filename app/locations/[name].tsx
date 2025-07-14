@@ -1,14 +1,9 @@
 import NewLocationModal from "@/lib/components/NewLocationModal";
+import { Button } from "@/lib/ui/Button";
 import { AppleMaps } from "expo-maps";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function LocationDetail() {
   const params = useLocalSearchParams();
@@ -36,12 +31,11 @@ export default function LocationDetail() {
         options={{
           title: location.name || "Location Detail",
           headerRight: () => (
-            <TouchableOpacity
+            <Button
+              title="New +"
+              variant="ghost"
               onPress={() => setShowNewLocationModal(true)}
-              style={styles.newButton}
-            >
-              <Text style={styles.newButtonText}>New +</Text>
-            </TouchableOpacity>
+            />
           ),
         }}
       />
@@ -223,17 +217,5 @@ const styles = StyleSheet.create({
   countryText: {
     fontSize: 14,
     color: "#666",
-  },
-  // Header button styles
-  newButton: {
-    backgroundColor: "#007AFF",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-  },
-  newButtonText: {
-    color: "white",
-    fontSize: 14,
-    fontWeight: "600",
   },
 });

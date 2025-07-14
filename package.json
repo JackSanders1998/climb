@@ -9,8 +9,10 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint",
+    "lint:fix": "expo lint . --fix",
     "prettier": "npx prettier . --check",
-    "lint:fix": "bun lint . --fix && npx prettier . --write"
+    "prettier:fix": "npx prettier . --write",
+    "prepare": "bun lint . --fix && npx prettier . --write"
   },
   "dependencies": {
     "@clerk/clerk-expo": "^2.14.3",
@@ -40,6 +42,8 @@
     "expo-system-ui": "~5.0.10",
     "expo-web-browser": "~14.2.0",
     "jsonwebtoken": "^9.0.2",
+    "lint-staged": "^16.1.2",
+    "mrm": "^4.1.22",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.80.1",
@@ -58,8 +62,11 @@
     "eslint-config-expo": "~9.2.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.1",
+    "husky": "^9.1.7",
     "prettier": "^3.6.2",
     "typescript": "~5.8.3"
   },
-  "private": true
+  "lint-staged": {
+    "*": "lint:fix"
+  }
 }

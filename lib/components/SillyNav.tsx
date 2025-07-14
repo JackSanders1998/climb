@@ -14,7 +14,6 @@ interface SillyNavProps {
 export default function SillyNav({ pageName }: SillyNavProps) {
   const { isLoading, isAuthenticated, user } = useStoreUserEffect();
   const { signOut } = useAuth();
-  console.log(user);
 
   return (
     <ScrollView
