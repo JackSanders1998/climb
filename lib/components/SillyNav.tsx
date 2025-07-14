@@ -1,5 +1,7 @@
-import { SignedIn, SignedOut, useAuth, useUser } from "@clerk/clerk-expo";
+import { useAuth } from "@clerk/clerk-expo";
+import { Fragment } from "react";
 import { ScrollView, View } from "react-native";
+import { useStoreUserEffect } from "../hooks/useStoreUserEffect";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
 import { Text } from "../ui/Text";
@@ -10,13 +12,7 @@ interface SillyNavProps {
 }
 
 export default function SillyNav({ pageName }: SillyNavProps) {
-  // Helper function to determine if a link is for the current page
-  const isCurrentPage = (linkText: string) => {
-    return pageName === linkText;
-  };
-
-  const { user } = useUser();
-
+  const { isLoading, isAuthenticated, user } = useStoreUserEffect();
   const { signOut } = useAuth();
 
   return (
@@ -62,7 +58,22 @@ export default function SillyNav({ pageName }: SillyNavProps) {
           variant="surface"
         />
 
-        <SignedOut>
+        {isLoading ? (
+          <Text>Loading...</Text>
+        ) : isAuthenticated ? (
+          <Fragment>
+            <View style={{ paddingVertical: 32 }}>
+              <Button title="Sign out" onPress={() => signOut()} />
+            </View>
+            {user &&
+              Object.entries(user).map(([key, value], index) => (
+                <Card key={index}>
+                  <Text level="title3">{key}</Text>
+                  <Text>{JSON.stringify(value, null, 2)}</Text>
+                </Card>
+              ))}
+          </Fragment>
+        ) : (
           <View
             style={{
               paddingVertical: 32,
@@ -70,19 +81,7 @@ export default function SillyNav({ pageName }: SillyNavProps) {
           >
             <SignIn />
           </View>
-        </SignedOut>
-        <SignedIn>
-          <View style={{ paddingVertical: 32 }}>
-            <Button title="Sign out" onPress={() => signOut()} />
-          </View>
-          {user &&
-            Object.entries(user).map(([key, value], index) => (
-              <Card key={index}>
-                <Text level="title3">{key}</Text>
-                <Text>{JSON.stringify(value, null, 2)}</Text>
-              </Card>
-            ))}
-        </SignedIn>
+        )}
       </View>
     </ScrollView>
   );
