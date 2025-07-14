@@ -9,8 +9,10 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint",
+    "lint:fix": "expo lint . --fix",
     "prettier": "npx prettier . --check",
-    "lint:fix": "bun lint . --fix && npx prettier . --write"
+    "prettier:fix": "npx prettier . --write",
+    "prepare": "bun lint . --fix && npx prettier . --write"
   },
   "dependencies": {
     "@clerk/clerk-expo": "^2.14.3",
