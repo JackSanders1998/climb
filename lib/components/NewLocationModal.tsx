@@ -15,6 +15,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { isAdmin } from "../hooks/access";
+import { useStoreUserEffect } from "../hooks/useStoreUserEffect";
 
 interface NewLocationModalProps {
   visible: boolean;
@@ -44,6 +46,7 @@ export default function NewLocationModal({
     latitude: number;
     longitude: number;
   } | null>(null);
+  const { roles } = useStoreUserEffect();
 
   const appleMapsSearch = useAction(api.locations.appleMaps.search);
   const locationCreate = useMutation(api.locations.locations.insert);
@@ -177,25 +180,46 @@ export default function NewLocationModal({
     try {
       // Insert location into database using Convex mutation
       await locationCreate({
-        appleMapsId: selectedLocationData?.id || "",
-        name: newLocationAddress,
+        appleMaps: {
+          coordinate: {
+            latitude: selectedCoordinates.latitude,
+            longitude: selectedCoordinates.longitude,
+          },
+          appleMapsMetadata: {
+            name: selectedLocationData.name,
+            country: selectedLocationData.appleMapsMetadata.country,
+            countryCode: selectedLocationData.appleMapsMetadata.countryCode,
+            formattedAddressLines:
+              selectedLocationData.appleMapsMetadata.formattedAddressLines,
+          },
+          displayMapRegion: {
+            eastLongitude: selectedLocationData.coordinate.longitude + 0.05,
+            northLatitude: selectedLocationData.coordinate.latitude + 0.05,
+            southLatitude: selectedLocationData.coordinate.latitude - 0.05,
+            westLongitude: selectedLocationData.coordinate.longitude - 0.05,
+          },
+          structuredAddress: {
+            administrativeArea:
+              selectedLocationData.structuredAddress.administrativeArea,
+            administrativeAreaCode:
+              selectedLocationData.structuredAddress.administrativeAreaCode,
+            dependentLocalities:
+              selectedLocationData.structuredAddress.dependentLocalities,
+            fullThoroughfare:
+              selectedLocationData.structuredAddress.fullThoroughfare,
+            locality: selectedLocationData.structuredAddress.locality,
+            subLocality: selectedLocationData.structuredAddress.subLocality,
+            postCode: selectedLocationData.structuredAddress.postCode,
+            subThoroughfare:
+              selectedLocationData.structuredAddress.subThoroughfare,
+            thoroughfare: selectedLocationData.structuredAddress.thoroughfare,
+            areasOfInterest:
+              selectedLocationData.structuredAddress.areasOfInterest || [],
+          },
+        },
         description: `${newLocationType} climbing location`,
-        coordinate: {
-          latitude: selectedCoordinates.latitude,
-          longitude: selectedCoordinates.longitude,
-        },
-        formattedAddressLines: selectedLocationData.formattedAddressLines,
-        poiCategory: selectedLocationData.poiCategory,
         environment: newLocationType as "Gym" | "Outdoor",
-        country: selectedLocationData.country,
-        countryCode: selectedLocationData.countryCode,
-        displayMapRegion: selectedLocationData.displayMapRegion || {
-          eastLongitude: selectedCoordinates.longitude + 0.005,
-          westLongitude: selectedCoordinates.longitude - 0.005,
-          northLatitude: selectedCoordinates.latitude + 0.005,
-          southLatitude: selectedCoordinates.latitude - 0.005,
-        },
-        structuredAddress: selectedLocationData.structuredAddress,
+        reviewStatus: isAdmin(roles) ? "approved" : "pending",
       });
 
       // Show success message and close modal

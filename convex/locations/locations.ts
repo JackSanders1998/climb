@@ -69,7 +69,7 @@ export const insert = mutation({
       searchIdentifiers: generateSearchIdentifiers(),
       appleMapsId: args.appleMaps.appleMapsMetadata.appleMapsId,
       country: args.appleMaps.appleMapsMetadata.country,
-      countryCode: args.appleMaps.appleMapsMetadata.countryCode,
+      countryCode: args.appleMaps.appleMapsMetadata.countryCode ?? "",
       formattedAddressLines:
         args.appleMaps.appleMapsMetadata.formattedAddressLines,
       name: args.appleMaps.appleMapsMetadata.name,
@@ -90,6 +90,7 @@ export const insert = mutation({
       subThoroughfare: args.appleMaps.structuredAddress.subThoroughfare,
       thoroughfare: args.appleMaps.structuredAddress.thoroughfare,
       fullThoroughfare: args.appleMaps.structuredAddress.fullThoroughfare,
+      reviewStatus: args.reviewStatus, // Default to pending if not provided
     });
 
     // This whole geospatial index may not be necessary --> TODO: figure out of it is needed
@@ -139,11 +140,18 @@ export const search = query({
     searchTerm: v.string(),
   },
   handler: async (ctx, args) => {
+    if (!args.searchTerm) {
+      return ctx.db
+        .query("locations")
+        .filter((q) => q.eq(q.field("reviewStatus"), "approved"))
+        .take(10);
+    }
     return ctx.db
       .query("locations")
       .withSearchIndex("location_search", (q) =>
         q.search("searchIdentifiers", args.searchTerm),
       )
+      .filter((q) => q.eq(q.field("reviewStatus"), "approved"))
       .take(10);
   },
 });

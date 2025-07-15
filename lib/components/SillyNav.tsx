@@ -12,7 +12,7 @@ interface SillyNavProps {
 }
 
 export default function SillyNav({ pageName }: SillyNavProps) {
-  const { isLoading, isAuthenticated, user } = useStoreUserEffect();
+  const { isLoading, isAuthenticated, user, roles } = useStoreUserEffect();
   const { signOut } = useAuth();
 
   return (

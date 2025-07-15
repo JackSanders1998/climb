@@ -37,5 +37,6 @@ export function useStoreUserEffect() {
     isLoading: isLoading || (isAuthenticated && userId === null),
     isAuthenticated: isAuthenticated && userId !== null,
     user,
+    roles: (user?.publicMetadata?.roles as string[]) || [],
   };
 }

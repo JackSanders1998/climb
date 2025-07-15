@@ -65,8 +65,8 @@ export default function Locations() {
                   params: {
                     id: location._id,
                     name: location.name,
-                    latitude: location.coordinate.latitude.toString(),
-                    longitude: location.coordinate.longitude.toString(),
+                    latitude: location.latitude.toString(),
+                    longitude: location.longitude.toString(),
                     address: JSON.stringify(location.formattedAddressLines),
                     category: location.poiCategory || "",
                     country: location.country || "",
@@ -84,8 +84,8 @@ export default function Locations() {
                       style={styles.miniMap}
                       cameraPosition={{
                         coordinates: {
-                          latitude: location.coordinate.latitude,
-                          longitude: location.coordinate.longitude,
+                          latitude: location.latitude,
+                          longitude: location.longitude,
                         },
                         zoom: 15,
                       }}

@@ -7,6 +7,7 @@ export default defineSchema({
   users: defineTable(userSchema.fields).index("by_token", ["tokenIdentifier"]),
   locations: defineTable(locationSchema).searchIndex("location_search", {
     searchField: "searchIdentifiers",
+    filterFields: ["reviewStatus"],
   }),
   climbs: defineTable({
     body: v.string(),

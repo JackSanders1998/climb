@@ -10,6 +10,13 @@ const custom = v.object({
   images: v.optional(v.array(v.id("images"))),
   metadata: v.optional(v.object({})),
   environment: v.string(), // e.g. "gym", "outdoor"
+  reviewStatus: v.union(
+    v.literal("pending"),
+    v.literal("approved"),
+    v.literal("rejected"),
+  ),
+  reviewedBy: v.optional(v.id("users")), // User who reviewed the location
+  reviewedAt: v.optional(v.number()), // Timestamp of when the location was reviewed
   /**
    * This is a string that contains all the information we want to search on.
    * It includes:
@@ -78,6 +85,11 @@ export const locationInsertPayload = v.object({
   images: v.optional(v.array(v.id("images"))),
   metadata: v.optional(v.object({})),
   environment: v.string(), // e.g. "gym", "outdoor"
+  reviewStatus: v.union(
+    v.literal("pending"),
+    v.literal("approved"),
+    v.literal("rejected"),
+  ),
   appleMaps,
 });
 export type LocationInsertPayloadType = Infer<typeof locationInsertPayload>;
