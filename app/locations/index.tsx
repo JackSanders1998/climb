@@ -1,5 +1,6 @@
 import { api } from "@/convex/_generated/api";
 import NewLocationModal from "@/lib/components/NewLocationModal";
+import { Button } from "@/lib/ui/Button";
 import { useQuery } from "convex/react";
 import { AppleMaps } from "expo-maps";
 import { Link, Stack } from "expo-router";
@@ -45,12 +46,7 @@ export default function Locations() {
               setSearchTerm(event.nativeEvent.text),
           },
           headerRight: () => (
-            <TouchableOpacity
-              onPress={() => setShowNewLocationModal(true)}
-              style={styles.newButton}
-            >
-              <Text style={styles.newButtonText}>New +</Text>
-            </TouchableOpacity>
+            <Button title="New" onPress={() => setShowNewLocationModal(true)} />
           ),
         }}
       />
@@ -91,6 +87,7 @@ export default function Locations() {
                       }}
                       uiSettings={{
                         myLocationButtonEnabled: false,
+                        togglePitchEnabled: false,
                       }}
                     />
                   </View>

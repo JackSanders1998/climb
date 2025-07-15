@@ -317,6 +317,8 @@ PODS:
     - Yoga
   - ExpoAsset (11.1.7):
     - ExpoModulesCore
+  - ExpoBlur (14.1.5):
+    - ExpoModulesCore
   - ExpoCrypto (14.1.5):
     - ExpoModulesCore
   - ExpoFileSystem (18.1.11):
@@ -379,6 +381,8 @@ PODS:
   - ExpoSymbols (0.4.5):
     - ExpoModulesCore
   - ExpoSystemUI (5.0.10):
+    - ExpoModulesCore
+  - ExpoUI (0.1.1-alpha.10):
     - ExpoModulesCore
   - ExpoWebBrowser (14.2.0):
     - ExpoModulesCore
@@ -2641,7 +2645,7 @@ PODS:
     - React-perflogger (= 0.80.1)
     - React-utils (= 0.80.1)
     - SocketRocket
-  - RNGestureHandler (2.27.1):
+  - RNGestureHandler (2.24.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -2923,6 +2927,7 @@ DEPENDENCIES:
   - ExpoSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - ExpoSymbols (from `../node_modules/expo-symbols/ios`)
   - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
+  - "ExpoUI (from `../node_modules/@expo/ui/ios`)"
   - ExpoWebBrowser (from `../node_modules/expo-web-browser/ios`)
   - EXUpdatesInterface (from `../node_modules/expo-updates-interface/ios`)
   - fast_float (from `../node_modules/react-native/third-party-podspecs/fast_float.podspec`)
@@ -3071,6 +3076,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-symbols/ios"
   ExpoSystemUI:
     :path: "../node_modules/expo-system-ui/ios"
+  ExpoUI:
+    :path: "../node_modules/@expo/ui/ios"
   ExpoWebBrowser:
     :path: "../node_modules/expo-web-browser/ios"
   EXUpdatesInterface:
@@ -3240,6 +3247,7 @@ SPEC CHECKSUMS:
   expo-dev-menu: 4cd8ba7321e0bd0c44ed47d04171d78af2e420d5
   expo-dev-menu-interface: 609c35ae8b97479cdd4c9e23c8cf6adc44beea0e
   ExpoAsset: ef06e880126c375f580d4923fdd1cdf4ee6ee7d6
+  ExpoBlur: 3c8885b9bf9eef4309041ec87adec48b5f1986a9
   ExpoCrypto: a9f1d75baeea6ef8b03c1660621585196c382e85
   ExpoFileSystem: 7f92f7be2f5c5ed40a7c9efc8fa30821181d9d63
   ExpoFont: cf508bc2e6b70871e05386d71cab927c8524cc8e
@@ -3255,17 +3263,18 @@ SPEC CHECKSUMS:
   ExpoSplashScreen: 0ad5acac1b5d2953c6e00d4319f16d616f70d4dd
   ExpoSymbols: c5612a90fb9179cdaebcd19bea9d8c69e5d3b859
   ExpoSystemUI: c2724f9d5af6b1bb74e013efadf9c6a8fae547a2
+  ExpoUI: d67b6d76bb31c025df33e9ee68b20b031436d70e
   ExpoWebBrowser: dc39a88485f007e61a3dff05d6a75f22ab4a2e92
   EXUpdatesInterface: 7ff005b7af94ee63fa452ea7bb95d7a8ff40277a
-  fast_float: 914e00b8b67cb8ba184a778c7bbc2e9fe98d37b3
+  fast_float: b32c788ed9c6a8c584d114d0047beda9664e7cc6
   FBLazyVector: 09f03e4b6f42f955734b64a118f86509cc719427
-  fmt: b85d977e8fe789fd71c77123f9f4920d88c4d170
-  glog: 682871fb30f4a65f657bf357581110656ea90b08
-  hermes-engine: c8443ebca6460d15100b5b29ae584a1a6c9dc18b
+  fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
+  glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
+  hermes-engine: 4f07404533b808de66cf48ac4200463068d0e95a
   libavif: 84bbb62fb232c3018d6f1bab79beea87e35de7b7
   libdav1d: 23581a4d8ec811ff171ed5e2e05cd27bad64c39f
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
-  RCT-Folly: fb64616e25cfac1c3d10bfd784d68926325ae67f
+  RCT-Folly: 846fda9475e61ec7bcbf8a3fe81edfcaeb090669
   RCTDeprecation: efa5010912100e944a7ac9a93a157e1def1988fe
   RCTRequired: bbc4cf999ddc4a4b076e076c74dd1d39d0254630
   RCTTypeSafety: d877728097547d0a37786cc9130c43ad71739ac3
@@ -3331,7 +3340,7 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: afd905e84ee36e1678016ae04d7370c75ed539be
   ReactCodegen: f8d5fb047c4cd9d2caade972cad9edac22521362
   ReactCommon: 17fd88849a174bf9ce45461912291aca711410fc
-  RNGestureHandler: 5e1a1605659c22098719fc2e8aee453fe728f52e
+  RNGestureHandler: e61ff6d07f74c2184c0f00a001089f06818aa7ae
   RNReanimated: bc1ddb7a5352648bcf0d592256069833bf935a46
   RNScreens: ee2abe7e0c548eed14e92742e81ed991165c56aa
   SDWebImage: f29024626962457f3470184232766516dee8dfea
