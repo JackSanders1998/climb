@@ -3,14 +3,16 @@ import { useStoreUserEffect } from "@/lib/hooks/useStoreUserEffect";
 import { Button } from "@/lib/ui/Button";
 import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
-import { sand, sandA } from "@radix-ui/colors";
+import { sand, sandA, slateA } from "@radix-ui/colors";
 import { ConvexReactClient } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
-import { Stack } from "expo-router";
+import { Link, Stack } from "expo-router";
 import { ReactNode } from "react";
+import { Alert, Image, StyleSheet, View } from "react-native";
 import { SheetProvider } from "react-native-actions-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as DropdownMenu from "zeego/dropdown-menu";
 import "./sheets.tsx";
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
@@ -37,6 +39,25 @@ const WrapWithAuth = ({ children }: { children: ReactNode }) => {
     >
       {isLoading ? undefined : <SignIn />}
     </SafeAreaView>
+  );
+};
+
+const SettingsButton = () => {
+  const { user } = useStoreUserEffect();
+
+  return (
+    <Link href={"/settings"}>
+      <Image
+        source={{ uri: user?.imageUrl }}
+        style={{
+          width: 32,
+          height: 32,
+          borderRadius: 8,
+          borderColor: slateA.slateA7,
+          borderWidth: StyleSheet.hairlineWidth,
+        }}
+      />
+    </Link>
   );
 };
 
@@ -67,13 +88,52 @@ export default function RootLayout() {
                   headerBlurEffect: "regular",
                   headerStyle: { backgroundColor: "rgba(255, 255, 255, 0.01)" },
                   headerLargeStyle: { backgroundColor: "transparent" },
+                  // headerRight: () => (
+                  //   <Button
+                  //     symbol="gear"
+                  //     href={settingsPath}
+                  //     as="link"
+                  //     title="Settings"
+                  //   />
+                  // ),
                   headerRight: () => (
-                    <Button
-                      symbol="gear"
-                      href={settingsPath}
-                      as="link"
-                      title="Settings"
-                    />
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        gap: 12,
+                        alignItems: "center",
+                      }}
+                    >
+                      <DropdownMenu.Root>
+                        <DropdownMenu.Trigger>
+                          <Button
+                            variant="ghost"
+                            title="Week"
+                            symbol="chevron.up.chevron.down"
+                          />
+                        </DropdownMenu.Trigger>
+                        <DropdownMenu.Content>
+                          <DropdownMenu.Label />
+                          <DropdownMenu.Item
+                            key="item-1"
+                            onSelect={() => Alert.alert("You selected Item 1")}
+                          >
+                            <DropdownMenu.ItemTitle>
+                              Item 1
+                            </DropdownMenu.ItemTitle>
+                          </DropdownMenu.Item>
+                          <DropdownMenu.Item
+                            key="item-2"
+                            onSelect={() => Alert.alert("You selected Item 2")}
+                          >
+                            <DropdownMenu.ItemTitle>
+                              Item 2
+                            </DropdownMenu.ItemTitle>
+                          </DropdownMenu.Item>
+                        </DropdownMenu.Content>
+                      </DropdownMenu.Root>
+                      <SettingsButton />
+                    </View>
                   ),
                 }}
               >

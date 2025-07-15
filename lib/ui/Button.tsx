@@ -1,7 +1,6 @@
 import { sand, sandA, slateA } from "@radix-ui/colors";
 import { BlurView } from "expo-blur";
 import { Link, LinkProps } from "expo-router";
-import { SFSymbol, SymbolView } from "expo-symbols";
 import {
   StyleSheet,
   TextProps,
@@ -9,15 +8,18 @@ import {
   TouchableOpacityProps,
   View,
 } from "react-native";
+import SweetSFSymbol from "sweet-sfsymbols";
+import { SystemName } from "sweet-sfsymbols/build/SweetSFSymbols.types";
 import { Text } from "./Text";
+
 type ILinkProps = { as: "link" } & LinkProps;
 type IButtonProps = { as?: "button" } & TouchableOpacityProps;
 
 type SharedProps = {
-  title: string;
+  title?: string;
   selected?: boolean;
   variant?: Variant;
-  symbol?: SFSymbol;
+  symbol?: SystemName;
   symbolSide?: "left" | "right";
 };
 
@@ -38,6 +40,7 @@ const sharedStyles = {
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: "transparent",
     overflow: "hidden",
+    borderCurve: "continuous",
   },
   text: {
     marginHorizontal: 4,
@@ -121,6 +124,21 @@ export const Button = ({
 
   // const symbolColor = "red";
 
+  const Symbol = () => {
+    if (props.symbol) {
+      return (
+        <SweetSFSymbol
+          colors={[symbolColor]}
+          name={props.symbol}
+          weight="regular"
+          size={variant === "ghost" ? 17 : 15}
+        />
+      );
+    } else {
+      return undefined;
+    }
+  };
+
   if (props.as === "link") {
     return (
       <Link
@@ -130,10 +148,19 @@ export const Button = ({
           variantStyles[variant].default.container,
           variantStyles[variant][state].container,
           { backgroundColor: "transparent" },
+          { ...(!props.title ? { width: 44, height: 44 } : {}) },
         ]}
         asChild
       >
         <TouchableOpacity>
+          {variant !== "ghost" && (
+            <BlurView
+              style={{
+                position: "absolute",
+                inset: 0,
+              }}
+            />
+          )}
           <View
             style={{
               position: "absolute",
@@ -144,39 +171,19 @@ export const Button = ({
                   : "transparent",
             }}
           />
-          {variant !== "ghost" && (
-            <BlurView
+          {symbolSide === "left" && <Symbol />}
+          {props.title && (
+            <Text
+              level={variant === "ghost" ? "body" : "subhead"}
               style={{
-                position: "absolute",
-                inset: 0,
+                ...sharedStyles.text,
+                ...variantStyles[variant][state].text,
               }}
-            />
+            >
+              {props.title}
+            </Text>
           )}
-          {props.symbol && symbolSide === "left" && (
-            <SymbolView
-              tintColor={symbolColor}
-              name={props.symbol}
-              size={variant === "ghost" ? 23 : 19}
-              weight="regular"
-            />
-          )}
-          <Text
-            level={variant === "ghost" ? "body" : "subhead"}
-            style={{
-              ...sharedStyles.text,
-              ...variantStyles[variant][state].text,
-            }}
-          >
-            {props.title}
-          </Text>
-          {props.symbol && symbolSide === "right" && (
-            <SymbolView
-              tintColor={symbolColor}
-              name={props.symbol}
-              size={variant === "ghost" ? 23 : 19}
-              weight="regular"
-            />
-          )}
+          {symbolSide === "right" && <Symbol />}
         </TouchableOpacity>
       </Link>
     );
@@ -190,8 +197,17 @@ export const Button = ({
         variantStyles[variant].default.container,
         variantStyles[variant][state].container,
         { backgroundColor: "transparent" },
+        { ...(!props.title ? { width: 44, height: 44 } : {}) },
       ]}
     >
+      {variant !== "ghost" && (
+        <BlurView
+          style={{
+            position: "absolute",
+            inset: 0,
+          }}
+        />
+      )}
       <View
         style={{
           position: "absolute",
@@ -202,39 +218,20 @@ export const Button = ({
               : "transparent",
         }}
       />
-      {variant !== "ghost" && (
-        <BlurView
+      {symbolSide === "left" && <Symbol />}
+
+      {props.title && (
+        <Text
+          level={variant === "ghost" ? "body" : "subhead"}
           style={{
-            position: "absolute",
-            inset: 0,
+            ...sharedStyles.text,
+            ...variantStyles[variant][state].text,
           }}
-        />
+        >
+          {props.title}
+        </Text>
       )}
-      {props.symbol && symbolSide === "left" && (
-        <SymbolView
-          tintColor={symbolColor}
-          name={props.symbol}
-          size={variant === "ghost" ? 23 : 19}
-          weight="regular"
-        />
-      )}
-      <Text
-        level={variant === "ghost" ? "body" : "subhead"}
-        style={{
-          ...sharedStyles.text,
-          ...variantStyles[variant][state].text,
-        }}
-      >
-        {props.title}
-      </Text>
-      {props.symbol && symbolSide === "right" && (
-        <SymbolView
-          tintColor={symbolColor}
-          name={props.symbol}
-          size={variant === "ghost" ? 23 : 19}
-          weight="regular"
-        />
-      )}
+      {symbolSide === "right" && <Symbol />}
     </TouchableOpacity>
   );
 };

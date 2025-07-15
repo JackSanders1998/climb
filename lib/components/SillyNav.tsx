@@ -24,7 +24,7 @@ export default function SillyNav({ pageName }: SillyNavProps) {
         <Button
           title="Open sheet"
           onPress={() => SheetManager.show("session-sheet")}
-          symbol="rectangle.on.rectangle"
+          symbol="rectangle.portrait.bottomthird.inset.filled"
           variant="primary"
         />
         <Button
@@ -41,7 +41,7 @@ export default function SillyNav({ pageName }: SillyNavProps) {
           as="link"
           href="/insights"
           variant="surface"
-          symbol="chart.bar.xaxis"
+          symbol="chart.bar"
         />
         <Button
           selected={pageName === "Locations"}
