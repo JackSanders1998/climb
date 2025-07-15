@@ -4,7 +4,6 @@ import { Card } from "@/lib/ui/Card";
 import { Glur } from "@/lib/ui/Glur";
 import { Text } from "@/lib/ui/Text";
 import { useAuth } from "@clerk/clerk-expo";
-import { Stack } from "expo-router";
 import React, { Fragment } from "react";
 import { Alert, Image, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -15,7 +14,7 @@ export default function Settings() {
 
   return (
     <Fragment>
-      <Stack.Screen options={{ headerRight: undefined }} />
+      {/* <Stack.Screen options={{ headerRight: undefined }} /> */}
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         contentContainerStyle={{
@@ -33,12 +32,13 @@ export default function Settings() {
 
             <Text level="title2">{user?.fullName}</Text>
           </View>
+          <View style={{ height: 4 }}></View>
           <Text>{user?.id}</Text>
           <Text>{user?.primaryEmailAddress?.emailAddress}</Text>
           <Text>{user?.createdAt?.toString()}</Text>
-          <View style={{ height: 16 }}></View>
+          <View style={{ height: 8 }}></View>
           <Button
-            variant="surface"
+            variant="destructive"
             symbol="rectangle.portrait.and.arrow.right"
             onPress={() =>
               Alert.alert("Are you sure you want to sign out?", undefined, [

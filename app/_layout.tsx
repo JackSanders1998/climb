@@ -3,10 +3,10 @@ import { useStoreUserEffect } from "@/lib/hooks/useStoreUserEffect";
 import { Button } from "@/lib/ui/Button";
 import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
-import { sand, sandA, slateA } from "@radix-ui/colors";
+import { sand, sandA } from "@radix-ui/colors";
 import { ConvexReactClient } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
-import { Link, Stack } from "expo-router";
+import { Link, Stack, useRouter } from "expo-router";
 import { ReactNode } from "react";
 import { Alert, Image, StyleSheet, View } from "react-native";
 import { SheetProvider } from "react-native-actions-sheet";
@@ -53,11 +53,24 @@ const SettingsButton = () => {
           width: 32,
           height: 32,
           borderRadius: 8,
-          borderColor: slateA.slateA7,
+          borderColor: sandA.sandA7,
           borderWidth: StyleSheet.hairlineWidth,
         }}
       />
     </Link>
+  );
+};
+
+const DoneButton = () => {
+  const router = useRouter();
+  return (
+    <Button
+      variant="ghost"
+      title="Close"
+      onPress={() =>
+        router.canGoBack() ? router.back() : router.navigate("/")
+      }
+    />
   );
 };
 
@@ -100,7 +113,7 @@ export default function RootLayout() {
                     <View
                       style={{
                         flexDirection: "row",
-                        gap: 12,
+                        gap: 16,
                         alignItems: "center",
                       }}
                     >
@@ -153,6 +166,9 @@ export default function RootLayout() {
                   name="settings"
                   options={{
                     title: "Settings",
+                    presentation: "modal",
+                    headerLargeTitle: false,
+                    headerRight: DoneButton,
                   }}
                 />
               </Stack>

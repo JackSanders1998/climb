@@ -1,4 +1,4 @@
-import { sand, sandA, slateA } from "@radix-ui/colors";
+import { redA, sand, sandA } from "@radix-ui/colors";
 import { BlurView } from "expo-blur";
 import { Link, LinkProps } from "expo-router";
 import {
@@ -77,19 +77,35 @@ const variantStyles = {
   surface: {
     default: {
       container: {
-        backgroundColor: slateA.slateA3,
-        borderColor: slateA.slateA8,
+        backgroundColor: sandA.sandA3,
+        borderColor: sandA.sandA8,
         borderWidth: StyleSheet.hairlineWidth,
       },
       text: {
-        color: slateA.slateA12,
+        color: sandA.sandA12,
       },
     },
     selected: {
       container: {
-        backgroundColor: slateA.slateA7,
+        backgroundColor: sandA.sandA7,
       },
       text: {},
+    },
+  },
+  destructive: {
+    default: {
+      container: {
+        backgroundColor: redA.redA4,
+        borderColor: redA.redA7,
+        borderWidth: StyleSheet.hairlineWidth,
+      },
+      text: {
+        color: redA.redA12,
+      },
+    },
+    selected: {
+      text: {},
+      container: {},
     },
   },
 } as const satisfies Record<
@@ -149,6 +165,7 @@ export const Button = ({
           variantStyles[variant][state].container,
           { backgroundColor: "transparent" },
           { ...(!props.title ? { width: 44, height: 44 } : {}) },
+          { ...(variant === "ghost" ? { paddingHorizontal: 0 } : {}) },
         ]}
         asChild
       >
@@ -198,6 +215,7 @@ export const Button = ({
         variantStyles[variant][state].container,
         { backgroundColor: "transparent" },
         { ...(!props.title ? { width: 44, height: 44 } : {}) },
+        { ...(variant === "ghost" ? { paddingHorizontal: 0 } : {}) },
       ]}
     >
       {variant !== "ghost" && (
