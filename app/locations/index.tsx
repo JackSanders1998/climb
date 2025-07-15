@@ -60,7 +60,7 @@ export default function Locations() {
           ),
         }}
       />
-      
+
       {/* Filter Toggles */}
       <View style={styles.filterContainer}>
         <TouchableOpacity
@@ -79,7 +79,7 @@ export default function Locations() {
             Show Pending
           </Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity
           style={[
             styles.filterToggle,
@@ -97,7 +97,7 @@ export default function Locations() {
           </Text>
         </TouchableOpacity>
       </View>
-      
+
       <ScrollView>
         <Fragment>
           {data && data.length > 0 ? (
