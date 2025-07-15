@@ -162,6 +162,7 @@ export default function NewLocationModal({
       longitude: result.coordinate.longitude,
     });
     setSelectedLocationData(result); // Store complete location data
+    console.log("Selected location data:", result);
     setMapRegion({
       latitude: result.coordinate.latitude,
       longitude: result.coordinate.longitude,
@@ -180,23 +181,28 @@ export default function NewLocationModal({
     try {
       // Insert location into database using Convex mutation
       await locationCreate({
+        description: `${newLocationType} climbing location`,
+        environment: newLocationType as "Gym" | "Outdoor",
+        reviewStatus: isAdmin(roles) ? "approved" : "pending",
+        // TODO: Add images and metadata handling
         appleMaps: {
+          appleMapsMetadata: {
+            appleMapsId: selectedLocationData.id,
+            country: selectedLocationData.country,
+            countryCode: selectedLocationData.countryCode,
+            formattedAddressLines: selectedLocationData.formattedAddressLines,
+            name: selectedLocationData.name,
+            poiCategory: selectedLocationData.poiCategory,
+          },
           coordinate: {
             latitude: selectedCoordinates.latitude,
             longitude: selectedCoordinates.longitude,
           },
-          appleMapsMetadata: {
-            name: selectedLocationData.name,
-            country: selectedLocationData.appleMapsMetadata.country,
-            countryCode: selectedLocationData.appleMapsMetadata.countryCode,
-            formattedAddressLines:
-              selectedLocationData.appleMapsMetadata.formattedAddressLines,
-          },
           displayMapRegion: {
-            eastLongitude: selectedLocationData.coordinate.longitude + 0.05,
-            northLatitude: selectedLocationData.coordinate.latitude + 0.05,
-            southLatitude: selectedLocationData.coordinate.latitude - 0.05,
-            westLongitude: selectedLocationData.coordinate.longitude - 0.05,
+            eastLongitude: selectedLocationData.displayMapRegion.eastLongitude,
+            northLatitude: selectedLocationData.displayMapRegion.northLatitude,
+            southLatitude: selectedLocationData.displayMapRegion.southLatitude,
+            westLongitude: selectedLocationData.displayMapRegion.westLongitude,
           },
           structuredAddress: {
             administrativeArea:
@@ -214,12 +220,9 @@ export default function NewLocationModal({
               selectedLocationData.structuredAddress.subThoroughfare,
             thoroughfare: selectedLocationData.structuredAddress.thoroughfare,
             areasOfInterest:
-              selectedLocationData.structuredAddress.areasOfInterest || [],
+              selectedLocationData.structuredAddress.areasOfInterest,
           },
         },
-        description: `${newLocationType} climbing location`,
-        environment: newLocationType as "Gym" | "Outdoor",
-        reviewStatus: isAdmin(roles) ? "approved" : "pending",
       });
 
       // Show success message and close modal
@@ -233,7 +236,7 @@ export default function NewLocationModal({
         },
       ]);
     } catch (error: unknown) {
-      console.error("Error creating location:", error);
+      console.error("Error creating location:", selectedLocationData);
       Alert.alert(
         "Error",
         JSON.stringify((error as Error).message) ||

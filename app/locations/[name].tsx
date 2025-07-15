@@ -1,5 +1,6 @@
 import NewLocationModal from "@/lib/components/NewLocationModal";
 import { Button } from "@/lib/ui/Button";
+import { Card } from "@/lib/ui/Card";
 import { AppleMaps } from "expo-maps";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
@@ -18,6 +19,7 @@ export default function LocationDetail() {
     address: params.address ? JSON.parse(params.address as string) : [],
     category: params.category as string,
     country: params.country as string,
+    reviewStatus: params.reviewStatus as string,
   };
 
   return (
@@ -113,6 +115,44 @@ export default function LocationDetail() {
             </View>
           )}
         </View>
+
+        {/* Review Status Card */}
+        <Card>
+          <View style={styles.reviewStatusHeader}>
+            <Text style={styles.sectionTitle}>Review Status</Text>
+            <View
+              style={[
+                styles.statusBadge,
+                location.reviewStatus === "approved" && styles.statusApproved,
+                location.reviewStatus === "pending" && styles.statusPending,
+                location.reviewStatus === "rejected" && styles.statusRejected,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.statusText,
+                  location.reviewStatus === "approved" &&
+                    styles.statusTextApproved,
+                  location.reviewStatus === "pending" &&
+                    styles.statusTextPending,
+                  location.reviewStatus === "rejected" &&
+                    styles.statusTextRejected,
+                ]}
+              >
+                {location.reviewStatus.charAt(0).toUpperCase() +
+                  location.reviewStatus.slice(1)}
+              </Text>
+            </View>
+          </View>
+          <Text style={styles.reviewDescription}>
+            {location.reviewStatus === "approved" &&
+              "This location has been reviewed and approved for public viewing."}
+            {location.reviewStatus === "pending" &&
+              "This location is awaiting review by a moderator."}
+            {location.reviewStatus === "rejected" &&
+              "This location has been reviewed and rejected."}
+          </Text>
+        </Card>
       </View>
 
       {/* New Location Modal */}
@@ -218,5 +258,47 @@ const styles = StyleSheet.create({
   countryText: {
     fontSize: 14,
     color: "#666",
+  },
+  reviewStatusHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  statusBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 15,
+    borderWidth: 1,
+  },
+  statusApproved: {
+    backgroundColor: "#E8F5E8",
+    borderColor: "#4CAF50",
+  },
+  statusPending: {
+    backgroundColor: "#FFF3E0",
+    borderColor: "#FF9800",
+  },
+  statusRejected: {
+    backgroundColor: "#FFEBEE",
+    borderColor: "#F44336",
+  },
+  statusText: {
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  statusTextApproved: {
+    color: "#2E7D2E",
+  },
+  statusTextPending: {
+    color: "#E65100",
+  },
+  statusTextRejected: {
+    color: "#C62828",
+  },
+  reviewDescription: {
+    fontSize: 14,
+    color: "#666",
+    lineHeight: 20,
   },
 });

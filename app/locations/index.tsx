@@ -27,7 +27,13 @@ const addressFormatter = (addressLines: string[]) => {
 export default function Locations() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showNewLocationModal, setShowNewLocationModal] = useState(false);
-  const data = useQuery(api.locations.locations.search, { searchTerm });
+  const [showPending, setShowPending] = useState(false);
+  const [showRejected, setShowRejected] = useState(false);
+  const data = useQuery(api.locations.locations.search, {
+    searchTerm,
+    showPending,
+    showRejected,
+  });
 
   return (
     <ScrollView
@@ -54,6 +60,44 @@ export default function Locations() {
           ),
         }}
       />
+      
+      {/* Filter Toggles */}
+      <View style={styles.filterContainer}>
+        <TouchableOpacity
+          style={[
+            styles.filterToggle,
+            showPending && styles.filterToggleActive,
+          ]}
+          onPress={() => setShowPending(!showPending)}
+        >
+          <Text
+            style={[
+              styles.filterToggleText,
+              showPending && styles.filterToggleTextActive,
+            ]}
+          >
+            Show Pending
+          </Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={[
+            styles.filterToggle,
+            showRejected && styles.filterToggleActive,
+          ]}
+          onPress={() => setShowRejected(!showRejected)}
+        >
+          <Text
+            style={[
+              styles.filterToggleText,
+              showRejected && styles.filterToggleTextActive,
+            ]}
+          >
+            Show Rejected
+          </Text>
+        </TouchableOpacity>
+      </View>
+      
       <ScrollView>
         <Fragment>
           {data && data.length > 0 ? (
@@ -70,6 +114,7 @@ export default function Locations() {
                     address: JSON.stringify(location.formattedAddressLines),
                     category: location.poiCategory || "",
                     country: location.country || "",
+                    reviewStatus: location.reviewStatus || "pending",
                   },
                 }}
                 asChild
@@ -240,5 +285,35 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 14,
     fontWeight: "600",
+  },
+  // Filter toggle styles
+  filterContainer: {
+    flexDirection: "row",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    gap: 12,
+    backgroundColor: "#f8f9fa",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e1e8ed",
+  },
+  filterToggle: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  filterToggleActive: {
+    backgroundColor: "#007AFF",
+    borderColor: "#007AFF",
+  },
+  filterToggleText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#666",
+  },
+  filterToggleTextActive: {
+    color: "white",
   },
 });

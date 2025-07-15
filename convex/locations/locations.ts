@@ -69,7 +69,7 @@ export const insert = mutation({
       searchIdentifiers: generateSearchIdentifiers(),
       appleMapsId: args.appleMaps.appleMapsMetadata.appleMapsId,
       country: args.appleMaps.appleMapsMetadata.country,
-      countryCode: args.appleMaps.appleMapsMetadata.countryCode ?? "",
+      countryCode: args.appleMaps.appleMapsMetadata.countryCode,
       formattedAddressLines:
         args.appleMaps.appleMapsMetadata.formattedAddressLines,
       name: args.appleMaps.appleMapsMetadata.name,
@@ -138,6 +138,8 @@ export const searchByRectangleExperiment = query({
 export const search = query({
   args: {
     searchTerm: v.string(),
+    showPending: v.optional(v.boolean()),
+    showRejected: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     if (!args.searchTerm) {
@@ -146,12 +148,28 @@ export const search = query({
         .filter((q) => q.eq(q.field("reviewStatus"), "approved"))
         .take(10);
     }
+
+    // Build the status filter based on the optional parameters
+    const buildStatusFilter = (q: any) => {
+      const conditions = [q.eq(q.field("reviewStatus"), "approved")];
+
+      if (args.showPending) {
+        conditions.push(q.eq(q.field("reviewStatus"), "pending"));
+      }
+
+      if (args.showRejected) {
+        conditions.push(q.eq(q.field("reviewStatus"), "rejected"));
+      }
+
+      return conditions.length === 1 ? conditions[0] : q.or(...conditions);
+    };
+
     return ctx.db
       .query("locations")
       .withSearchIndex("location_search", (q) =>
         q.search("searchIdentifiers", args.searchTerm),
       )
-      .filter((q) => q.eq(q.field("reviewStatus"), "approved"))
+      .filter(buildStatusFilter)
       .take(10);
   },
 });
@@ -168,9 +186,60 @@ export const getById = query({
 });
 
 export const list = query({
-  args: { limit: v.optional(v.number()) },
+  args: {
+    limit: v.optional(v.number()),
+    includePending: v.optional(v.boolean()),
+  },
   handler: async (ctx, args) => {
     const limit = args.limit || 100; // Default to 100 if no limit is provided
-    return await ctx.db.query("locations").take(limit);
+
+    if (args.includePending) {
+      // Return both approved and pending locations
+      return await ctx.db
+        .query("locations")
+        .filter((q) =>
+          q.or(
+            q.eq(q.field("reviewStatus"), "approved"),
+            q.eq(q.field("reviewStatus"), "pending"),
+          ),
+        )
+        .take(limit);
+    }
+
+    // Default: only return approved locations
+    return await ctx.db
+      .query("locations")
+      .filter((q) => q.eq(q.field("reviewStatus"), "approved"))
+      .take(limit);
+  },
+});
+
+export const getPendingLocations = query({
+  args: { limit: v.optional(v.number()) },
+  handler: async (ctx, args) => {
+    const limit = args.limit || 100;
+    return await ctx.db
+      .query("locations")
+      .filter((q) => q.eq(q.field("reviewStatus"), "pending"))
+      .take(limit);
+  },
+});
+
+export const approveLocation = mutation({
+  args: { id: v.id("locations") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Must be signed in to approve a location");
+    }
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier),
+      )
+      .first();
+    if (!user) {
+      throw new Error("User not found");
+    }
   },
 });
