@@ -165,115 +165,90 @@ export default function LocationDetail() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f8f9fa",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 15,
-    paddingTop: 50,
-    backgroundColor: "white",
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  backButton: {
-    marginRight: 15,
-  },
-  backButtonText: {
-    fontSize: 16,
-    color: "#007AFF",
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  content: {
-    flex: 1,
-  },
-  mapContainer: {
-    height: 300,
-    margin: 15,
-    borderRadius: 12,
-    overflow: "hidden",
-  },
-  fullMap: {
-    flex: 1,
-  },
-  infoContainer: {
-    backgroundColor: "white",
-    margin: 15,
-    borderRadius: 12,
-    padding: 20,
-  },
-  titleRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 20,
-  },
-  locationName: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#333",
-    flex: 1,
-    marginRight: 10,
-  },
-  environmentBadge: {
-    backgroundColor: "#007AFF",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 15,
+  addressLine: {
+    color: "#666",
+    fontSize: 14,
+    marginBottom: 4,
   },
   badgeText: {
     color: "white",
     fontSize: 12,
     fontWeight: "600",
   },
+  categoryText: {
+    color: "#007AFF",
+    fontSize: 14,
+  },
+  content: {
+    flex: 1,
+  },
+  coordinateText: {
+    color: "#666",
+    fontFamily: "monospace",
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  countryText: {
+    color: "#666",
+    fontSize: 14,
+  },
   detailSection: {
     marginBottom: 20,
   },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 8,
-  },
-  addressLine: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 4,
-  },
-  coordinateText: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 4,
-    fontFamily: "monospace",
-  },
-  categoryText: {
-    fontSize: 14,
-    color: "#007AFF",
-  },
-  countryText: {
-    fontSize: 14,
-    color: "#666",
-  },
-  reviewStatusHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  statusBadge: {
+  environmentBadge: {
+    backgroundColor: "#007AFF",
+    borderRadius: 15,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 15,
-    borderWidth: 1,
+  },
+  fullMap: {
+    flex: 1,
+  },
+  infoContainer: {
+    backgroundColor: "white",
+    borderRadius: 12,
+    margin: 15,
+    padding: 20,
+  },
+  locationName: {
+    color: "#333",
+    flex: 1,
+    fontSize: 24,
+    fontWeight: "700",
+    marginRight: 10,
+  },
+  mapContainer: {
+    borderRadius: 12,
+    height: 300,
+    margin: 15,
+    overflow: "hidden",
+  },
+  reviewDescription: {
+    color: "#666",
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  reviewStatusHeader: {
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    color: "#333",
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 8,
   },
   statusApproved: {
     backgroundColor: "#E8F5E8",
     borderColor: "#4CAF50",
+  },
+  statusBadge: {
+    borderRadius: 15,
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
   },
   statusPending: {
     backgroundColor: "#FFF3E0",
@@ -296,9 +271,10 @@ const styles = StyleSheet.create({
   statusTextRejected: {
     color: "#C62828",
   },
-  reviewDescription: {
-    fontSize: 14,
-    color: "#666",
-    lineHeight: 20,
+  titleRow: {
+    alignItems: "flex-start",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 20,
   },
 });

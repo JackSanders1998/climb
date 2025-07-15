@@ -227,7 +227,7 @@ export const getPendingLocations = query({
 
 export const approveLocation = mutation({
   args: { id: v.id("locations") },
-  handler: async (ctx, args) => {
+  handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Must be signed in to approve a location");

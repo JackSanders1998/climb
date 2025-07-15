@@ -39,7 +39,7 @@ export const SignIn = () => {
 
       // If sign in was successful, set the active session
       if (createdSessionId) {
-        setActive!({ session: createdSessionId });
+        void setActive!({ session: createdSessionId });
       } else {
         // If there is no `createdSessionId`,
         // there are missing requirements, such as MFA

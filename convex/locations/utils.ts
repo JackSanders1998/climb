@@ -16,7 +16,7 @@ import { internalAction } from "../_generated/server";
  * @returns {Promise<string>} A promise that resolves to the generated token.
  */
 export const generateToken = internalAction({
-  handler: async (ctx): Promise<string> => {
+  handler: async (): Promise<string> => {
     const privateKey = Buffer.from(
       process.env.MAPKIT_PRIVATE_KEY!,
       "base64",
