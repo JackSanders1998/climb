@@ -4,6 +4,7 @@ on: [pull_request, push]
 
 jobs:
   build:
+    name: Build, Lint, and Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
