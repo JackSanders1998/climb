@@ -1,21 +1,6 @@
-import { GeospatialIndex } from "@convex-dev/geospatial";
 import { v } from "convex/values";
-import { components } from "../_generated/api";
-import { Id } from "../_generated/dataModel";
 import { mutation, query } from "../_generated/server";
-import {
-  CoordinateType,
-  CustomType,
-  DisplayMapRegionType,
-  locationInsertPayload,
-} from "./models";
-
-const geospatial = new GeospatialIndex<
-  Id<"locations">,
-  CoordinateType &
-    DisplayMapRegionType &
-    Pick<CustomType, "author" | "environment" | "description">
->(components.geospatial);
+import { locationInsertPayload } from "./models";
 
 export const insert = mutation({
   args: locationInsertPayload,
@@ -115,22 +100,6 @@ export const insert = mutation({
     );
 
     return geospatial.get(ctx, locationId);
-  },
-});
-
-// https://www.convex.dev/components/geospatial#example
-// https://github.com/get-convex/geospatial/tree/main/example
-export const searchByRectangleExperiment = query({
-  handler: (ctx) => {
-    const rectangle = {
-      west: -88.9712,
-      south: 40.7831,
-      east: -86.9712,
-      north: 42.7831,
-    };
-    return geospatial.query(ctx, {
-      shape: { type: "rectangle", rectangle },
-    });
   },
 });
 
