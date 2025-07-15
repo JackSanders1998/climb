@@ -1,8 +1,9 @@
+import { v } from "convex/values";
 import { mutation } from "../_generated/server";
 
 export const store = mutation({
-  args: {},
-  handler: async (ctx) => {
+  args: { roles: v.optional(v.array(v.string())) },
+  handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Called storeUser without authentication present");
@@ -30,6 +31,7 @@ export const store = mutation({
     return await ctx.db.insert("users", {
       name: identity.name ?? "Anonymous",
       tokenIdentifier: identity.tokenIdentifier,
+      roles: args.roles ?? [],
     });
   },
 });

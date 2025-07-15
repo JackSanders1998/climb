@@ -4,12 +4,8 @@ import { locationSchema } from "./locations/models";
 import { userSchema } from "./users/models";
 
 export default defineSchema({
-  users: defineTable({
-    ...userSchema,
-  }).index("by_token", ["tokenIdentifier"]),
-  locations: defineTable({
-    ...locationSchema,
-  }).searchIndex("location_search", {
+  users: defineTable(userSchema.fields).index("by_token", ["tokenIdentifier"]),
+  locations: defineTable(locationSchema).searchIndex("location_search", {
     searchField: "searchIdentifiers",
   }),
   climbs: defineTable({

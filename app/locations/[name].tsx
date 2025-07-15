@@ -64,6 +64,7 @@ export default function LocationDetail() {
             ]}
             uiSettings={{
               myLocationButtonEnabled: true,
+              togglePitchEnabled: false,
             }}
           />
         </View>

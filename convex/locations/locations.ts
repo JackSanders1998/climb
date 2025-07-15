@@ -4,30 +4,21 @@ import { components } from "../_generated/api";
 import { Id } from "../_generated/dataModel";
 import { mutation, query } from "../_generated/server";
 import {
-  AppleMapsMetadataSchemaType,
-  AppleMapsSchemaType,
-  CoordinateSchemaType,
-  CustomSchemaType,
-  DisplayMapRegionSchemaType,
+  CoordinateType,
+  CustomType,
+  DisplayMapRegionType,
   locationInsertPayload,
-  StructuredAddressSchemaType,
 } from "./models";
 
 const geospatial = new GeospatialIndex<
   Id<"locations">,
-  CoordinateSchemaType &
-    DisplayMapRegionSchemaType &
-    Pick<CustomSchemaType, "author" | "environment" | "description"> &
-    Pick<
-      AppleMapsSchemaType,
-      "appleMapsId" | "formattedAddressLines" | "name" | "poiCategory"
-    >
+  CoordinateType &
+    DisplayMapRegionType &
+    Pick<CustomType, "author" | "environment" | "description">
 >(components.geospatial);
 
 export const insert = mutation({
-  args: {
-    ...locationInsertPayload,
-  },
+  args: locationInsertPayload,
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -44,76 +35,61 @@ export const insert = mutation({
     }
 
     // Check if a record with the same appleMapsId already exists
-    if (args.appleMapsId) {
+    const appleMapsId = args.appleMaps.appleMapsMetadata.appleMapsId;
+    if (appleMapsId) {
       const existingRecord = await ctx.db
         .query("locations")
-        .filter((q) => q.eq(q.field("appleMapsId"), args.appleMapsId))
+        .filter((q) => q.eq(q.field("appleMapsId"), appleMapsId))
         .first();
       if (existingRecord) {
         throw new Error(
-          `A location with the appleMapsId "${args.appleMapsId}" already exists.`,
+          `A location with the appleMapsId "${appleMapsId}" already exists.`,
         );
       }
     }
 
     const generateSearchIdentifiers = () => {
       const identifiers = [
-        args.name.toLowerCase(),
+        args.appleMaps.appleMapsMetadata.name.toLowerCase(),
         args.description.toLowerCase(),
-        args.formattedAddressLines.join(" ").toLowerCase(),
-        args.poiCategory?.toLowerCase() || "",
+        args.appleMaps.appleMapsMetadata.formattedAddressLines
+          .join(" ")
+          .toLowerCase(),
+        args.appleMaps.appleMapsMetadata.poiCategory?.toLowerCase() || "",
       ];
       return identifiers.join(" ");
     };
 
-    const customSchemaBody: CustomSchemaType = {
+    const locationId = await ctx.db.insert("locations", {
       author: user._id,
       description: args.description,
       images: args.images,
       metadata: args.metadata,
       environment: args.environment,
       searchIdentifiers: generateSearchIdentifiers(),
-    };
-
-    const appleMapsMetadataSchemaBody: AppleMapsMetadataSchemaType = {
-      appleMapsId: args.appleMapsId,
-      country: args.country,
-      countryCode: args.countryCode,
-      formattedAddressLines: args.formattedAddressLines,
-      name: args.name,
-      poiCategory: args.poiCategory,
-    };
-
-    const coordinate: CoordinateSchemaType = {
-      latitude: args.coordinate.latitude,
-      longitude: args.coordinate.longitude,
-    };
-
-    const displayMapRegion: DisplayMapRegionSchemaType = {
-      eastLongitude: args.displayMapRegion.eastLongitude,
-      northLatitude: args.displayMapRegion.northLatitude,
-      southLatitude: args.displayMapRegion.southLatitude,
-      westLongitude: args.displayMapRegion.westLongitude,
-    };
-
-    const structuredAddress: StructuredAddressSchemaType = {
-      administrativeArea: args.structuredAddress.administrativeArea,
-      administrativeAreaCode: args.structuredAddress.administrativeAreaCode,
-      dependentLocalities: args.structuredAddress.dependentLocalities,
-      locality: args.structuredAddress.locality,
-      subLocality: args.structuredAddress.subLocality,
-      postCode: args.structuredAddress.postCode,
-      subThoroughfare: args.structuredAddress.subThoroughfare,
-      thoroughfare: args.structuredAddress.thoroughfare,
-      fullThoroughfare: args.structuredAddress.fullThoroughfare,
-    };
-
-    const locationId = await ctx.db.insert("locations", {
-      ...customSchemaBody,
-      ...appleMapsMetadataSchemaBody,
-      coordinate,
-      displayMapRegion,
-      structuredAddress,
+      appleMapsId: args.appleMaps.appleMapsMetadata.appleMapsId,
+      country: args.appleMaps.appleMapsMetadata.country,
+      countryCode: args.appleMaps.appleMapsMetadata.countryCode,
+      formattedAddressLines:
+        args.appleMaps.appleMapsMetadata.formattedAddressLines,
+      name: args.appleMaps.appleMapsMetadata.name,
+      poiCategory: args.appleMaps.appleMapsMetadata.poiCategory,
+      latitude: args.appleMaps.coordinate.latitude,
+      longitude: args.appleMaps.coordinate.longitude,
+      eastLongitude: args.appleMaps.displayMapRegion.eastLongitude,
+      northLatitude: args.appleMaps.displayMapRegion.northLatitude,
+      southLatitude: args.appleMaps.displayMapRegion.southLatitude,
+      westLongitude: args.appleMaps.displayMapRegion.westLongitude,
+      administrativeArea: args.appleMaps.structuredAddress.administrativeArea,
+      administrativeAreaCode:
+        args.appleMaps.structuredAddress.administrativeAreaCode,
+      dependentLocalities: args.appleMaps.structuredAddress.dependentLocalities,
+      locality: args.appleMaps.structuredAddress.locality,
+      subLocality: args.appleMaps.structuredAddress.subLocality,
+      postCode: args.appleMaps.structuredAddress.postCode,
+      subThoroughfare: args.appleMaps.structuredAddress.subThoroughfare,
+      thoroughfare: args.appleMaps.structuredAddress.thoroughfare,
+      fullThoroughfare: args.appleMaps.structuredAddress.fullThoroughfare,
     });
 
     // This whole geospatial index may not be necessary --> TODO: figure out of it is needed
@@ -121,15 +97,19 @@ export const insert = mutation({
       ctx, // The Convex mutation context
       locationId, // The unique string key to associate with the coordinate -- pk on locations table
       {
-        // The geographic coordinate `{ latitude, longitude }` to associate with the key
-        ...coordinate,
+        latitude: args.appleMaps.coordinate.latitude,
+        longitude: args.appleMaps.coordinate.longitude,
       },
       {
-        ...customSchemaBody,
-        ...appleMapsMetadataSchemaBody,
-        ...displayMapRegion,
-        ...structuredAddress,
-        ...coordinate,
+        eastLongitude: args.appleMaps.displayMapRegion.eastLongitude,
+        northLatitude: args.appleMaps.displayMapRegion.northLatitude,
+        southLatitude: args.appleMaps.displayMapRegion.southLatitude,
+        westLongitude: args.appleMaps.displayMapRegion.westLongitude,
+        latitude: args.appleMaps.coordinate.latitude,
+        longitude: args.appleMaps.coordinate.longitude,
+        author: user._id,
+        description: args.description,
+        environment: args.environment,
       },
     );
 
