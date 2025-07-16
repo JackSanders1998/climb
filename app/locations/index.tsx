@@ -1,6 +1,9 @@
 import { api } from "@/convex/_generated/api";
 import NewLocationModal from "@/lib/components/NewLocationModal";
 import { Button } from "@/lib/ui/Button";
+import { Card } from "@/lib/ui/Card";
+import { Text } from "@/lib/ui/Text";
+import { sandA } from "@radix-ui/colors";
 import { useQuery } from "convex/react";
 import { AppleMaps } from "expo-maps";
 import { Link, Stack } from "expo-router";
@@ -9,7 +12,6 @@ import {
   NativeSyntheticEvent,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -29,6 +31,11 @@ export default function Locations() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showNewLocationModal, setShowNewLocationModal] = useState(false);
   const data = useQuery(api.locations.locations.search, { searchTerm });
+
+  const all = useQuery(api.locations.locations.list, { limit: undefined });
+
+  const locations =
+    data && data.length > 0 ? data : all && all.length > 0 ? all : [];
 
   return (
     <ScrollView
@@ -50,10 +57,15 @@ export default function Locations() {
           ),
         }}
       />
-      <ScrollView>
+      <ScrollView
+        contentContainerStyle={{
+          padding: 12,
+          gap: 12,
+        }}
+      >
         <Fragment>
-          {data && data.length > 0 ? (
-            data.map((location, index) => (
+          {locations.length > 0 ? (
+            locations.map((location, index) => (
               <Link
                 key={index}
                 href={{
@@ -70,59 +82,69 @@ export default function Locations() {
                 }}
                 asChild
               >
-                <TouchableOpacity
-                  style={styles.locationCard}
-                  activeOpacity={0.7}
-                >
-                  {/* Small Map View */}
-                  <View style={styles.mapContainer} pointerEvents="none">
-                    <AppleMaps.View
-                      style={styles.miniMap}
-                      cameraPosition={{
-                        coordinates: {
-                          latitude: location.coordinate.latitude,
-                          longitude: location.coordinate.longitude,
-                        },
-                        zoom: 15,
-                      }}
-                      uiSettings={{
-                        myLocationButtonEnabled: false,
-                        togglePitchEnabled: false,
-                      }}
-                    />
-                  </View>
-
-                  {/* Metadata */}
-                  <View style={styles.metadataContainer}>
-                    <View style={styles.headerRow}>
-                      <Text style={styles.locationName}>
-                        {location.name || "Unknown Location"}
-                      </Text>
-                      <View style={styles.environmentBadge}>
-                        <Text style={styles.badgeText}>
-                          {location.poiCategory === "RockClimbing"
-                            ? "Gym"
-                            : "Outside"}
-                        </Text>
-                      </View>
+                <TouchableOpacity>
+                  <Card
+                    style={{
+                      flexDirection: "row",
+                    }}
+                  >
+                    <View style={styles.mapContainer} pointerEvents="none">
+                      <AppleMaps.View
+                        style={styles.miniMap}
+                        cameraPosition={{
+                          coordinates: {
+                            latitude: location.coordinate.latitude,
+                            longitude: location.coordinate.longitude,
+                          },
+                          zoom: 15,
+                        }}
+                        uiSettings={{
+                          myLocationButtonEnabled: false,
+                          togglePitchEnabled: false,
+                        }}
+                      />
                     </View>
-                    <Text style={styles.locationAddress}>
-                      {addressFormatter(location.formattedAddressLines).locale}
-                    </Text>
-                    <Text style={styles.locationAddress}>
-                      {addressFormatter(location.formattedAddressLines).country}
-                    </Text>
-                  </View>
+
+                    {/* Metadata */}
+                    <View style={styles.metadataContainer}>
+                      <View style={styles.headerRow}>
+                        <Text level="title3">
+                          {location.name || "Unknown Location"}
+                        </Text>
+                        <View
+                          style={{
+                            backgroundColor: sandA.sandA4,
+                            paddingHorizontal: 4,
+                            paddingVertical: 2,
+                            borderRadius: 4,
+                          }}
+                        >
+                          <Text level="caption1" dim>
+                            {location.poiCategory === "RockClimbing"
+                              ? "Gym"
+                              : "Outside"}
+                          </Text>
+                        </View>
+                      </View>
+                      <Text dim>
+                        {
+                          addressFormatter(location.formattedAddressLines)
+                            .locale
+                        }
+                      </Text>
+                      <Text dim>
+                        {
+                          addressFormatter(location.formattedAddressLines)
+                            .country
+                        }
+                      </Text>
+                    </View>
+                  </Card>
                 </TouchableOpacity>
               </Link>
             ))
           ) : (
-            <Text style={styles.emptyText}>
-              This would default to locations near you or your recent ones or
-              popular ones or something. For now, search for chicago or sf or
-              portland or movement. This is totally powered by convex db, not
-              apple maps.
-            </Text>
+            <Text>No Locations</Text>
           )}
         </Fragment>
       </ScrollView>
@@ -152,7 +174,7 @@ const styles = StyleSheet.create({
   mapContainer: {
     width: 80,
     height: 80,
-    borderRadius: 8,
+    borderRadius: 4,
     overflow: "hidden",
     marginRight: 8,
   },

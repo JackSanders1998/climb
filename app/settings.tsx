@@ -19,7 +19,7 @@ export default function Settings() {
         contentInsetAdjustmentBehavior="automatic"
         contentContainerStyle={{
           padding: 12,
-          gap: 8,
+          gap: 12,
           flexDirection: "column",
         }}
       >
@@ -37,25 +37,25 @@ export default function Settings() {
           <Text>{user?.primaryEmailAddress?.emailAddress}</Text>
           <Text>{user?.createdAt?.toString()}</Text>
           <View style={{ height: 8 }}></View>
-          <Button
-            variant="destructive"
-            symbol="rectangle.portrait.and.arrow.right"
-            onPress={() =>
-              Alert.alert("Are you sure you want to sign out?", undefined, [
-                {
-                  text: "Cancel",
-                  style: "cancel",
-                },
-                {
-                  text: "Sign out",
-                  onPress: () => signOut(),
-                  style: "destructive",
-                },
-              ])
-            }
-            title="Sign out"
-          />
         </Card>
+        <Button
+          variant="destructive"
+          symbol="rectangle.portrait.and.arrow.right"
+          onPress={() =>
+            Alert.alert("Are you sure you want to sign out?", undefined, [
+              {
+                text: "Cancel",
+                style: "cancel",
+              },
+              {
+                text: "Sign out",
+                onPress: () => signOut(),
+                style: "destructive",
+              },
+            ])
+          }
+          title="Sign out"
+        />
         {/* {user &&
           Object.entries(user).map(([key, value], index) => (
             <Card key={index}>

@@ -26,12 +26,14 @@ const Sheet = ({ children, title }: { children: ReactNode; title: string }) => {
       headerAlwaysVisible={false}
       overlayColor={sandA.sandA12}
       defaultOverlayOpacity={0.2}
+      gestureEnabled
+      CustomHeaderComponent={<></>}
     >
       <ScrollView
         style={{
-          margin: 8,
+          marginHorizontal: 8,
           backgroundColor: "white",
-          borderRadius: 24,
+          borderRadius: 32,
           borderCurve: "continuous",
           borderColor: sandA.sandA8,
           borderWidth: StyleSheet.hairlineWidth,
