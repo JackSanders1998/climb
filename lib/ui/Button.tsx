@@ -166,6 +166,7 @@ export const Button = ({
           { backgroundColor: "transparent" },
           { ...(!props.title ? { width: 44, height: 44 } : {}) },
           { ...(variant === "ghost" ? { paddingHorizontal: 0 } : {}) },
+          props.style,
         ]}
         asChild
       >
@@ -216,6 +217,7 @@ export const Button = ({
         { backgroundColor: "transparent" },
         { ...(!props.title ? { width: 44, height: 44 } : {}) },
         { ...(variant === "ghost" ? { paddingHorizontal: 0 } : {}) },
+        props.style,
       ]}
     >
       {variant !== "ghost" && (
