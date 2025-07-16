@@ -1,33 +1,12 @@
-import { GeospatialIndex } from "@convex-dev/geospatial";
 import { v } from "convex/values";
-import { components } from "../_generated/api";
-import { Id } from "../_generated/dataModel";
+import { api } from "../_generated/api";
 import { mutation, query } from "../_generated/server";
-import {
-  AppleMapsMetadataSchemaType,
-  AppleMapsSchemaType,
-  CoordinateSchemaType,
-  CustomSchemaType,
-  DisplayMapRegionSchemaType,
-  locationInsertPayload,
-  StructuredAddressSchemaType,
-} from "./models";
+import { locationInsertPayload } from "./models";
 
-const geospatial = new GeospatialIndex<
-  Id<"locations">,
-  CoordinateSchemaType &
-    DisplayMapRegionSchemaType &
-    Pick<CustomSchemaType, "author" | "environment" | "description"> &
-    Pick<
-      AppleMapsSchemaType,
-      "appleMapsId" | "formattedAddressLines" | "name" | "poiCategory"
-    >
->(components.geospatial);
-
+// ideas: https://github.com/get-convex/fullstack-convex/tree/main/convex
+// https://www.convex.dev/templates/fullstack
 export const insert = mutation({
-  args: {
-    ...locationInsertPayload,
-  },
+  args: locationInsertPayload,
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -44,126 +23,119 @@ export const insert = mutation({
     }
 
     // Check if a record with the same appleMapsId already exists
-    if (args.appleMapsId) {
+    const appleMapsId = args.appleMaps.appleMapsMetadata.appleMapsId;
+    if (appleMapsId) {
       const existingRecord = await ctx.db
         .query("locations")
-        .filter((q) => q.eq(q.field("appleMapsId"), args.appleMapsId))
+        .filter((q) => q.eq(q.field("appleMapsId"), appleMapsId))
         .first();
       if (existingRecord) {
         throw new Error(
-          `A location with the appleMapsId "${args.appleMapsId}" already exists.`,
+          `A location with the appleMapsId "${appleMapsId}" already exists.`,
         );
       }
     }
 
     const generateSearchIdentifiers = () => {
       const identifiers = [
-        args.name.toLowerCase(),
+        args.appleMaps.appleMapsMetadata.name.toLowerCase(),
         args.description.toLowerCase(),
-        args.formattedAddressLines.join(" ").toLowerCase(),
-        args.poiCategory?.toLowerCase() || "",
+        args.appleMaps.appleMapsMetadata.formattedAddressLines
+          .join(" ")
+          .toLowerCase(),
+        args.appleMaps.appleMapsMetadata.poiCategory?.toLowerCase() || "",
       ];
       return identifiers.join(" ");
     };
 
-    const customSchemaBody: CustomSchemaType = {
+    const locationId = await ctx.db.insert("locations", {
       author: user._id,
       description: args.description,
       images: args.images,
       metadata: args.metadata,
       environment: args.environment,
       searchIdentifiers: generateSearchIdentifiers(),
-    };
-
-    const appleMapsMetadataSchemaBody: AppleMapsMetadataSchemaType = {
-      appleMapsId: args.appleMapsId,
-      country: args.country,
-      countryCode: args.countryCode,
-      formattedAddressLines: args.formattedAddressLines,
-      name: args.name,
-      poiCategory: args.poiCategory,
-    };
-
-    const coordinate: CoordinateSchemaType = {
-      latitude: args.coordinate.latitude,
-      longitude: args.coordinate.longitude,
-    };
-
-    const displayMapRegion: DisplayMapRegionSchemaType = {
-      eastLongitude: args.displayMapRegion.eastLongitude,
-      northLatitude: args.displayMapRegion.northLatitude,
-      southLatitude: args.displayMapRegion.southLatitude,
-      westLongitude: args.displayMapRegion.westLongitude,
-    };
-
-    const structuredAddress: StructuredAddressSchemaType = {
-      administrativeArea: args.structuredAddress.administrativeArea,
-      administrativeAreaCode: args.structuredAddress.administrativeAreaCode,
-      dependentLocalities: args.structuredAddress.dependentLocalities,
-      locality: args.structuredAddress.locality,
-      subLocality: args.structuredAddress.subLocality,
-      postCode: args.structuredAddress.postCode,
-      subThoroughfare: args.structuredAddress.subThoroughfare,
-      thoroughfare: args.structuredAddress.thoroughfare,
-      fullThoroughfare: args.structuredAddress.fullThoroughfare,
-    };
-
-    const locationId = await ctx.db.insert("locations", {
-      ...customSchemaBody,
-      ...appleMapsMetadataSchemaBody,
-      coordinate,
-      displayMapRegion,
-      structuredAddress,
+      appleMapsId: args.appleMaps.appleMapsMetadata.appleMapsId,
+      country: args.appleMaps.appleMapsMetadata.country,
+      countryCode: args.appleMaps.appleMapsMetadata.countryCode,
+      formattedAddressLines:
+        args.appleMaps.appleMapsMetadata.formattedAddressLines,
+      name: args.appleMaps.appleMapsMetadata.name,
+      poiCategory: args.appleMaps.appleMapsMetadata.poiCategory,
+      latitude: args.appleMaps.coordinate.latitude,
+      longitude: args.appleMaps.coordinate.longitude,
+      eastLongitude: args.appleMaps.displayMapRegion.eastLongitude,
+      northLatitude: args.appleMaps.displayMapRegion.northLatitude,
+      southLatitude: args.appleMaps.displayMapRegion.southLatitude,
+      westLongitude: args.appleMaps.displayMapRegion.westLongitude,
+      administrativeArea: args.appleMaps.structuredAddress.administrativeArea,
+      administrativeAreaCode:
+        args.appleMaps.structuredAddress.administrativeAreaCode,
+      dependentLocalities: args.appleMaps.structuredAddress.dependentLocalities,
+      locality: args.appleMaps.structuredAddress.locality,
+      subLocality: args.appleMaps.structuredAddress.subLocality,
+      postCode: args.appleMaps.structuredAddress.postCode,
+      subThoroughfare: args.appleMaps.structuredAddress.subThoroughfare,
+      thoroughfare: args.appleMaps.structuredAddress.thoroughfare,
+      fullThoroughfare: args.appleMaps.structuredAddress.fullThoroughfare,
+      reviewStatus: args.reviewStatus, // Default to pending if not provided
     });
 
-    // This whole geospatial index may not be necessary --> TODO: figure out of it is needed
-    await geospatial.insert(
-      ctx, // The Convex mutation context
-      locationId, // The unique string key to associate with the coordinate -- pk on locations table
-      {
-        // The geographic coordinate `{ latitude, longitude }` to associate with the key
-        ...coordinate,
-      },
-      {
-        ...customSchemaBody,
-        ...appleMapsMetadataSchemaBody,
-        ...displayMapRegion,
-        ...structuredAddress,
-        ...coordinate,
-      },
-    );
+    // insert geospatial data
+    await ctx.runMutation(api.locations.geospatial.insert, {
+      locationId,
+      latitude: args.appleMaps.coordinate.latitude,
+      longitude: args.appleMaps.coordinate.longitude,
+      eastLongitude: args.appleMaps.displayMapRegion.eastLongitude,
+      northLatitude: args.appleMaps.displayMapRegion.northLatitude,
+      southLatitude: args.appleMaps.displayMapRegion.southLatitude,
+      westLongitude: args.appleMaps.displayMapRegion.westLongitude,
+    });
 
-    return geospatial.get(ctx, locationId);
+    return locationId;
   },
 });
 
-// https://www.convex.dev/components/geospatial#example
-// https://github.com/get-convex/geospatial/tree/main/example
-export const searchByRectangleExperiment = query({
-  handler: (ctx) => {
-    const rectangle = {
-      west: -88.9712,
-      south: 40.7831,
-      east: -86.9712,
-      north: 42.7831,
-    };
-    return geospatial.query(ctx, {
-      shape: { type: "rectangle", rectangle },
-    });
-  },
-});
+// Helper function to build status filter based on optional parameters
+const buildStatusFilter = (
+  q: any,
+  showPending?: boolean,
+  showRejected?: boolean,
+) => {
+  // Priority order: pending > rejected > approved (default)
+  if (showPending) {
+    return q.eq(q.field("reviewStatus"), "pending");
+  }
+
+  if (showRejected) {
+    return q.eq(q.field("reviewStatus"), "rejected");
+  }
+
+  // Default: show only approved
+  return q.eq(q.field("reviewStatus"), "approved");
+};
 
 // https://github.com/get-convex/convex-demos/tree/main/search
 export const search = query({
   args: {
     searchTerm: v.string(),
+    showPending: v.optional(v.boolean()),
+    showRejected: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
+    const statusFilter = (q: any) =>
+      buildStatusFilter(q, args.showPending, args.showRejected);
+
+    if (!args.searchTerm) {
+      return ctx.db.query("locations").filter(statusFilter).take(10);
+    }
+
     return ctx.db
       .query("locations")
       .withSearchIndex("location_search", (q) =>
         q.search("searchIdentifiers", args.searchTerm),
       )
+      .filter(statusFilter)
       .take(10);
   },
 });
@@ -180,9 +152,16 @@ export const getById = query({
 });
 
 export const list = query({
-  args: { limit: v.optional(v.number()) },
+  args: {
+    limit: v.optional(v.number()),
+    includePending: v.optional(v.boolean()),
+    showRejected: v.optional(v.boolean()),
+  },
   handler: async (ctx, args) => {
     const limit = args.limit || 100; // Default to 100 if no limit is provided
-    return await ctx.db.query("locations").take(limit);
+    const statusFilter = (q: any) =>
+      buildStatusFilter(q, args.includePending, args.showRejected);
+
+    return await ctx.db.query("locations").filter(statusFilter).take(limit);
   },
 });

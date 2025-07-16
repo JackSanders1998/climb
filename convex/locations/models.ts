@@ -4,12 +4,19 @@ import { Infer, v } from "convex/values";
  * Schema for location table columns not from Apple Maps.
  * (Think of a better variable name...)
  */
-const customSchema = {
+const custom = v.object({
   author: v.id("users"),
   description: v.string(),
   images: v.optional(v.array(v.id("images"))),
   metadata: v.optional(v.object({})),
   environment: v.string(), // e.g. "gym", "outdoor"
+  reviewStatus: v.union(
+    v.literal("pending"),
+    v.literal("approved"),
+    v.literal("rejected"),
+  ),
+  reviewedBy: v.optional(v.id("users")), // User who reviewed the location
+  reviewedAt: v.optional(v.number()), // Timestamp of when the location was reviewed
   /**
    * This is a string that contains all the information we want to search on.
    * It includes:
@@ -21,33 +28,24 @@ const customSchema = {
    * Keeping this duplicate information because search indexes are only available on strings
    */
   searchIdentifiers: v.string(),
-};
-// eslint erroneously throwing an unused var error: https://github.com/typescript-eslint/typescript-eslint/issues/10266#issuecomment-2551361581
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const customSchemaType = v.object(customSchema);
-export type CustomSchemaType = Infer<typeof customSchemaType>;
+});
+export type CustomType = Infer<typeof custom>;
 
-export const coordinateSchema = {
+export const coordinate = v.object({
   latitude: v.number(),
   longitude: v.number(),
-};
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const coordinateSchemaType = v.object(coordinateSchema);
-export type CoordinateSchemaType = Infer<typeof coordinateSchemaType>;
+});
+export type CoordinateType = Infer<typeof coordinate>;
 
-export const displayMapRegionSchema = {
+export const displayMapRegion = v.object({
   eastLongitude: v.number(),
   northLatitude: v.number(),
   southLatitude: v.number(),
   westLongitude: v.number(),
-};
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const displayMapRegionSchemaType = v.object(displayMapRegionSchema);
-export type DisplayMapRegionSchemaType = Infer<
-  typeof displayMapRegionSchemaType
->;
+});
+export type DisplayMapRegionType = Infer<typeof displayMapRegion>;
 
-export const structuredAddressSchema = {
+export const structuredAddress = v.object({
   administrativeArea: v.optional(v.string()),
   administrativeAreaCode: v.optional(v.string()),
   dependentLocalities: v.optional(v.array(v.string())),
@@ -58,58 +56,55 @@ export const structuredAddressSchema = {
   subThoroughfare: v.optional(v.string()),
   thoroughfare: v.optional(v.string()),
   areasOfInterest: v.optional(v.array(v.string())),
-};
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const structuredAddressSchemaType = v.object(structuredAddressSchema);
-export type StructuredAddressSchemaType = Infer<
-  typeof structuredAddressSchemaType
->;
+});
+export type StructuredAddressType = Infer<typeof structuredAddress>;
 
-export const appleMapsMetadataSchema = {
+export const appleMapsMetadata = v.object({
   appleMapsId: v.optional(v.string()), // called ID when querying Apple Maps directly
   country: v.string(),
   countryCode: v.string(),
   formattedAddressLines: v.array(v.string()),
   name: v.string(),
   poiCategory: v.optional(v.string()),
-};
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const appleMapsMetadataSchemaType = v.object(appleMapsMetadataSchema);
-export type AppleMapsMetadataSchemaType = Infer<
-  typeof appleMapsMetadataSchemaType
->;
+});
+export type AppleMapsMetadataType = Infer<typeof appleMapsMetadata>;
 
 /**
  * Schema for Apple Maps data.
  */
-export const appleMapsSchema = {
-  ...appleMapsMetadataSchema,
-  coordinate: v.object({
-    ...coordinateSchema,
-  }),
-  displayMapRegion: v.object({
-    ...displayMapRegionSchema,
-  }),
-  structuredAddress: v.object({
-    ...structuredAddressSchema,
-  }),
-};
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const appleMapsSchemaType = v.object(appleMapsSchema);
-export type AppleMapsSchemaType = Infer<typeof appleMapsSchemaType>;
+export const appleMaps = v.object({
+  appleMapsMetadata,
+  coordinate,
+  displayMapRegion,
+  structuredAddress,
+});
+export type AppleMapsType = Infer<typeof appleMaps>;
 
-export const locationInsertPayload = {
+export const locationInsertPayload = v.object({
   description: v.string(),
   images: v.optional(v.array(v.id("images"))),
   metadata: v.optional(v.object({})),
   environment: v.string(), // e.g. "gym", "outdoor"
-  ...appleMapsSchema,
-};
+  reviewStatus: v.union(
+    v.literal("pending"),
+    v.literal("approved"),
+    v.literal("rejected"),
+  ),
+  appleMaps,
+});
+export type LocationInsertPayloadType = Infer<typeof locationInsertPayload>;
 
+export const location = v.object({
+  custom,
+  appleMaps,
+});
+export type LocationType = Infer<typeof location>;
+
+// DATABASE SCHEMA
 export const locationSchema = {
-  ...customSchema,
-  ...appleMapsSchema,
+  ...appleMapsMetadata.fields,
+  ...coordinate.fields,
+  ...displayMapRegion.fields,
+  ...structuredAddress.fields,
+  ...custom.fields,
 };
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const locationSchemaType = v.object(locationSchema);
-export type LocationSchemaType = Infer<typeof locationSchemaType>;

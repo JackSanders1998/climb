@@ -27,7 +27,7 @@ export function useStoreUserEffect() {
       const id = await storeUser();
       setUserId(id);
     }
-    createUser();
+    void createUser();
     return () => setUserId(null);
     // Make sure the effect reruns if the user logs in with
     // a different identity
@@ -37,5 +37,6 @@ export function useStoreUserEffect() {
     isLoading: isLoading || (isAuthenticated && userId === null),
     isAuthenticated: isAuthenticated && userId !== null,
     user,
+    roles: (user?.publicMetadata?.roles as string[]) || [],
   };
 }

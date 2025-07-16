@@ -1,7 +1,7 @@
-import { mutation } from "../_generated/server";
+import { v } from "convex/values";
+import { mutation, query } from "../_generated/server";
 
 export const store = mutation({
-  args: {},
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -9,10 +9,6 @@ export const store = mutation({
     }
 
     // Check if we've already stored this identity before.
-    // Note: If you don't want to define an index right away, you can use
-    // ctx.db.query("users")
-    //  .filter(q => q.eq(q.field("tokenIdentifier"), identity.tokenIdentifier))
-    //  .unique();
     const user = await ctx.db
       .query("users")
       .withIndex("by_token", (q) =>
@@ -31,5 +27,19 @@ export const store = mutation({
       name: identity.name ?? "Anonymous",
       tokenIdentifier: identity.tokenIdentifier,
     });
+  },
+});
+
+export const get = query({
+  args: { id: v.optional(v.id("users")) },
+  handler: async (ctx, { id }) => {
+    if (!id) {
+      return await ctx.db.query("users").collect();
+    }
+    const user = await ctx.db.get(id);
+    if (!user) {
+      throw new Error(`User with id ${id} not found`);
+    }
+    return user;
   },
 });

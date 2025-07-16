@@ -27,7 +27,13 @@ const addressFormatter = (addressLines: string[]) => {
 export default function Locations() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showNewLocationModal, setShowNewLocationModal] = useState(false);
-  const data = useQuery(api.locations.locations.search, { searchTerm });
+  const [showPending, setShowPending] = useState(false);
+  const [showRejected, setShowRejected] = useState(false);
+  const data = useQuery(api.locations.locations.search, {
+    searchTerm,
+    showPending,
+    showRejected,
+  });
 
   return (
     <ScrollView
@@ -54,6 +60,44 @@ export default function Locations() {
           ),
         }}
       />
+
+      {/* Filter Toggles */}
+      <View style={styles.filterContainer}>
+        <TouchableOpacity
+          style={[
+            styles.filterToggle,
+            showPending && styles.filterToggleActive,
+          ]}
+          onPress={() => setShowPending(!showPending)}
+        >
+          <Text
+            style={[
+              styles.filterToggleText,
+              showPending && styles.filterToggleTextActive,
+            ]}
+          >
+            Show Pending
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.filterToggle,
+            showRejected && styles.filterToggleActive,
+          ]}
+          onPress={() => setShowRejected(!showRejected)}
+        >
+          <Text
+            style={[
+              styles.filterToggleText,
+              showRejected && styles.filterToggleTextActive,
+            ]}
+          >
+            Show Rejected
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       <ScrollView>
         <Fragment>
           {data && data.length > 0 ? (
@@ -65,11 +109,12 @@ export default function Locations() {
                   params: {
                     id: location._id,
                     name: location.name,
-                    latitude: location.coordinate.latitude.toString(),
-                    longitude: location.coordinate.longitude.toString(),
+                    latitude: location.latitude.toString(),
+                    longitude: location.longitude.toString(),
                     address: JSON.stringify(location.formattedAddressLines),
                     category: location.poiCategory || "",
                     country: location.country || "",
+                    reviewStatus: location.reviewStatus || "pending",
                   },
                 }}
                 asChild
@@ -84,13 +129,14 @@ export default function Locations() {
                       style={styles.miniMap}
                       cameraPosition={{
                         coordinates: {
-                          latitude: location.coordinate.latitude,
-                          longitude: location.coordinate.longitude,
+                          latitude: location.latitude,
+                          longitude: location.longitude,
                         },
                         zoom: 15,
                       }}
                       uiSettings={{
                         myLocationButtonEnabled: false,
+                        togglePitchEnabled: false,
                       }}
                     />
                   </View>
@@ -140,100 +186,103 @@ export default function Locations() {
 }
 
 const styles = StyleSheet.create({
-  locationCard: {
-    flexDirection: "row",
-    backgroundColor: "white",
-    margin: 10,
-    borderRadius: 12,
-    padding: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  mapContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 8,
-    overflow: "hidden",
-    marginRight: 8,
-  },
-  miniMap: {
-    flex: 1,
-  },
-  metadataContainer: {
-    flex: 1,
-    justifyContent: "flex-start",
-  },
-  headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 4,
-  },
-  locationName: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#333",
-    flex: 1,
-    marginRight: 8,
-  },
-  environmentBadge: {
-    backgroundColor: "#007AFF",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    alignSelf: "flex-start",
-  },
   badgeText: {
     color: "white",
     fontSize: 12,
     fontWeight: "600",
   },
-  locationAddress: {
-    fontSize: 14,
+  emptyText: {
     color: "#666",
-    marginBottom: 8,
-    lineHeight: 18,
+    fontSize: 16,
+    marginTop: 50,
+    textAlign: "center",
   },
-  coordinatesRow: {
+  environmentBadge: {
+    alignSelf: "flex-start",
+    backgroundColor: "#007AFF",
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  filterContainer: {
+    backgroundColor: "#f8f9fa",
+    borderBottomColor: "#e1e8ed",
+    borderBottomWidth: 1,
     flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 6,
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
-  coordinateLabel: {
-    fontSize: 12,
+  filterToggle: {
+    backgroundColor: "white",
+    borderColor: "#ddd",
+    borderRadius: 20,
+    borderWidth: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  filterToggleActive: {
+    backgroundColor: "#007AFF",
+    borderColor: "#007AFF",
+  },
+  filterToggleText: {
+    color: "#666",
+    fontSize: 14,
     fontWeight: "500",
-    color: "#888",
-    marginRight: 4,
   },
-  coordinateValue: {
-    fontSize: 12,
-    color: "#333",
-    marginRight: 12,
+  filterToggleTextActive: {
+    color: "white",
   },
-  categoryText: {
-    fontSize: 13,
-    color: "#007AFF",
+  headerRow: {
+    alignItems: "flex-start",
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 4,
   },
-  countryText: {
-    fontSize: 12,
-    color: "#999",
-  },
-  emptyText: {
-    textAlign: "center",
-    fontSize: 16,
+  locationAddress: {
     color: "#666",
-    marginTop: 50,
+    fontSize: 14,
+    lineHeight: 18,
+    marginBottom: 8,
   },
-  // Header button styles
+  locationCard: {
+    backgroundColor: "white",
+    borderRadius: 12,
+    elevation: 3,
+    flexDirection: "row",
+    margin: 10,
+    padding: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  locationName: {
+    color: "#333",
+    flex: 1,
+    fontSize: 18,
+    fontWeight: "600",
+    marginRight: 8,
+  },
+  mapContainer: {
+    borderRadius: 8,
+    height: 80,
+    marginRight: 8,
+    overflow: "hidden",
+    width: 80,
+  },
+  metadataContainer: {
+    flex: 1,
+    justifyContent: "flex-start",
+  },
+  miniMap: {
+    flex: 1,
+  },
   newButton: {
     backgroundColor: "#007AFF",
+    borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 8,
   },
   newButtonText: {
     color: "white",
