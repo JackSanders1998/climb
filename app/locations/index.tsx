@@ -15,6 +15,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { SheetManager } from "react-native-actions-sheet";
 
 const addressFormatter = (addressLines: string[]) => {
   try {
@@ -53,7 +54,24 @@ export default function Locations() {
               setSearchTerm(event.nativeEvent.text),
           },
           headerRight: () => (
-            <Button title="New" onPress={() => setShowNewLocationModal(true)} />
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 16,
+              }}
+            >
+              <Button
+                title="Old"
+                onPress={() => setShowNewLocationModal(true)}
+                variant="ghost"
+              />
+              <Button
+                title="New"
+                onPress={() => SheetManager.show("location-sheet")}
+                symbol="plus"
+                variant="ghost"
+              />
+            </View>
           ),
         }}
       />

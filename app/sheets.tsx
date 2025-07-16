@@ -1,8 +1,14 @@
 import { Button } from "@/lib/ui/Button";
 import { Text } from "@/lib/ui/Text";
-import { purple, sandA } from "@radix-ui/colors";
+import { blue, plum, purple, sandA, teal, violet } from "@radix-ui/colors";
 import { ReactNode, useState } from "react";
-import { Alert, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  ColorValue,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import ActionSheet, {
   registerSheet,
   ScrollView,
@@ -66,11 +72,13 @@ const Choice = ({
   onPress,
   symbol,
   checked = false,
+  color,
 }: {
   title: string;
   onPress: () => void;
   symbol: SystemName;
   checked?: boolean;
+  color: ColorValue;
 }) => {
   return (
     <TouchableOpacity
@@ -83,12 +91,7 @@ const Choice = ({
         alignItems: "center",
       }}
     >
-      <SweetSFSymbol
-        name={symbol}
-        size={34}
-        weight="bold"
-        colors={[purple.purple10]}
-      />
+      <SweetSFSymbol name={symbol} size={34} weight="bold" colors={[color]} />
 
       <Text level="subhead">{title}</Text>
       <SweetSFSymbol
@@ -124,18 +127,21 @@ const SessionSheet = () => {
             onPress={() => setSelectedStyle("lead")}
             symbol="figure.dance"
             checked={selectedStyle === "lead"}
+            color={plum.plum10}
           />
           <Choice
             title="Top rope"
             onPress={() => setSelectedStyle("toprope")}
             symbol="figure.climbing"
             checked={selectedStyle === "toprope"}
+            color={purple.purple10}
           />
           <Choice
             title="Boulder"
             onPress={() => setSelectedStyle("boulder")}
             symbol="figure.fall"
             checked={selectedStyle === "boulder"}
+            color={violet.violet10}
           />
         </View>
 
@@ -182,7 +188,46 @@ const SessionSheet = () => {
   );
 };
 
+const NewLocationSheet = () => {
+  const [type, setType] = useState<"gym" | "outdoor">("gym");
+
+  return (
+    <Sheet title="Add location">
+      <View
+        style={{
+          gap: 24,
+        }}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-around",
+          }}
+        >
+          <Choice
+            title="Outdoors"
+            onPress={() => setType("outdoor")}
+            symbol="figure.hiking"
+            checked={type === "outdoor"}
+            color={teal.teal10}
+          />
+          <Choice
+            title="Gym"
+            onPress={() => setType("gym")}
+            symbol="figure.strengthtraining.traditional"
+            checked={type === "gym"}
+            color={blue.blue10}
+          />
+        </View>
+
+        <Button title="Submit" symbol="checkmark" variant="primary" />
+      </View>
+    </Sheet>
+  );
+};
+
 registerSheet("session-sheet", SessionSheet);
+registerSheet("location-sheet", NewLocationSheet);
 
 // We extend some of the types here to give us great intellisense
 // across the app for all registered sheets.
