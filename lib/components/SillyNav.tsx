@@ -1,5 +1,6 @@
 import { ScrollView, View } from "react-native";
 import { SheetManager } from "react-native-actions-sheet";
+import { useStoreUserEffect } from "../hooks/useStoreUserEffect";
 import { Button } from "../ui/Button";
 
 interface SillyNavProps {
@@ -7,6 +8,8 @@ interface SillyNavProps {
 }
 
 export default function SillyNav({ pageName }: SillyNavProps) {
+  const { roles } = useStoreUserEffect();
+
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
@@ -43,14 +46,16 @@ export default function SillyNav({ pageName }: SillyNavProps) {
           variant="surface"
           symbol="chart.bar"
         />
-        <Button
-          selected={pageName === "Locations"}
-          title="Locations"
-          as="link"
-          href="/locations"
-          variant="surface"
-          symbol="map"
-        />
+        {roles.includes("ADMIN") && (
+          <Button
+            selected={pageName === "Locations"}
+            title="Locations"
+            as="link"
+            href="/locations"
+            variant="surface"
+            symbol="map"
+          />
+        )}
       </View>
     </ScrollView>
   );

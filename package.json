@@ -17,23 +17,29 @@
     "t": "vitest",
     "test:once": "vitest run",
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
-    "test:coverage": "vitest run --coverage --coverage.reporter=text"
+    "test:coverage": "vitest run --coverage --coverage.reporter=text",
+    "convex": "convex dev"
   },
   "dependencies": {
     "@clerk/clerk-expo": "^2.14.4",
     "@convex-dev/action-cache": "^0.2.10",
     "@convex-dev/geospatial": "^0.1.9",
-    "@expo/ui": "~0.1.1-alpha.10",
+    "@convex-dev/react-query": "^0.0.0-alpha.11",
     "@edge-runtime/vm": "^5.0.0",
+    "@expo/ui": "~0.1.1-alpha.10",
     "@expo/vector-icons": "^14.1.0",
     "@radix-ui/colors": "^3.0.0",
+    "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-masked-view/masked-view": "^0.3.2",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.5.2",
     "@react-navigation/native": "^7.1.6",
+    "@tanstack/query-async-storage-persister": "^5.83.0",
+    "@tanstack/react-query-persist-client": "^5.83.0",
     "@typescript-eslint/eslint-plugin": "^8.37.0",
     "@typescript-eslint/parser": "^8.37.0",
     "convex": "^1.25.4",
+    "convex-helpers": "^0.1.99",
     "convex-test": "^0.0.38",
     "eslint-plugin-react-native": "^5.0.0",
     "expo": "~53.0.19",
@@ -71,8 +77,8 @@
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
     "sweet-sfsymbols": "^0.7.2",
-    "zeego": "^3.0.6",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "zeego": "^3.0.6"
   },
   "devDependencies": {
     "@babel/core": "^7.28.0",

@@ -1,3 +1,4 @@
+import { api } from "@/convex/_generated/api";
 import { Toggle } from "@/lib/components/Toggle";
 import { useStoreUserEffect } from "@/lib/hooks/useStoreUserEffect";
 import { Button } from "@/lib/ui/Button";
@@ -5,7 +6,9 @@ import { Card } from "@/lib/ui/Card";
 import { Glur } from "@/lib/ui/Glur";
 import { Text } from "@/lib/ui/Text";
 import { useAuth } from "@clerk/clerk-expo";
-import React, { Fragment, useState } from "react";
+import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import React, { Fragment } from "react";
 import { Alert, Image, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -13,7 +16,17 @@ export default function Settings() {
   const { user } = useStoreUserEffect();
   const { signOut } = useAuth();
 
-  const [adminEnabled, setAdminEnabled] = useState(false);
+  const { data: settings } = useQuery(
+    convexQuery(api.settings.settings.get, {}),
+  );
+
+  const { mutate: patchSettings } = useMutation({
+    mutationFn: useConvexMutation(api.settings.settings.patch),
+  });
+
+  if (!settings) {
+    return <Text>Loading...</Text>;
+  }
 
   return (
     <Fragment>
@@ -43,8 +56,14 @@ export default function Settings() {
         </Card>
         <Card>
           <Toggle
-            checked={adminEnabled}
-            setChecked={setAdminEnabled}
+            checked={settings?.adminFeaturesEnabled}
+            setChecked={async (checked) => {
+              if (checked !== settings?.adminFeaturesEnabled) {
+                await patchSettings({
+                  adminFeaturesEnabled: checked,
+                });
+              }
+            }}
             label="Enable admin features"
           />
         </Card>

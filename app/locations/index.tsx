@@ -3,8 +3,10 @@ import NewLocationModal from "@/lib/components/NewLocationModal";
 import { Button } from "@/lib/ui/Button";
 import { Card } from "@/lib/ui/Card";
 import { Text } from "@/lib/ui/Text";
+import { convexQuery } from "@convex-dev/react-query";
 import { sandA } from "@radix-ui/colors";
-import { useQuery } from "convex/react";
+import { useQuery } from "@tanstack/react-query";
+
 import { AppleMaps } from "expo-maps";
 import { Link, Stack } from "expo-router";
 import React, { useState } from "react";
@@ -35,13 +37,13 @@ export default function Locations() {
   const [showLocationsFilter, setShowLocationsFilter] = useState<
     "all" | "pending" | "rejected"
   >("all");
-  const data = useQuery(api.locations.locations.search, {
-    searchTerm,
-    showPending: showLocationsFilter === "pending",
-    showRejected: showLocationsFilter === "rejected",
-  });
-
-  // const all = useQuery(api.locations.locations.list, { limit: undefined });
+  const { data } = useQuery(
+    convexQuery(api.locations.locations.search, {
+      searchTerm,
+      showPending: showLocationsFilter === "pending",
+      showRejected: showLocationsFilter === "rejected",
+    }),
+  );
 
   const locations = data ?? [];
   //
@@ -213,27 +215,6 @@ export default function Locations() {
 }
 
 const styles = StyleSheet.create({
-  mapContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 4,
-    overflow: "hidden",
-    marginRight: 8,
-  },
-  miniMap: {
-    flex: 1,
-  },
-  metadataContainer: {
-    flex: 1,
-    justifyContent: "flex-start",
-  },
-  headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 4,
-  },
-
   emptyText: {
     color: "#666",
     fontSize: 16,
@@ -246,7 +227,28 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 12,
     paddingHorizontal: 4,
-    paddingVertical: 12,
     paddingTop: 0,
+    paddingVertical: 12,
+  },
+  headerRow: {
+    alignItems: "flex-start",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 4,
+  },
+  mapContainer: {
+    borderRadius: 4,
+    height: 80,
+    marginRight: 8,
+    overflow: "hidden",
+    width: 80,
+  },
+
+  metadataContainer: {
+    flex: 1,
+    justifyContent: "flex-start",
+  },
+  miniMap: {
+    flex: 1,
   },
 });
