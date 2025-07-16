@@ -1,0 +1,12 @@
+name: build-lint-test
+on: [pull_request, push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - run: bun lint
+      - run: bun prettier
+      - run: bun t

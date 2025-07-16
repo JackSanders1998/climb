@@ -31,7 +31,13 @@ const addressFormatter = (addressLines: string[]) => {
 export default function Locations() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showNewLocationModal, setShowNewLocationModal] = useState(false);
-  const data = useQuery(api.locations.locations.search, { searchTerm });
+  const [showPending, setShowPending] = useState(false);
+  const [showRejected, setShowRejected] = useState(false);
+  const data = useQuery(api.locations.locations.search, {
+    searchTerm,
+    showPending,
+    showRejected,
+  });
 
   const all = useQuery(api.locations.locations.list, { limit: undefined });
 
@@ -75,6 +81,44 @@ export default function Locations() {
           ),
         }}
       />
+
+      {/* Filter Toggles */}
+      <View style={styles.filterContainer}>
+        <TouchableOpacity
+          style={[
+            styles.filterToggle,
+            showPending && styles.filterToggleActive,
+          ]}
+          onPress={() => setShowPending(!showPending)}
+        >
+          <Text
+          // style={[
+          //   styles.filterToggleText,
+          //   showPending && styles.filterToggleTextActive,
+          // ]}
+          >
+            Show Pending
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.filterToggle,
+            showRejected && styles.filterToggleActive,
+          ]}
+          onPress={() => setShowRejected(!showRejected)}
+        >
+          <Text
+          // style={[
+          //   styles.filterToggleText,
+          //   showRejected && styles.filterToggleTextActive,
+          // ]}
+          >
+            Show Rejected
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       <ScrollView
         contentContainerStyle={{
           padding: 12,
@@ -91,11 +135,12 @@ export default function Locations() {
                   params: {
                     id: location._id,
                     name: location.name,
-                    latitude: location.coordinate.latitude.toString(),
-                    longitude: location.coordinate.longitude.toString(),
+                    latitude: location.latitude.toString(),
+                    longitude: location.longitude.toString(),
                     address: JSON.stringify(location.formattedAddressLines),
                     category: location.poiCategory || "",
                     country: location.country || "",
+                    reviewStatus: location.reviewStatus || "pending",
                   },
                 }}
                 asChild
@@ -111,8 +156,8 @@ export default function Locations() {
                         style={styles.miniMap}
                         cameraPosition={{
                           coordinates: {
-                            latitude: location.coordinate.latitude,
-                            longitude: location.coordinate.longitude,
+                            latitude: location.latitude,
+                            longitude: location.longitude,
                           },
                           zoom: 15,
                         }}
@@ -228,49 +273,47 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
   },
-  locationAddress: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 8,
-    lineHeight: 18,
-  },
-  coordinatesRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 6,
-  },
-  coordinateLabel: {
-    fontSize: 12,
-    fontWeight: "500",
-    color: "#888",
-    marginRight: 4,
-  },
-  coordinateValue: {
-    fontSize: 12,
-    color: "#333",
-    marginRight: 12,
-  },
-  categoryText: {
-    fontSize: 13,
-    color: "#007AFF",
-    marginBottom: 4,
-  },
-  countryText: {
-    fontSize: 12,
-    color: "#999",
-  },
   emptyText: {
-    textAlign: "center",
-    fontSize: 16,
     color: "#666",
+    fontSize: 16,
     marginTop: 50,
+    textAlign: "center",
   },
-  // Header button styles
+  filterContainer: {
+    backgroundColor: "#f8f9fa",
+    borderBottomColor: "#e1e8ed",
+    borderBottomWidth: 1,
+    flexDirection: "row",
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  filterToggle: {
+    backgroundColor: "white",
+    borderColor: "#ddd",
+    borderRadius: 20,
+    borderWidth: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  filterToggleActive: {
+    backgroundColor: "#007AFF",
+    borderColor: "#007AFF",
+  },
+  filterToggleText: {
+    color: "#666",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  filterToggleTextActive: {
+    color: "white",
+  },
+
   newButton: {
     backgroundColor: "#007AFF",
+    borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 8,
   },
   newButtonText: {
     color: "white",

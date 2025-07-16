@@ -15,6 +15,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { isAdmin } from "../hooks/access";
+import { useStoreUserEffect } from "../hooks/useStoreUserEffect";
 
 interface NewLocationModalProps {
   visible: boolean;
@@ -44,6 +46,7 @@ export default function NewLocationModal({
     latitude: number;
     longitude: number;
   } | null>(null);
+  const { roles } = useStoreUserEffect();
 
   const appleMapsSearch = useAction(api.locations.appleMaps.search);
   const locationCreate = useMutation(api.locations.locations.insert);
@@ -52,7 +55,7 @@ export default function NewLocationModal({
   useEffect(() => {
     if (!visible) return;
 
-    (async () => {
+    void (async () => {
       try {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
@@ -159,6 +162,7 @@ export default function NewLocationModal({
       longitude: result.coordinate.longitude,
     });
     setSelectedLocationData(result); // Store complete location data
+    console.log("Selected location data:", result);
     setMapRegion({
       latitude: result.coordinate.latitude,
       longitude: result.coordinate.longitude,
@@ -177,25 +181,48 @@ export default function NewLocationModal({
     try {
       // Insert location into database using Convex mutation
       await locationCreate({
-        appleMapsId: selectedLocationData?.id || "",
-        name: newLocationAddress,
         description: `${newLocationType} climbing location`,
-        coordinate: {
-          latitude: selectedCoordinates.latitude,
-          longitude: selectedCoordinates.longitude,
-        },
-        formattedAddressLines: selectedLocationData.formattedAddressLines,
-        poiCategory: selectedLocationData.poiCategory,
         environment: newLocationType as "Gym" | "Outdoor",
-        country: selectedLocationData.country,
-        countryCode: selectedLocationData.countryCode,
-        displayMapRegion: selectedLocationData.displayMapRegion || {
-          eastLongitude: selectedCoordinates.longitude + 0.005,
-          westLongitude: selectedCoordinates.longitude - 0.005,
-          northLatitude: selectedCoordinates.latitude + 0.005,
-          southLatitude: selectedCoordinates.latitude - 0.005,
+        reviewStatus: isAdmin(roles) ? "approved" : "pending",
+        // TODO: Add images and metadata handling
+        appleMaps: {
+          appleMapsMetadata: {
+            appleMapsId: selectedLocationData.id,
+            country: selectedLocationData.country,
+            countryCode: selectedLocationData.countryCode,
+            formattedAddressLines: selectedLocationData.formattedAddressLines,
+            name: selectedLocationData.name,
+            poiCategory: selectedLocationData.poiCategory,
+          },
+          coordinate: {
+            latitude: selectedCoordinates.latitude,
+            longitude: selectedCoordinates.longitude,
+          },
+          displayMapRegion: {
+            eastLongitude: selectedLocationData.displayMapRegion.eastLongitude,
+            northLatitude: selectedLocationData.displayMapRegion.northLatitude,
+            southLatitude: selectedLocationData.displayMapRegion.southLatitude,
+            westLongitude: selectedLocationData.displayMapRegion.westLongitude,
+          },
+          structuredAddress: {
+            administrativeArea:
+              selectedLocationData.structuredAddress.administrativeArea,
+            administrativeAreaCode:
+              selectedLocationData.structuredAddress.administrativeAreaCode,
+            dependentLocalities:
+              selectedLocationData.structuredAddress.dependentLocalities,
+            fullThoroughfare:
+              selectedLocationData.structuredAddress.fullThoroughfare,
+            locality: selectedLocationData.structuredAddress.locality,
+            subLocality: selectedLocationData.structuredAddress.subLocality,
+            postCode: selectedLocationData.structuredAddress.postCode,
+            subThoroughfare:
+              selectedLocationData.structuredAddress.subThoroughfare,
+            thoroughfare: selectedLocationData.structuredAddress.thoroughfare,
+            areasOfInterest:
+              selectedLocationData.structuredAddress.areasOfInterest,
+          },
         },
-        structuredAddress: selectedLocationData.structuredAddress,
       });
 
       // Show success message and close modal
@@ -209,7 +236,7 @@ export default function NewLocationModal({
         },
       ]);
     } catch (error: unknown) {
-      console.error("Error creating location:", error);
+      console.error("Error creating location:", selectedLocationData);
       Alert.alert(
         "Error",
         JSON.stringify((error as Error).message) ||
@@ -366,7 +393,7 @@ export default function NewLocationModal({
                       ]
                     : []),
                   // Show search result markers
-                  ...searchResults.map((result, index) => ({
+                  ...searchResults.map((result) => ({
                     coordinates: {
                       latitude: result.coordinate.latitude,
                       longitude: result.coordinate.longitude,
@@ -390,121 +417,95 @@ export default function NewLocationModal({
 }
 
 const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    backgroundColor: "#f8f9fa",
-  },
-  modalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 20,
-    paddingTop: 60,
-    backgroundColor: "white",
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#333",
-  },
-  modalContent: {
-    flex: 1,
-    padding: 20,
-  },
-  formSection: {
-    marginBottom: 24,
-  },
-  fieldLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 8,
-  },
-  helpText: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 8,
-    fontStyle: "italic",
-  },
-  textInput: {
-    backgroundColor: "white",
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    minHeight: 48,
-  },
-  typeButtons: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  typeIconButton: {
-    flex: 1,
-    padding: 16,
-    alignItems: "center",
-    minHeight: 80,
-  },
-  typeIcon: {
-    fontSize: 24,
-    marginBottom: 4,
-  },
-  typeIconButtonText: {
-    fontSize: 14,
-    color: "#333",
-    fontWeight: "600",
-    marginBottom: 4,
-  },
   checkmarkCircle: {
+    alignItems: "center",
     backgroundColor: "#000",
     borderRadius: 10,
-    width: 20,
     height: 20,
-    alignItems: "center",
     justifyContent: "center",
+    width: 20,
   },
   checkmarkText: {
     color: "#fff",
     fontSize: 12,
     fontWeight: "bold",
   },
-  typeButton: {
-    flex: 1,
+  dropdown: {
     backgroundColor: "white",
-    borderWidth: 1,
     borderColor: "#ddd",
     borderRadius: 8,
+    borderWidth: 1,
+    elevation: 3,
+    marginTop: 4,
+    maxHeight: 200,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  dropdownItem: {
+    borderBottomColor: "#f0f0f0",
+    borderBottomWidth: 1,
     padding: 12,
-    alignItems: "center",
   },
-  typeButtonActive: {
-    backgroundColor: "#007AFF",
-    borderColor: "#007AFF",
+  dropdownItemSubtitle: {
+    color: "#666",
+    fontSize: 14,
+    marginTop: 2,
   },
-  typeButtonText: {
-    fontSize: 16,
+  dropdownItemTitle: {
     color: "#333",
+    fontSize: 16,
     fontWeight: "500",
   },
-  typeButtonTextActive: {
-    color: "white",
+  dropdownScroll: {
+    maxHeight: 200,
+  },
+  fieldLabel: {
+    color: "#333",
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 8,
+  },
+  formSection: {
+    marginBottom: 24,
   },
   mapContainer: {
-    height: 200,
-    borderRadius: 12,
-    overflow: "hidden",
     backgroundColor: "white",
-    borderWidth: 1,
     borderColor: "#ddd",
+    borderRadius: 12,
+    borderWidth: 1,
+    height: 200,
+    overflow: "hidden",
     position: "relative",
   },
   mapView: {
     flex: 1,
     height: 200,
   },
-
+  modalContainer: {
+    backgroundColor: "#f8f9fa",
+    flex: 1,
+  },
+  modalContent: {
+    flex: 1,
+    padding: 20,
+  },
+  modalHeader: {
+    alignItems: "center",
+    backgroundColor: "white",
+    borderBottomColor: "#eee",
+    borderBottomWidth: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 20,
+    paddingTop: 60,
+  },
+  modalTitle: {
+    color: "#333",
+    fontSize: 18,
+    fontWeight: "600",
+  },
   searchContainer: {
     position: "relative",
   },
@@ -513,35 +514,33 @@ const styles = StyleSheet.create({
     right: 12,
     top: 12,
   },
-  dropdown: {
+  textInput: {
     backgroundColor: "white",
-    borderWidth: 1,
     borderColor: "#ddd",
     borderRadius: 8,
-    marginTop: 4,
-    maxHeight: 200,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  dropdownScroll: {
-    maxHeight: 200,
-  },
-  dropdownItem: {
-    padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
-  },
-  dropdownItemTitle: {
+    borderWidth: 1,
     fontSize: 16,
-    color: "#333",
-    fontWeight: "500",
+    minHeight: 48,
+    padding: 12,
   },
-  dropdownItemSubtitle: {
+  typeButtons: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  typeIcon: {
+    fontSize: 24,
+    marginBottom: 4,
+  },
+  typeIconButton: {
+    alignItems: "center",
+    flex: 1,
+    minHeight: 80,
+    padding: 16,
+  },
+  typeIconButtonText: {
+    color: "#333",
     fontSize: 14,
-    color: "#666",
-    marginTop: 2,
+    fontWeight: "600",
+    marginBottom: 4,
   },
 });

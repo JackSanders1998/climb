@@ -17,7 +17,7 @@ export const search = action({
   args: { params },
   // returns: v.array(v.any()) || v.null(), // Adjust the return type as needed
   handler: async (ctx, args) => {
-    const token = await ctx.runAction(internal.locations.utils.generateToken);
+    const token = await ctx.runAction(internal.utils.mapKitToken.generateToken);
     const params = new URLSearchParams({
       q: args.params.q,
       includePoiCategories: args.params.includePoiCategories?.join(",") || "",
@@ -47,7 +47,7 @@ export const autocomplete = action({
   args: { params },
   returns: v.array(v.any()), // Adjust the return type as needed
   handler: async (ctx, args) => {
-    const token = await ctx.runAction(internal.locations.utils.generateToken);
+    const token = await ctx.runAction(internal.utils.mapKitToken.generateToken);
     const params = new URLSearchParams({
       q: args.params.q,
       includePoiCategories: args.params.includePoiCategories?.join(",") || "",
