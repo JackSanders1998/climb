@@ -1,16 +1,19 @@
+import { Toggle } from "@/lib/components/Toggle";
 import { useStoreUserEffect } from "@/lib/hooks/useStoreUserEffect";
 import { Button } from "@/lib/ui/Button";
 import { Card } from "@/lib/ui/Card";
 import { Glur } from "@/lib/ui/Glur";
 import { Text } from "@/lib/ui/Text";
 import { useAuth } from "@clerk/clerk-expo";
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Alert, Image, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 export default function Settings() {
   const { user } = useStoreUserEffect();
   const { signOut } = useAuth();
+
+  const [adminEnabled, setAdminEnabled] = useState(false);
 
   return (
     <Fragment>
@@ -37,6 +40,13 @@ export default function Settings() {
           <Text>{user?.primaryEmailAddress?.emailAddress}</Text>
           <Text>{user?.createdAt?.toString()}</Text>
           <View style={{ height: 8 }}></View>
+        </Card>
+        <Card>
+          <Toggle
+            checked={adminEnabled}
+            setChecked={setAdminEnabled}
+            label="Enable admin features"
+          />
         </Card>
         <Button
           variant="destructive"
