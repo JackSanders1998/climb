@@ -12,7 +12,7 @@ export default function LocationDetail() {
   const params = useLocalSearchParams();
   const router = useRouter();
   const [showNewLocationModal, setShowNewLocationModal] = useState(false);
-  
+
   // Convex mutations
   const approveLocation = useMutation(api.locations.review.approve);
   const rejectLocation = useMutation(api.locations.review.reject);
@@ -34,9 +34,9 @@ export default function LocationDetail() {
     try {
       await approveLocation({ id: location.id as any });
       Alert.alert("Success", "Location approved successfully", [
-        { text: "OK", onPress: () => router.back() }
+        { text: "OK", onPress: () => router.back() },
       ]);
-    } catch (error) {
+    } catch {
       Alert.alert("Error", "Failed to approve location");
     }
   };
@@ -55,14 +55,14 @@ export default function LocationDetail() {
             try {
               await rejectLocation({ id: location.id as any });
               Alert.alert("Success", "Location rejected successfully", [
-                { text: "OK", onPress: () => router.back() }
+                { text: "OK", onPress: () => router.back() },
               ]);
-            } catch (error) {
+            } catch {
               Alert.alert("Error", "Failed to reject location");
             }
-          }
-        }
-      ]
+          },
+        },
+      ],
     );
   };
 
@@ -196,7 +196,7 @@ export default function LocationDetail() {
             {location.reviewStatus === "rejected" &&
               "This location has been reviewed and rejected."}
           </Text>
-          
+
           {/* Review Action Buttons */}
           {location.reviewStatus === "pending" && (
             <View style={styles.reviewActions}>
@@ -210,11 +210,11 @@ export default function LocationDetail() {
                 title="Reject"
                 variant="ghost"
                 onPress={handleReject}
-                style={[styles.actionButton, { backgroundColor: '#FF4444' }]}
+                style={[styles.actionButton, { backgroundColor: "#FF4444" }]}
               />
             </View>
           )}
-          
+
           {location.reviewStatus === "rejected" && (
             <View style={styles.reviewActions}>
               <Button
@@ -238,6 +238,12 @@ export default function LocationDetail() {
 }
 
 const styles = StyleSheet.create({
+  actionButton: {
+    flex: 1,
+  },
+  actionButtonSingle: {
+    width: "100%",
+  },
   addressLine: {
     color: "#666",
     fontSize: 14,
@@ -296,6 +302,11 @@ const styles = StyleSheet.create({
     margin: 15,
     overflow: "hidden",
   },
+  reviewActions: {
+    flexDirection: "row",
+    gap: 12,
+    marginTop: 16,
+  },
   reviewDescription: {
     color: "#666",
     fontSize: 14,
@@ -349,16 +360,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 20,
-  },
-  reviewActions: {
-    flexDirection: "row",
-    gap: 12,
-    marginTop: 16,
-  },
-  actionButton: {
-    flex: 1,
-  },
-  actionButtonSingle: {
-    width: "100%",
   },
 });

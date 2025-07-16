@@ -15,7 +15,7 @@ export const insert = mutation({
     const user = await ctx.db
       .query("users")
       .withIndex("by_token", (q) =>
-        q.eq("tokenIdentifier", identity.tokenIdentifier)
+        q.eq("tokenIdentifier", identity.tokenIdentifier),
       )
       .unique();
     if (!user) {
@@ -31,7 +31,7 @@ export const insert = mutation({
         .first();
       if (existingRecord) {
         throw new Error(
-          `A location with the appleMapsId "${appleMapsId}" already exists.`
+          `A location with the appleMapsId "${appleMapsId}" already exists.`,
         );
       }
     }
@@ -100,17 +100,17 @@ export const insert = mutation({
 const buildStatusFilter = (
   q: any,
   showPending?: boolean,
-  showRejected?: boolean
+  showRejected?: boolean,
 ) => {
   // Priority order: pending > rejected > approved (default)
   if (showPending) {
     return q.eq(q.field("reviewStatus"), "pending");
   }
-  
+
   if (showRejected) {
     return q.eq(q.field("reviewStatus"), "rejected");
   }
-  
+
   // Default: show only approved
   return q.eq(q.field("reviewStatus"), "approved");
 };
@@ -123,19 +123,17 @@ export const search = query({
     showRejected: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
-    const statusFilter = (q: any) => buildStatusFilter(q, args.showPending, args.showRejected);
-    
+    const statusFilter = (q: any) =>
+      buildStatusFilter(q, args.showPending, args.showRejected);
+
     if (!args.searchTerm) {
-      return ctx.db
-        .query("locations")
-        .filter(statusFilter)
-        .take(10);
+      return ctx.db.query("locations").filter(statusFilter).take(10);
     }
 
     return ctx.db
       .query("locations")
       .withSearchIndex("location_search", (q) =>
-        q.search("searchIdentifiers", args.searchTerm)
+        q.search("searchIdentifiers", args.searchTerm),
       )
       .filter(statusFilter)
       .take(10);
@@ -161,11 +159,9 @@ export const list = query({
   },
   handler: async (ctx, args) => {
     const limit = args.limit || 100; // Default to 100 if no limit is provided
-    const statusFilter = (q: any) => buildStatusFilter(q, args.includePending, args.showRejected);
+    const statusFilter = (q: any) =>
+      buildStatusFilter(q, args.includePending, args.showRejected);
 
-    return await ctx.db
-      .query("locations")
-      .filter(statusFilter)
-      .take(limit);
+    return await ctx.db.query("locations").filter(statusFilter).take(limit);
   },
 });
