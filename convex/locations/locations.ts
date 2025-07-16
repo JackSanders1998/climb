@@ -1,4 +1,5 @@
 import { v } from "convex/values";
+import { api } from "../_generated/api";
 import { mutation, query } from "../_generated/server";
 import { locationInsertPayload } from "./models";
 
@@ -78,28 +79,18 @@ export const insert = mutation({
       reviewStatus: args.reviewStatus, // Default to pending if not provided
     });
 
-    // This whole geospatial index may not be necessary --> TODO: figure out of it is needed
-    await geospatial.insert(
-      ctx, // The Convex mutation context
-      locationId, // The unique string key to associate with the coordinate -- pk on locations table
-      {
-        latitude: args.appleMaps.coordinate.latitude,
-        longitude: args.appleMaps.coordinate.longitude,
-      },
-      {
-        eastLongitude: args.appleMaps.displayMapRegion.eastLongitude,
-        northLatitude: args.appleMaps.displayMapRegion.northLatitude,
-        southLatitude: args.appleMaps.displayMapRegion.southLatitude,
-        westLongitude: args.appleMaps.displayMapRegion.westLongitude,
-        latitude: args.appleMaps.coordinate.latitude,
-        longitude: args.appleMaps.coordinate.longitude,
-        author: user._id,
-        description: args.description,
-        environment: args.environment,
-      },
-    );
+    // insert geospatial data
+    await ctx.runMutation(api.locations.geospatial.insert, {
+      locationId,
+      latitude: args.appleMaps.coordinate.latitude,
+      longitude: args.appleMaps.coordinate.longitude,
+      eastLongitude: args.appleMaps.displayMapRegion.eastLongitude,
+      northLatitude: args.appleMaps.displayMapRegion.northLatitude,
+      southLatitude: args.appleMaps.displayMapRegion.southLatitude,
+      westLongitude: args.appleMaps.displayMapRegion.westLongitude,
+    });
 
-    return geospatial.get(ctx, locationId);
+    return locationId;
   },
 });
 

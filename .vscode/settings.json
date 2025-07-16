@@ -1,7 +1,5 @@
 {
-  "cSpell.words": [
-    "Geospatial"
-  ],
+  "cSpell.words": ["Geospatial"],
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit",
