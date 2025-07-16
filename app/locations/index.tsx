@@ -89,7 +89,16 @@ export default function Locations() {
       <View style={styles.filterContainer}>
         <Button
           variant="surface"
-          title="Show pending"
+          title="All"
+          onPress={() => setShowLocationsFilter("all")}
+          selected={showLocationsFilter === "all"}
+          style={{
+            flex: 1,
+          }}
+        />
+        <Button
+          variant="surface"
+          title="Pending"
           onPress={() =>
             setShowLocationsFilter((prev) =>
               prev === "pending" ? "all" : "pending",
@@ -103,7 +112,7 @@ export default function Locations() {
 
         <Button
           variant="surface"
-          title="Show rejected"
+          title="Rejected"
           onPress={() =>
             setShowLocationsFilter((prev) =>
               prev === "rejected" ? "all" : "rejected",
