@@ -14,10 +14,11 @@ import type * as locations_appleMaps from "../locations/appleMaps.js";
 import type * as locations_geospatial from "../locations/geospatial.js";
 import type * as locations_locations from "../locations/locations.js";
 import type * as locations_models from "../locations/models.js";
-import type * as locations_utils from "../locations/utils.js";
+import type * as locations_review from "../locations/review.js";
 import type * as users_models from "../users/models.js";
 import type * as users_users from "../users/users.js";
 import type * as utils_auth from "../utils/auth.js";
+import type * as utils_mapKitToken from "../utils/mapKitToken.js";
 
 import type {
   ApiFromModules,
@@ -40,10 +41,11 @@ declare const fullApi: ApiFromModules<{
   "locations/geospatial": typeof locations_geospatial;
   "locations/locations": typeof locations_locations;
   "locations/models": typeof locations_models;
-  "locations/utils": typeof locations_utils;
+  "locations/review": typeof locations_review;
   "users/models": typeof users_models;
   "users/users": typeof users_users;
   "utils/auth": typeof utils_auth;
+  "utils/mapKitToken": typeof utils_mapKitToken;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

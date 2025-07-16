@@ -3,6 +3,8 @@ import { api } from "../_generated/api";
 import { mutation, query } from "../_generated/server";
 import { locationInsertPayload } from "./models";
 
+// ideas: https://github.com/get-convex/fullstack-convex/tree/main/convex
+// https://www.convex.dev/templates/fullstack
 export const insert = mutation({
   args: locationInsertPayload,
   handler: async (ctx, args) => {
@@ -13,7 +15,7 @@ export const insert = mutation({
     const user = await ctx.db
       .query("users")
       .withIndex("by_token", (q) =>
-        q.eq("tokenIdentifier", identity.tokenIdentifier),
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
       )
       .unique();
     if (!user) {
@@ -29,7 +31,7 @@ export const insert = mutation({
         .first();
       if (existingRecord) {
         throw new Error(
-          `A location with the appleMapsId "${appleMapsId}" already exists.`,
+          `A location with the appleMapsId "${appleMapsId}" already exists.`
         );
       }
     }
@@ -94,6 +96,25 @@ export const insert = mutation({
   },
 });
 
+// Helper function to build status filter based on optional parameters
+const buildStatusFilter = (
+  q: any,
+  showPending?: boolean,
+  showRejected?: boolean
+) => {
+  // Priority order: pending > rejected > approved (default)
+  if (showPending) {
+    return q.eq(q.field("reviewStatus"), "pending");
+  }
+  
+  if (showRejected) {
+    return q.eq(q.field("reviewStatus"), "rejected");
+  }
+  
+  // Default: show only approved
+  return q.eq(q.field("reviewStatus"), "approved");
+};
+
 // https://github.com/get-convex/convex-demos/tree/main/search
 export const search = query({
   args: {
@@ -102,34 +123,21 @@ export const search = query({
     showRejected: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
+    const statusFilter = (q: any) => buildStatusFilter(q, args.showPending, args.showRejected);
+    
     if (!args.searchTerm) {
       return ctx.db
         .query("locations")
-        .filter((q) => q.eq(q.field("reviewStatus"), "approved"))
+        .filter(statusFilter)
         .take(10);
     }
-
-    // Build the status filter based on the optional parameters
-    const buildStatusFilter = (q: any) => {
-      const conditions = [q.eq(q.field("reviewStatus"), "approved")];
-
-      if (args.showPending) {
-        conditions.push(q.eq(q.field("reviewStatus"), "pending"));
-      }
-
-      if (args.showRejected) {
-        conditions.push(q.eq(q.field("reviewStatus"), "rejected"));
-      }
-
-      return conditions.length === 1 ? conditions[0] : q.or(...conditions);
-    };
 
     return ctx.db
       .query("locations")
       .withSearchIndex("location_search", (q) =>
-        q.search("searchIdentifiers", args.searchTerm),
+        q.search("searchIdentifiers", args.searchTerm)
       )
-      .filter(buildStatusFilter)
+      .filter(statusFilter)
       .take(10);
   },
 });
@@ -149,57 +157,15 @@ export const list = query({
   args: {
     limit: v.optional(v.number()),
     includePending: v.optional(v.boolean()),
+    showRejected: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const limit = args.limit || 100; // Default to 100 if no limit is provided
+    const statusFilter = (q: any) => buildStatusFilter(q, args.includePending, args.showRejected);
 
-    if (args.includePending) {
-      // Return both approved and pending locations
-      return await ctx.db
-        .query("locations")
-        .filter((q) =>
-          q.or(
-            q.eq(q.field("reviewStatus"), "approved"),
-            q.eq(q.field("reviewStatus"), "pending"),
-          ),
-        )
-        .take(limit);
-    }
-
-    // Default: only return approved locations
     return await ctx.db
       .query("locations")
-      .filter((q) => q.eq(q.field("reviewStatus"), "approved"))
+      .filter(statusFilter)
       .take(limit);
-  },
-});
-
-export const getPendingLocations = query({
-  args: { limit: v.optional(v.number()) },
-  handler: async (ctx, args) => {
-    const limit = args.limit || 100;
-    return await ctx.db
-      .query("locations")
-      .filter((q) => q.eq(q.field("reviewStatus"), "pending"))
-      .take(limit);
-  },
-});
-
-export const approveLocation = mutation({
-  args: { id: v.id("locations") },
-  handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Must be signed in to approve a location");
-    }
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_token", (q) =>
-        q.eq("tokenIdentifier", identity.tokenIdentifier),
-      )
-      .first();
-    if (!user) {
-      throw new Error("User not found");
-    }
   },
 });
