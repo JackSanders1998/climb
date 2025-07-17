@@ -65,6 +65,13 @@ export default function Locations() {
             onChangeText: (event: NativeSyntheticEvent<{ text: string }>) =>
               setSearchTerm(event.nativeEvent.text),
           },
+          headerTitleStyle: {
+            color: "transparent",
+          },
+
+          headerLargeTitleStyle: {
+            color: sandA.sandA12,
+          },
           headerRight: () => (
             <View
               style={{
