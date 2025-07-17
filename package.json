@@ -18,7 +18,8 @@
     "test:once": "vitest run",
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
     "test:coverage": "vitest run --coverage --coverage.reporter=text",
-    "convex": "convex dev"
+    "convex": "convex dev",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@clerk/clerk-expo": "^2.14.4",

@@ -1,15 +1,14 @@
-import { api } from "@/convex/_generated/api";
 import { Select } from "@/lib/components/Select";
 import { Toggle } from "@/lib/components/Toggle";
+import { useSettings } from "@/lib/hooks/useSettings";
 import { useStoreUserEffect } from "@/lib/hooks/useStoreUserEffect";
 import { Button } from "@/lib/ui/Button";
 import { Card } from "@/lib/ui/Card";
 import { Glur } from "@/lib/ui/Glur";
 import { Text } from "@/lib/ui/Text";
 import { useAuth } from "@clerk/clerk-expo";
-import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { sandA } from "@radix-ui/colors";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import React, { Fragment } from "react";
 import { Alert, Image, StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -30,13 +29,13 @@ export default function Settings() {
   const { user } = useStoreUserEffect();
   const { signOut } = useAuth();
 
-  const { data: settings } = useQuery(
-    convexQuery(api.settings.settings.get, {}),
-  );
+  const { query, mutation } = useSettings();
 
-  const { mutate: patchSettings } = useMutation({
-    mutationFn: useConvexMutation(api.settings.settings.patch),
-  });
+  const { data: settings } = query;
+
+  const { mutate: patchSettings } = mutation;
+
+  const client = useQueryClient();
 
   return (
     <Fragment>
@@ -69,12 +68,24 @@ export default function Settings() {
               paddingVertical: 4,
             }}
           >
+            <Text style={{ paddingVertical: 8 }} level="title3">
+              General settings
+            </Text>
+            <Divider />
             <Toggle
               checked={settings?.adminFeaturesEnabled ?? false}
               setChecked={(checked) => {
                 if (checked !== settings?.adminFeaturesEnabled) {
+                  console.log("checked", checked);
+
                   patchSettings({
                     adminFeaturesEnabled: checked,
+                  });
+                } else {
+                  console.log("unchanged");
+                  console.log({
+                    local: checked,
+                    remote: settings?.adminFeaturesEnabled,
                   });
                 }
               }}
@@ -100,6 +111,30 @@ export default function Settings() {
             </View>
           </Card>
         )}
+
+        <Button
+          variant="destructive"
+          symbol="trash"
+          onPress={() =>
+            Alert.alert(
+              "Are you sure you want to clear the local cache?",
+              undefined,
+              [
+                {
+                  text: "Cancel",
+                  style: "cancel",
+                },
+                {
+                  text: "Clear cache",
+                  onPress: () => client.clear(),
+                  style: "destructive",
+                },
+              ],
+            )
+          }
+          title="Clear local cache"
+        />
+
         <Button
           variant="destructive"
           symbol="rectangle.portrait.and.arrow.right"
