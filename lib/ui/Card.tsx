@@ -12,7 +12,7 @@ export const Card = (props: ViewProps) => {
             backgroundColor: sand.sand1,
             borderRadius: 16,
             borderCurve: "continuous",
-            padding: 12,
+            padding: 16,
             gap: 4,
             borderColor: sandA.sandA8,
             borderWidth: StyleSheet.hairlineWidth,

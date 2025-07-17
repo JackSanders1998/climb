@@ -1,4 +1,5 @@
 import { api } from "@/convex/_generated/api";
+import { Select } from "@/lib/components/Select";
 import { Toggle } from "@/lib/components/Toggle";
 import { useStoreUserEffect } from "@/lib/hooks/useStoreUserEffect";
 import { Button } from "@/lib/ui/Button";
@@ -7,10 +8,23 @@ import { Glur } from "@/lib/ui/Glur";
 import { Text } from "@/lib/ui/Text";
 import { useAuth } from "@clerk/clerk-expo";
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
+import { sandA } from "@radix-ui/colors";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import React, { Fragment } from "react";
-import { Alert, Image, View } from "react-native";
+import { Alert, Image, StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+
+const Divider = () => {
+  return (
+    <View
+      style={{
+        height: StyleSheet.hairlineWidth,
+        backgroundColor: sandA.sandA6,
+        width: "100%",
+      }}
+    />
+  );
+};
 
 export default function Settings() {
   const { user } = useStoreUserEffect();
@@ -34,7 +48,7 @@ export default function Settings() {
           flexDirection: "column",
         }}
       >
-        <Card style={{ gap: 8 }}>
+        <Card style={{ gap: 12 }}>
           <View style={{ flexDirection: "row", gap: 8 }}>
             <Image
               source={{ uri: user?.imageUrl }}
@@ -43,25 +57,47 @@ export default function Settings() {
 
             <Text level="title2">{user?.fullName}</Text>
           </View>
-          <View style={{ height: 4 }}></View>
+          <Divider />
           <Text dim>{user?.id}</Text>
           <Text dim>{user?.primaryEmailAddress?.emailAddress}</Text>
           <Text dim>{user?.createdAt?.toString()}</Text>
-          <View style={{ height: 8 }}></View>
         </Card>
         {settings && (
-          <Card>
+          <Card
+            style={{
+              gap: 4,
+              paddingVertical: 4,
+            }}
+          >
             <Toggle
-              checked={settings?.adminFeaturesEnabled}
-              setChecked={async (checked) => {
+              checked={settings?.adminFeaturesEnabled ?? false}
+              setChecked={(checked) => {
                 if (checked !== settings?.adminFeaturesEnabled) {
-                  await patchSettings({
+                  patchSettings({
                     adminFeaturesEnabled: checked,
                   });
                 }
               }}
               label="Enable admin features"
             />
+            <Divider />
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Text>Interval summary</Text>
+              <Select
+                align="right"
+                values={["Week", "Month"] as const}
+                value={settings?.summaryInterval ?? "Week"}
+                onValueChange={(val) => {
+                  patchSettings({ summaryInterval: val });
+                }}
+              />
+            </View>
           </Card>
         )}
         <Button

@@ -19,6 +19,7 @@ export const Toggle = ({
         width: "100%",
         justifyContent: "space-between",
         alignItems: "center",
+        height: 44,
       }}
     >
       <Text>{label}</Text>
