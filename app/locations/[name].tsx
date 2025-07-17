@@ -1,7 +1,7 @@
+import { api } from "@/convex/_generated/api";
 import NewLocationModal from "@/lib/components/NewLocationModal";
 import { Button } from "@/lib/ui/Button";
 import { Card } from "@/lib/ui/Card";
-import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { AppleMaps } from "expo-maps";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
@@ -208,7 +208,7 @@ export default function LocationDetail() {
               />
               <Button
                 title="Reject"
-                variant="ghost"
+                variant="destructive"
                 onPress={handleReject}
                 style={[styles.actionButton, { backgroundColor: "#FF4444" }]}
               />
