@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { internalMutation } from "../_generated/server";
 
-// The tiping is all fucked up here so not using this method rn
+// The typing is all fucked up here so not using this method rn
 export const test = internalMutation({
   returns: v.object({
     _id: v.id("users"),

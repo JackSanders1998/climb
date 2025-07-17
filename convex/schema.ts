@@ -1,7 +1,7 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
-import { locationSchema } from "./locations/models";
-import { userSchema } from "./users/models";
+import { locationSchema } from "./models/locations/models";
+import { userSchema } from "./models/users/models";
 
 export default defineSchema({
   users: defineTable(userSchema.fields).index("by_token", ["tokenIdentifier"]),

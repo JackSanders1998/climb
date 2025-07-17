@@ -7,5 +7,8 @@
 },
 "prettier.trailingComma": "all",
 "source.sortMembers": "explicit",
-"trailing-comma": "explicit"
+"trailing-comma": "explicit",
+"yaml.schemas": {
+  "https://www.artillery.io/schema.json": []
+}
 }

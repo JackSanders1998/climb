@@ -1,7 +1,7 @@
 import { v } from "convex/values";
-import { api } from "../_generated/api";
-import { mutation, query } from "../_generated/server";
-import { locationInsertPayload } from "./models";
+import { api } from "./_generated/api";
+import { mutation, query } from "./_generated/server";
+import { locationInsertPayload } from "./models/locations/models";
 
 // ideas: https://github.com/get-convex/fullstack-convex/tree/main/convex
 // https://www.convex.dev/templates/fullstack
@@ -82,7 +82,7 @@ export const insert = mutation({
     });
 
     // insert geospatial data
-    await ctx.runMutation(api.locations.geospatial.insert, {
+    await ctx.runMutation(api.geospatial.insert, {
       locationId,
       latitude: args.appleMaps.coordinate.latitude,
       longitude: args.appleMaps.coordinate.longitude,

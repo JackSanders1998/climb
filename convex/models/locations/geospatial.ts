@@ -1,8 +1,8 @@
 import { GeospatialIndex } from "@convex-dev/geospatial";
 import { v } from "convex/values";
-import { components } from "../_generated/api";
-import { Id } from "../_generated/dataModel";
-import { mutation } from "../_generated/server";
+import { components } from "../../_generated/api";
+import { Id } from "../../_generated/dataModel";
+import { mutation } from "../../_generated/server";
 import { DisplayMapRegionType } from "./models";
 
 const geospatial = new GeospatialIndex<Id<"locations">, DisplayMapRegionType>(
