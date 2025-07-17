@@ -2,13 +2,7 @@ import { Button } from "@/lib/ui/Button";
 import { Text } from "@/lib/ui/Text";
 import { blue, plum, purple, sandA, teal, violet } from "@radix-ui/colors";
 import { ReactNode, useState } from "react";
-import {
-  Alert,
-  ColorValue,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ColorValue, StyleSheet, TouchableOpacity, View } from "react-native";
 import ActionSheet, {
   registerSheet,
   ScrollView,
@@ -16,8 +10,9 @@ import ActionSheet, {
   useSheetIDContext,
   useSheetRef,
 } from "react-native-actions-sheet";
-import * as DropdownMenu from "zeego/dropdown-menu";
 
+import { Select } from "@/lib/components/Select";
+import { useSettings } from "@/lib/hooks/useSettings";
 import SweetSFSymbol from "sweet-sfsymbols";
 import { SystemName } from "sweet-sfsymbols/build/SweetSFSymbols.types";
 
@@ -109,6 +104,8 @@ const SessionSheet = () => {
     "lead" | "toprope" | "boulder"
   >("lead");
 
+  const { query, mutation } = useSettings();
+
   return (
     <Sheet title="Log a climb">
       <View
@@ -150,30 +147,13 @@ const SessionSheet = () => {
             alignItems: "flex-start",
           }}
         >
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger>
-              <Button
-                variant="ghost"
-                title="YDS"
-                symbol="chevron.up.chevron.down"
-              />
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content>
-              <DropdownMenu.Label />
-              <DropdownMenu.Item
-                key="item-1"
-                onSelect={() => Alert.alert("You selected Item 1")}
-              >
-                <DropdownMenu.ItemTitle>Item 1</DropdownMenu.ItemTitle>
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                key="item-2"
-                onSelect={() => Alert.alert("You selected Item 2")}
-              >
-                <DropdownMenu.ItemTitle>Item 2</DropdownMenu.ItemTitle>
-              </DropdownMenu.Item>
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
+          <Select
+            values={["YDS", "Font", "French", "V"] as const}
+            value={query.data?.preferredGrade ?? "YDS"}
+            onValueChange={(val) => {
+              mutation.mutate({ preferredGrade: val });
+            }}
+          />
         </View>
 
         <Button title="Add photo" symbol="photo.badge.plus" variant="surface" />

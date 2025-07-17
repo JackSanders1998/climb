@@ -5,11 +5,39 @@ import { settingsSchema, SettingsType } from "./models";
 
 const defaultSettings: SettingsType = {
   adminFeaturesEnabled: false,
+  summaryInterval: "Week",
+  preferredGrade: "YDS",
 };
+
+// const insertDefault = internalMutation({
+//   args: v.id("user"),
+//   handler: async (ctx) => {
+//     const identity = await ctx.auth.getUserIdentity();
+
+//     if (!identity) {
+//       throw new Error("Called getSettings without authentication present");
+//     }
+
+//     const user = await ctx.db
+//       .query("users")
+//       .withIndex("by_token", (q) =>
+//         q.eq("tokenIdentifier", identity.tokenIdentifier),
+//       )
+//       .unique();
+//     if (!user) {
+//       throw new Error("Unauthenticated call to mutation");
+//     }
+
+//     await ctx.db.insert("settings", {
+//       userId: user._id,
+//       ...defaultSettings,
+//     });
+//   },
+// });
 
 export const get = query({
   // args: partial(settingsSchema),
-  handler: async (ctx, args) => {
+  handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Called getSettings without authentication present");

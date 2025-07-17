@@ -2430,6 +2430,8 @@ PODS:
   - SocketRocket (0.7.1)
   - SweetSFSymbols (0.7.2):
     - ExpoModulesCore
+  - SwiftUIReactNative (5.0.0):
+    - ExpoModulesCore
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -2544,6 +2546,7 @@ DEPENDENCIES:
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - SweetSFSymbols (from `../node_modules/sweet-sfsymbols/ios`)
+  - SwiftUIReactNative (from `../node_modules/swiftui-react-native/ios`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -2780,6 +2783,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-screens"
   SweetSFSymbols:
     :path: "../node_modules/sweet-sfsymbols/ios"
+  SwiftUIReactNative:
+    :path: "../node_modules/swiftui-react-native/ios"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -2904,6 +2909,7 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: e38c0a70396191361d60c092933e22c20d5b1380
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   SweetSFSymbols: cb38963b4b1cffa0ea2eacc5fe6a8a2a2f4f740f
+  SwiftUIReactNative: 6af1ddbecf2c93011a8047f9897907b741c3f0df
   Yoga: adb397651e1c00672c12e9495babca70777e411e
 
 PODFILE CHECKSUM: 4e8f11a2e9a321f71ff6518b52b5ebd458273124

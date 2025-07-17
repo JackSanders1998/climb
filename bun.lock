@@ -60,6 +60,7 @@
         "react-native-web": "~0.20.0",
         "react-native-webview": "13.13.5",
         "sweet-sfsymbols": "^0.7.2",
+        "swiftui-react-native": "^6.3.3",
         "vitest": "^3.2.4",
         "zeego": "^3.0.6",
       },
@@ -2338,6 +2339,8 @@
     "supports-preserve-symlinks-flag": ["supports-preserve-symlinks-flag@1.0.0", "", {}, "sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w=="],
 
     "sweet-sfsymbols": ["sweet-sfsymbols@0.7.2", "", { "peerDependencies": { "expo": "*", "react": "*", "react-native": "*" } }, "sha512-+Dwjb7LwHWIOVfAMgrDI5+iDtAGSXGgD3ACiqqf1gtm+eLY9uVL7gDPR6VWm5bhFPOyXQy2mijUZN70mu8l1dw=="],
+
+    "swiftui-react-native": ["swiftui-react-native@6.3.3", "", { "peerDependencies": { "expo": "*", "react": "*", "react-native": "*" } }, "sha512-/3CygnDsGkXFat+1LRujW1a7WSw/KOCl62CbGTOFLWQNOE3uGM0tylNO4PuiUDilxDqc/krOkjGORbplNfZYxw=="],
 
     "swr": ["swr@2.3.3", "", { "dependencies": { "dequal": "^2.0.3", "use-sync-external-store": "^1.4.0" }, "peerDependencies": { "react": "^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0" } }, "sha512-dshNvs3ExOqtZ6kJBaAsabhPdHyeY4P2cKwRCniDVifBMoG/SVI7tfLWqPXriVspf2Rg4tPzXJTnwaihIeFw2A=="],
 

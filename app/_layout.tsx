@@ -1,4 +1,6 @@
+import { Select } from "@/lib/components/Select";
 import { SignIn } from "@/lib/components/signin";
+import { useSettings } from "@/lib/hooks/useSettings";
 import { useStoreUserEffect } from "@/lib/hooks/useStoreUserEffect";
 import { Button } from "@/lib/ui/Button";
 import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
@@ -13,11 +15,10 @@ import { ConvexReactClient } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { Link, Stack, useRouter } from "expo-router";
 import { ReactNode } from "react";
-import { Alert, Image, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import { SheetProvider } from "react-native-actions-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-import * as DropdownMenu from "zeego/dropdown-menu";
 import "./sheets.tsx";
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
@@ -95,22 +96,37 @@ const DoneButton = () => {
   );
 };
 
+const WeekButton = () => {
+  const { query, mutation } = useSettings();
+
+  return (
+    <Select
+      values={["Week", "Month"] as const}
+      value={query.data?.summaryInterval ?? "Week"}
+      onValueChange={(val) => {
+        mutation.mutate({ summaryInterval: val });
+      }}
+      align="right"
+    />
+  );
+};
+
 export default function RootLayout() {
   return (
     <GestureHandlerRootView>
-      <SheetProvider>
-        <ClerkProvider
-          tokenCache={tokenCache}
-          publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
-        >
-          <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-            <PersistQueryClientProvider
-              persistOptions={{
-                persister: asyncStoragePersister,
-              }}
-              client={queryClient}
-            >
-              <WrapWithAuth>
+      <ClerkProvider
+        tokenCache={tokenCache}
+        publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
+      >
+        <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
+          <PersistQueryClientProvider
+            persistOptions={{
+              persister: asyncStoragePersister,
+            }}
+            client={queryClient}
+          >
+            <WrapWithAuth>
+              <SheetProvider>
                 <Stack
                   screenOptions={{
                     contentStyle: {
@@ -146,38 +162,7 @@ export default function RootLayout() {
                           alignItems: "center",
                         }}
                       >
-                        <DropdownMenu.Root>
-                          <DropdownMenu.Trigger>
-                            <Button
-                              variant="ghost"
-                              title="Week"
-                              symbol="chevron.up.chevron.down"
-                            />
-                          </DropdownMenu.Trigger>
-                          <DropdownMenu.Content>
-                            <DropdownMenu.Label />
-                            <DropdownMenu.Item
-                              key="item-1"
-                              onSelect={() =>
-                                Alert.alert("You selected Item 1")
-                              }
-                            >
-                              <DropdownMenu.ItemTitle>
-                                Item 1
-                              </DropdownMenu.ItemTitle>
-                            </DropdownMenu.Item>
-                            <DropdownMenu.Item
-                              key="item-2"
-                              onSelect={() =>
-                                Alert.alert("You selected Item 2")
-                              }
-                            >
-                              <DropdownMenu.ItemTitle>
-                                Item 2
-                              </DropdownMenu.ItemTitle>
-                            </DropdownMenu.Item>
-                          </DropdownMenu.Content>
-                        </DropdownMenu.Root>
+                        <WeekButton />
                         <SettingsButton />
                       </View>
                     ),
@@ -205,11 +190,11 @@ export default function RootLayout() {
                     }}
                   />
                 </Stack>
-              </WrapWithAuth>
-            </PersistQueryClientProvider>
-          </ConvexProviderWithClerk>
-        </ClerkProvider>
-      </SheetProvider>
+              </SheetProvider>
+            </WrapWithAuth>
+          </PersistQueryClientProvider>
+        </ConvexProviderWithClerk>
+      </ClerkProvider>
     </GestureHandlerRootView>
   );
 }

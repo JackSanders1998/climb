@@ -24,13 +24,8 @@ export default function Settings() {
     mutationFn: useConvexMutation(api.settings.settings.patch),
   });
 
-  if (!settings) {
-    return <Text>Loading...</Text>;
-  }
-
   return (
     <Fragment>
-      {/* <Stack.Screen options={{ headerRight: undefined }} /> */}
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         contentContainerStyle={{
@@ -49,24 +44,26 @@ export default function Settings() {
             <Text level="title2">{user?.fullName}</Text>
           </View>
           <View style={{ height: 4 }}></View>
-          <Text>{user?.id}</Text>
-          <Text>{user?.primaryEmailAddress?.emailAddress}</Text>
-          <Text>{user?.createdAt?.toString()}</Text>
+          <Text dim>{user?.id}</Text>
+          <Text dim>{user?.primaryEmailAddress?.emailAddress}</Text>
+          <Text dim>{user?.createdAt?.toString()}</Text>
           <View style={{ height: 8 }}></View>
         </Card>
-        <Card>
-          <Toggle
-            checked={settings?.adminFeaturesEnabled}
-            setChecked={async (checked) => {
-              if (checked !== settings?.adminFeaturesEnabled) {
-                await patchSettings({
-                  adminFeaturesEnabled: checked,
-                });
-              }
-            }}
-            label="Enable admin features"
-          />
-        </Card>
+        {settings && (
+          <Card>
+            <Toggle
+              checked={settings?.adminFeaturesEnabled}
+              setChecked={async (checked) => {
+                if (checked !== settings?.adminFeaturesEnabled) {
+                  await patchSettings({
+                    adminFeaturesEnabled: checked,
+                  });
+                }
+              }}
+              label="Enable admin features"
+            />
+          </Card>
+        )}
         <Button
           variant="destructive"
           symbol="rectangle.portrait.and.arrow.right"
