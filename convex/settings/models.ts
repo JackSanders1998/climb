@@ -22,3 +22,8 @@ export const settingsSchema = partial(
   }),
 );
 export type SettingsType = Omit<Infer<typeof settingsSchema>, "userId">;
+export const defaultSettings: SettingsType = {
+  adminFeaturesEnabled: false,
+  summaryInterval: "Week",
+  preferredGrade: "YDS",
+};

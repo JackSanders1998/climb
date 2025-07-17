@@ -7,33 +7,20 @@ import { Card } from "@/lib/ui/Card";
 import { Glur } from "@/lib/ui/Glur";
 import { Text } from "@/lib/ui/Text";
 import { useAuth } from "@clerk/clerk-expo";
-import { sandA } from "@radix-ui/colors";
 import { useQueryClient } from "@tanstack/react-query";
 import React, { Fragment } from "react";
-import { Alert, Image, StyleSheet, View } from "react-native";
+import { Alert, Image, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-
-const Divider = () => {
-  return (
-    <View
-      style={{
-        height: StyleSheet.hairlineWidth,
-        backgroundColor: sandA.sandA6,
-        width: "100%",
-      }}
-    />
-  );
-};
+import { Divider } from "../lib/components/Divider";
 
 export default function Settings() {
   const { user } = useStoreUserEffect();
   const { signOut } = useAuth();
 
-  const { query, mutation } = useSettings();
-
-  const { data: settings } = query;
-
-  const { mutate: patchSettings } = mutation;
+  const {
+    query: { data: settings },
+    mutation: { mutate: patchSettings },
+  } = useSettings();
 
   const client = useQueryClient();
 
@@ -58,7 +45,9 @@ export default function Settings() {
           </View>
           <Divider />
           <Text dim>{user?.id}</Text>
+          <Divider />
           <Text dim>{user?.primaryEmailAddress?.emailAddress}</Text>
+          <Divider />
           <Text dim>{user?.createdAt?.toString()}</Text>
         </Card>
         {settings && (
@@ -76,16 +65,8 @@ export default function Settings() {
               checked={settings?.adminFeaturesEnabled ?? false}
               setChecked={(checked) => {
                 if (checked !== settings?.adminFeaturesEnabled) {
-                  console.log("checked", checked);
-
                   patchSettings({
                     adminFeaturesEnabled: checked,
-                  });
-                } else {
-                  console.log("unchanged");
-                  console.log({
-                    local: checked,
-                    remote: settings?.adminFeaturesEnabled,
                   });
                 }
               }}
@@ -132,7 +113,7 @@ export default function Settings() {
               ],
             )
           }
-          title="Clear local cache"
+          title="Clear cache"
         />
 
         <Button

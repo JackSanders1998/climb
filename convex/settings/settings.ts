@@ -2,16 +2,10 @@ import { getOneFrom } from "convex-helpers/server/relationships";
 import { partial } from "convex-helpers/validators";
 import { internal } from "../_generated/api";
 import { internalQuery, mutation, query } from "../_generated/server";
-import { settingsSchema, SettingsType } from "./models";
+import { defaultSettings, settingsSchema } from "./models";
 
 import { WithoutSystemFields } from "convex/server";
 import { DataModel } from "../_generated/dataModel";
-
-const defaultSettings: SettingsType = {
-  adminFeaturesEnabled: false,
-  summaryInterval: "Week",
-  preferredGrade: "YDS",
-};
 
 export const getSettings = internalQuery({
   handler: async (ctx): Promise<DataModel["settings"]["document"] | null> => {
