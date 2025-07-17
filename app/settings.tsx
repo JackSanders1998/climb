@@ -57,10 +57,6 @@ export default function Settings() {
               paddingVertical: 4,
             }}
           >
-            <Text style={{ paddingVertical: 8 }} level="title3">
-              General settings
-            </Text>
-            <Divider />
             <Toggle
               checked={settings?.adminFeaturesEnabled ?? false}
               setChecked={(checked) => {
