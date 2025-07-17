@@ -183,21 +183,6 @@ export default function Locations() {
 }
 
 const styles = StyleSheet.create({
-  emptyText: {
-    color: "#666",
-    fontSize: 16,
-    marginTop: 50,
-    textAlign: "center",
-  },
-  filterContainer: {
-    borderBottomColor: sandA.sandA6,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    flexDirection: "row",
-    gap: 12,
-    paddingHorizontal: 4,
-    paddingTop: 0,
-    paddingVertical: 12,
-  },
   headerRow: {
     alignItems: "flex-start",
     flexDirection: "row",
