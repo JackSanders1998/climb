@@ -1,5 +1,6 @@
 import { api } from "@/convex/_generated/api";
 import NewLocationModal from "@/lib/components/NewLocationModal";
+import { Select } from "@/lib/components/Select";
 import { Button } from "@/lib/ui/Button";
 import { Card } from "@/lib/ui/Card";
 import { Text } from "@/lib/ui/Text";
@@ -35,13 +36,13 @@ export default function Locations() {
   const [showNewLocationModal, setShowNewLocationModal] = useState(false);
 
   const [showLocationsFilter, setShowLocationsFilter] = useState<
-    "all" | "pending" | "rejected"
-  >("all");
+    "All" | "Pending" | "Rejected"
+  >("All");
   const { data } = useQuery(
     convexQuery(api.locations.locations.search, {
       searchTerm,
-      showPending: showLocationsFilter === "pending",
-      showRejected: showLocationsFilter === "rejected",
+      showPending: showLocationsFilter === "Pending",
+      showRejected: showLocationsFilter === "Rejected",
     }),
   );
 
@@ -71,11 +72,13 @@ export default function Locations() {
                 gap: 16,
               }}
             >
-              <Button
-                title="Old"
-                onPress={() => setShowNewLocationModal(true)}
-                variant="ghost"
+              <Select
+                align="right"
+                values={["All", "Pending", "Rejected"] as const}
+                value={showLocationsFilter}
+                onValueChange={(val) => setShowLocationsFilter(val)}
               />
+
               <Button
                 title="New"
                 onPress={() => SheetManager.show("location-sheet")}
@@ -87,46 +90,11 @@ export default function Locations() {
         }}
       />
 
-      {/* Filter Toggles */}
-      <View style={styles.filterContainer}>
-        <Button
-          variant="surface"
-          title="All"
-          onPress={() => setShowLocationsFilter("all")}
-          selected={showLocationsFilter === "all"}
-          style={{
-            flex: 1,
-          }}
-        />
-        <Button
-          variant="surface"
-          title="Pending"
-          onPress={() =>
-            setShowLocationsFilter((prev) =>
-              prev === "pending" ? "all" : "pending",
-            )
-          }
-          selected={showLocationsFilter === "pending"}
-          style={{
-            flex: 1,
-          }}
-        />
-
-        <Button
-          variant="surface"
-          title="Rejected"
-          onPress={() =>
-            setShowLocationsFilter((prev) =>
-              prev === "rejected" ? "all" : "rejected",
-            )
-          }
-          selected={showLocationsFilter === "rejected"}
-          style={{
-            flex: 1,
-          }}
-        />
-      </View>
-
+      <Button
+        title="Old create modal"
+        onPress={() => setShowNewLocationModal(true)}
+        variant="surface"
+      />
       {locations.length > 0 ? (
         locations.map((location, index) => (
           <Link
@@ -141,7 +109,7 @@ export default function Locations() {
                 address: JSON.stringify(location.formattedAddressLines),
                 category: location.poiCategory || "",
                 country: location.country || "",
-                reviewStatus: location.reviewStatus || "pending",
+                reviewStatus: location.reviewStatus || "Pending",
               },
             }}
             asChild
