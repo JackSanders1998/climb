@@ -2,12 +2,18 @@ import { ScrollView, View } from "react-native";
 import { SheetManager } from "react-native-actions-sheet";
 import { useStoreUserEffect } from "../hooks/useStoreUserEffect";
 import { Button } from "../ui/Button";
+import { Card } from "../ui/Card";
+import { Text } from "../ui/Text";
 
 interface SillyNavProps {
   pageName: string;
+  paddingBottom?: number;
 }
 
-export default function SillyNav({ pageName }: SillyNavProps) {
+export default function SillyNav({
+  pageName,
+  paddingBottom = 0,
+}: SillyNavProps) {
   const { roles } = useStoreUserEffect();
 
   return (
@@ -56,7 +62,19 @@ export default function SillyNav({ pageName }: SillyNavProps) {
             symbol="map"
           />
         )}
+
+        {Array.from({ length: 10 }, (_, index) => index).map((i) => (
+          <Card key={"foo" + i}>
+            <Text level="headline">To test scrolling</Text>
+            <Text>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor
+              ipsam ipsum rem molestias, voluptate hic omnis minus at fugit
+              adipisci!
+            </Text>
+          </Card>
+        ))}
       </View>
+      <View style={{ height: paddingBottom }} />
     </ScrollView>
   );
 }

@@ -15,11 +15,14 @@ import type * as locations_geospatial from "../locations/geospatial.js";
 import type * as locations_locations from "../locations/locations.js";
 import type * as locations_models from "../locations/models.js";
 import type * as locations_review from "../locations/review.js";
+import type * as sessions_models from "../sessions/models.js";
+import type * as sessions_sessions from "../sessions/sessions.js";
 import type * as settings_models from "../settings/models.js";
 import type * as settings_settings from "../settings/settings.js";
 import type * as users_models from "../users/models.js";
 import type * as users_users from "../users/users.js";
 import type * as utils_auth from "../utils/auth.js";
+import type * as utils_date from "../utils/date.js";
 import type * as utils_mapKitToken from "../utils/mapKitToken.js";
 
 import type {
@@ -44,11 +47,14 @@ declare const fullApi: ApiFromModules<{
   "locations/locations": typeof locations_locations;
   "locations/models": typeof locations_models;
   "locations/review": typeof locations_review;
+  "sessions/models": typeof sessions_models;
+  "sessions/sessions": typeof sessions_sessions;
   "settings/models": typeof settings_models;
   "settings/settings": typeof settings_settings;
   "users/models": typeof users_models;
   "users/users": typeof users_users;
   "utils/auth": typeof utils_auth;
+  "utils/date": typeof utils_date;
   "utils/mapKitToken": typeof utils_mapKitToken;
 }>;
 declare const fullApiWithMounts: typeof fullApi;

@@ -1,6 +1,7 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 import { locationSchema } from "./locations/models";
+import { sessionSchema } from "./sessions/models";
 import { settingsSchema } from "./settings/models";
 import { userSchema } from "./users/models";
 
@@ -20,4 +21,5 @@ export default defineSchema({
     format: v.string(),
   }),
   settings: defineTable(settingsSchema.fields).index("userId", ["userId"]),
+  sessions: defineTable(sessionSchema).index("userId", ["userId"]),
 });

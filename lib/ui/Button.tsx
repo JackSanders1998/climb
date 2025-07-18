@@ -44,6 +44,7 @@ const sharedStyles = {
   },
   text: {
     marginHorizontal: 4,
+    fontVariant: ["tabular-nums"],
   },
 } as const satisfies {
   container: LinkProps["style"] | TouchableOpacityProps["style"];
