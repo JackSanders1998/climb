@@ -19,7 +19,8 @@
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
     "test:coverage": "vitest run --coverage --coverage.reporter=text",
     "convex": "convex dev",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "dev": "expo run:ios & convex dev"
   },
   "dependencies": {
     "@clerk/clerk-expo": "^2.14.4",
