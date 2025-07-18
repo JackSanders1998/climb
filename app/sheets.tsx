@@ -12,6 +12,7 @@ import ActionSheet, {
 } from "react-native-actions-sheet";
 
 import { Select } from "@/lib/components/Select";
+import { TextInput } from "@/lib/components/TextInput";
 import { useSettings } from "@/lib/hooks/useSettings";
 import SweetSFSymbol from "sweet-sfsymbols";
 import { SystemName } from "sweet-sfsymbols/build/SweetSFSymbols.types";
@@ -87,7 +88,6 @@ const Choice = ({
       }}
     >
       <SweetSFSymbol name={symbol} size={34} weight="bold" colors={[color]} />
-
       <Text level="subhead">{title}</Text>
       <SweetSFSymbol
         colors={[checked ? sandA.sandA12 : sandA.sandA8]}
@@ -199,6 +199,8 @@ const NewLocationSheet = () => {
             color={blue.blue10}
           />
         </View>
+
+        <TextInput label="Name" placeholder="Name..." />
 
         <Button title="Submit" symbol="checkmark" variant="primary" />
       </View>
