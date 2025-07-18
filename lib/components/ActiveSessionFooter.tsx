@@ -1,4 +1,5 @@
 import { api } from "@/convex/_generated/api";
+import { decodeDate } from "@/convex/utils/date";
 import { useElapsedTime } from "@/lib/hooks/useElapsedTime";
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -68,7 +69,7 @@ export const ActiveSessionFooter = () => {
       {session.data?.startedAt && (
         <ElapsedTimeButton
           enabled={true}
-          start={DateTime.fromISO(session.data?.startedAt)}
+          start={decodeDate(session.data?.startedAt)}
           onPress={startOrEnd}
         />
       )}
