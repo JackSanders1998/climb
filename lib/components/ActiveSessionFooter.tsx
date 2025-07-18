@@ -6,7 +6,6 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { DateTime } from "luxon";
 import { useCallback } from "react";
 import { View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "../ui/Button";
 
 const ElapsedTimeButton = ({
@@ -33,8 +32,6 @@ const ElapsedTimeButton = ({
 };
 
 export const ActiveSessionFooter = () => {
-  const { bottom } = useSafeAreaInsets();
-
   const session = useQuery(convexQuery(api.sessions.sessions.get, {}));
 
   const start = useMutation({
@@ -54,18 +51,7 @@ export const ActiveSessionFooter = () => {
   }, [session.data]);
 
   return (
-    <View
-      style={{
-        bottom,
-        position: "absolute",
-        left: 8,
-        right: 8,
-        width: "auto",
-        justifyContent: "center",
-        flexDirection: "row",
-        gap: 8,
-      }}
-    >
+    <View>
       {session.data?.startedAt && (
         <ElapsedTimeButton
           enabled={true}

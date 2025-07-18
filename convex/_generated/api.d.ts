@@ -8,7 +8,6 @@
  * @module
  */
 
-import type * as utils_useElapsedTime from "../../lib/hooks/useElapsedTime.js";
 import type * as climbs from "../climbs.js";
 import type * as images from "../images.js";
 import type * as locations_appleMaps from "../locations/appleMaps.js";
@@ -57,7 +56,6 @@ declare const fullApi: ApiFromModules<{
   "utils/auth": typeof utils_auth;
   "utils/date": typeof utils_date;
   "utils/mapKitToken": typeof utils_mapKitToken;
-  "utils/useElapsedTime": typeof utils_useElapsedTime;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 
