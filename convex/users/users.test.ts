@@ -1,8 +1,8 @@
 import { convexTest, TestConvex } from "convex-test";
 import { GenericSchema, SchemaDefinition } from "convex/server";
 import { describe, expect, test } from "vitest";
-import { api } from "../../_generated/api";
-import schema from "../../schema";
+import { api } from "../_generated/api";
+import schema from "../schema";
 
 const mockIdentity = (
   t: TestConvex<SchemaDefinition<GenericSchema, boolean>>,

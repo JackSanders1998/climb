@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { api } from "./_generated/api";
 import { mutation, query } from "./_generated/server";
-import { locationInsertPayload } from "./models/locations/models";
+import { locationInsertPayload } from "./locations/models";
 
 // ideas: https://github.com/get-convex/fullstack-convex/tree/main/convex
 // https://www.convex.dev/templates/fullstack

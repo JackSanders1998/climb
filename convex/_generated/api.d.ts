@@ -10,14 +10,14 @@
 
 import type * as climbs from "../climbs.js";
 import type * as geospatial from "../geospatial.js";
+import type * as images_models from "../images/models.js";
 import type * as images from "../images.js";
+import type * as locations_appleMaps from "../locations/appleMaps.js";
+import type * as locations_geospatial from "../locations/geospatial.js";
+import type * as locations_models from "../locations/models.js";
+import type * as locations_review from "../locations/review.js";
 import type * as locations from "../locations.js";
-import type * as models_locations_appleMaps from "../models/locations/appleMaps.js";
-import type * as models_locations_geospatial from "../models/locations/geospatial.js";
-import type * as models_locations_models from "../models/locations/models.js";
-import type * as models_locations_review from "../models/locations/review.js";
-import type * as models_users_models from "../models/users/models.js";
-import type * as models_users_users from "../models/users/users.js";
+import type * as users_models from "../users/models.js";
 import type * as users_users from "../users/users.js";
 import type * as utils_auth from "../utils/auth.js";
 import type * as utils_mapKitToken from "../utils/mapKitToken.js";
@@ -39,14 +39,14 @@ import type {
 declare const fullApi: ApiFromModules<{
   climbs: typeof climbs;
   geospatial: typeof geospatial;
+  "images/models": typeof images_models;
   images: typeof images;
+  "locations/appleMaps": typeof locations_appleMaps;
+  "locations/geospatial": typeof locations_geospatial;
+  "locations/models": typeof locations_models;
+  "locations/review": typeof locations_review;
   locations: typeof locations;
-  "models/locations/appleMaps": typeof models_locations_appleMaps;
-  "models/locations/geospatial": typeof models_locations_geospatial;
-  "models/locations/models": typeof models_locations_models;
-  "models/locations/review": typeof models_locations_review;
-  "models/users/models": typeof models_users_models;
-  "models/users/users": typeof models_users_users;
+  "users/models": typeof users_models;
   "users/users": typeof users_users;
   "utils/auth": typeof utils_auth;
   "utils/mapKitToken": typeof utils_mapKitToken;

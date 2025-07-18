@@ -1,6 +1,6 @@
 import { Infer, v } from "convex/values";
-import { internal } from "../../_generated/api";
-import { action } from "../../_generated/server";
+import { internal } from "../_generated/api";
+import { action } from "../_generated/server";
 
 const params = v.object({
   q: v.string(),

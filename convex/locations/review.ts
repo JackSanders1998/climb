@@ -1,6 +1,6 @@
 import { v } from "convex/values";
-import { Id } from "../../_generated/dataModel";
-import { mutation } from "../../_generated/server";
+import { Id } from "../_generated/dataModel";
+import { mutation } from "../_generated/server";
 
 // Helper function to authenticate and get user
 const authenticateUser = async (ctx: any) => {
