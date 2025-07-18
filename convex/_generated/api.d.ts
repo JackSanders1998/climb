@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as utils_useElapsedTime from "../../lib/hooks/useElapsedTime.js";
 import type * as climbs from "../climbs.js";
 import type * as images from "../images.js";
 import type * as locations_appleMaps from "../locations/appleMaps.js";
@@ -24,7 +25,6 @@ import type * as users_users from "../users/users.js";
 import type * as utils_auth from "../utils/auth.js";
 import type * as utils_date from "../utils/date.js";
 import type * as utils_mapKitToken from "../utils/mapKitToken.js";
-import type * as utils_useElapsedTime from "../utils/useElapsedTime.js";
 
 import type {
   ApiFromModules,

@@ -1,5 +1,5 @@
 import { api } from "@/convex/_generated/api";
-import { useElapsedTime } from "@/convex/utils/useElapsedTime";
+import { useElapsedTime } from "@/lib/hooks/useElapsedTime";
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { DateTime } from "luxon";
