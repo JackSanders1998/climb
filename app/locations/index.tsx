@@ -36,8 +36,8 @@ export default function Locations() {
   const [showNewLocationModal, setShowNewLocationModal] = useState(false);
 
   const [showLocationsFilter, setShowLocationsFilter] = useState<
-    "All" | "Pending" | "Rejected"
-  >("All");
+    "Approved" | "Pending" | "Rejected"
+  >("Approved");
   const { data } = useQuery(
     convexQuery(api.locations.locations.search, {
       searchTerm,
@@ -81,7 +81,7 @@ export default function Locations() {
             >
               <Select
                 align="right"
-                values={["All", "Pending", "Rejected"] as const}
+                values={["Approved", "Pending", "Rejected"] as const}
                 value={showLocationsFilter}
                 onValueChange={(val) => setShowLocationsFilter(val)}
               />
