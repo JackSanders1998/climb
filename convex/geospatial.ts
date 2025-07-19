@@ -1,15 +1,15 @@
 import { GeospatialIndex } from "@convex-dev/geospatial";
 import { v } from "convex/values";
-import { components } from "../_generated/api";
-import { Id } from "../_generated/dataModel";
-import { mutation } from "../_generated/server";
-import { DisplayMapRegionType } from "./models";
+import { components } from "./_generated/api";
+import { Id } from "./_generated/dataModel";
+import { DisplayMapRegionType } from "./modules/locations/models";
+import { mutationWithRLS } from "./utils/rowLevelSecurity";
 
 const geospatial = new GeospatialIndex<Id<"locations">, DisplayMapRegionType>(
   components.geospatial,
 );
 
-export const insert = mutation({
+export const insert = mutationWithRLS({
   args: {
     locationId: v.id("locations"),
     latitude: v.number(),

@@ -1,4 +1,5 @@
 import { partial } from "convex-helpers/validators";
+import { defineTable } from "convex/server";
 import { Infer, v } from "convex/values";
 
 /**
@@ -27,3 +28,7 @@ export const defaultSettings: SettingsType = {
   summaryInterval: "Week",
   preferredGrade: "YDS",
 };
+
+export const settings = defineTable(settingsSchema.fields).index("userId", [
+  "userId",
+]);

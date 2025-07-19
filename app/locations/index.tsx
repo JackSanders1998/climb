@@ -39,7 +39,7 @@ export default function Locations() {
     "All" | "Pending" | "Rejected"
   >("All");
   const { data } = useQuery(
-    convexQuery(api.locations.locations.search, {
+    convexQuery(api.locations.search, {
       searchTerm,
       showPending: showLocationsFilter === "Pending",
       showRejected: showLocationsFilter === "Rejected",

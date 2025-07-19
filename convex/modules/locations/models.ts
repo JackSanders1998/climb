@@ -1,3 +1,4 @@
+import { defineTable } from "convex/server";
 import { Infer, v } from "convex/values";
 
 /**
@@ -101,10 +102,18 @@ export const location = v.object({
 export type LocationType = Infer<typeof location>;
 
 // DATABASE SCHEMA
-export const locationSchema = {
+const locationSchema = {
   ...appleMapsMetadata.fields,
   ...coordinate.fields,
   ...displayMapRegion.fields,
   ...structuredAddress.fields,
   ...custom.fields,
 };
+
+export const locations = defineTable(locationSchema).searchIndex(
+  "location_search",
+  {
+    searchField: "searchIdentifiers",
+    filterFields: ["reviewStatus"],
+  },
+);

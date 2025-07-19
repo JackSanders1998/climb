@@ -8,19 +8,18 @@
  * @module
  */
 
-import type * as climbs from "../climbs.js";
+import type * as appleMaps from "../appleMaps.js";
+import type * as geospatial from "../geospatial.js";
 import type * as images from "../images.js";
-import type * as locations_appleMaps from "../locations/appleMaps.js";
-import type * as locations_geospatial from "../locations/geospatial.js";
-import type * as locations_locations from "../locations/locations.js";
-import type * as locations_models from "../locations/models.js";
-import type * as locations_review from "../locations/review.js";
-import type * as settings_models from "../settings/models.js";
-import type * as settings_settings from "../settings/settings.js";
-import type * as users_models from "../users/models.js";
-import type * as users_users from "../users/users.js";
-import type * as utils_auth from "../utils/auth.js";
+import type * as locations from "../locations.js";
+import type * as modules_appleMaps_models from "../modules/appleMaps/models.js";
+import type * as modules_images_models from "../modules/images/models.js";
+import type * as modules_locations_geospatial from "../modules/locations/geospatial.js";
+import type * as modules_locations_models from "../modules/locations/models.js";
+import type * as settings from "../settings.js";
+import type * as users from "../users.js";
 import type * as utils_mapKitToken from "../utils/mapKitToken.js";
+import type * as utils_rowLevelSecurity from "../utils/rowLevelSecurity.js";
 
 import type {
   ApiFromModules,
@@ -37,19 +36,18 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  climbs: typeof climbs;
+  appleMaps: typeof appleMaps;
+  geospatial: typeof geospatial;
   images: typeof images;
-  "locations/appleMaps": typeof locations_appleMaps;
-  "locations/geospatial": typeof locations_geospatial;
-  "locations/locations": typeof locations_locations;
-  "locations/models": typeof locations_models;
-  "locations/review": typeof locations_review;
-  "settings/models": typeof settings_models;
-  "settings/settings": typeof settings_settings;
-  "users/models": typeof users_models;
-  "users/users": typeof users_users;
-  "utils/auth": typeof utils_auth;
+  locations: typeof locations;
+  "modules/appleMaps/models": typeof modules_appleMaps_models;
+  "modules/images/models": typeof modules_images_models;
+  "modules/locations/geospatial": typeof modules_locations_geospatial;
+  "modules/locations/models": typeof modules_locations_models;
+  settings: typeof settings;
+  users: typeof users;
   "utils/mapKitToken": typeof utils_mapKitToken;
+  "utils/rowLevelSecurity": typeof utils_rowLevelSecurity;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

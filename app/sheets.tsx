@@ -16,7 +16,13 @@ import { useSettings } from "@/lib/hooks/useSettings";
 import SweetSFSymbol from "sweet-sfsymbols";
 import { SystemName } from "sweet-sfsymbols/build/SweetSFSymbols.types";
 
-const Sheet = ({ children, title }: { children: ReactNode; title: string }) => {
+export default function Sheet({
+  children,
+  title,
+}: {
+  children: ReactNode;
+  title: string;
+}) {
   const sheetId = useSheetIDContext();
 
   const ref = useSheetRef(sheetId);
@@ -60,7 +66,7 @@ const Sheet = ({ children, title }: { children: ReactNode; title: string }) => {
       </ScrollView>
     </ActionSheet>
   );
-};
+}
 
 const Choice = ({
   title,
@@ -216,5 +222,3 @@ declare module "react-native-actions-sheet" {
     "example-sheet": SheetDefinition;
   }
 }
-
-export {};

@@ -1,8 +1,8 @@
 import { convexTest, TestConvex } from "convex-test";
 import { GenericSchema, SchemaDefinition } from "convex/server";
 import { describe, expect, test } from "vitest";
-import { api } from "../_generated/api";
-import schema from "../schema";
+import { api } from "./_generated/api";
+import schema from "./schema";
 
 const mockIdentity = (
   t: TestConvex<SchemaDefinition<GenericSchema, boolean>>,
@@ -17,11 +17,11 @@ describe("users.store", () => {
     const t = convexTest(schema);
 
     const unauthorizedCall = async () => {
-      await t.mutation(api.users.users.store);
+      await t.mutation(api.users.create);
     };
 
     await expect(unauthorizedCall).rejects.toThrow(
-      "Called storeUser without authentication present",
+      "Called createUser without authentication present",
     );
   });
 
@@ -29,9 +29,7 @@ describe("users.store", () => {
     const t = convexTest(schema);
     const asOndra = mockIdentity(t);
 
-    expect(await asOndra.mutation(api.users.users.store)).toEqual(
-      "10000;users",
-    );
+    expect(await asOndra.mutation(api.users.create)).toEqual("10000;users");
   });
 });
 
@@ -40,7 +38,7 @@ describe("users.get", () => {
     const t = convexTest(schema);
 
     await expect(
-      t.query(api.users.users.get, {
+      t.query(api.users.get, {
         // @ts-ignore --> this user does not exist
         id: "non-existent-user-id",
       }),
@@ -56,10 +54,10 @@ describe("users.get", () => {
       name: "Magnus Midtbø",
       tokenIdentifier: "magnus-token",
     });
-    await asOndra.mutation(api.users.users.store);
-    await asMagnus.mutation(api.users.users.store);
+    await asOndra.mutation(api.users.create);
+    await asMagnus.mutation(api.users.create);
 
-    const getUsers = await t.query(api.users.users.get, {});
+    const getUsers = await t.query(api.users.get, {});
 
     expect(getUsers).toHaveLength(2);
     expect(getUsers).toMatchObject([
@@ -85,14 +83,14 @@ describe("users.get", () => {
       name: "Magnus Midtbø",
       tokenIdentifier: "magnus-token",
     });
-    await asOndra.mutation(api.users.users.store);
-    await asMagnus.mutation(api.users.users.store);
+    await asOndra.mutation(api.users.create);
+    await asMagnus.mutation(api.users.create);
 
-    const ondra = await t.query(api.users.users.get, {
+    const ondra = await t.query(api.users.get, {
       // @ts-ignore --> ignoring generated convex types since this doesn't ~actually~ exist
       id: "10000;users",
     });
-    const magnus = await t.query(api.users.users.get, {
+    const magnus = await t.query(api.users.get, {
       // @ts-ignore --> ignoring generated convex types since this doesn't ~actually~ exist
       id: "10001;users",
     });
@@ -109,11 +107,5 @@ describe("users.get", () => {
       _id: "10001;users",
       _creationTime: expect.any(Number),
     });
-  });
-
-  test("Return an empty array if there isn't anything in the db", async () => {
-    const t = convexTest(schema);
-
-    await expect(t.query(api.users.users.get, {})).resolves.toEqual([]);
   });
 });

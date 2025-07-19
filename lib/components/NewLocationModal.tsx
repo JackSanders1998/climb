@@ -48,8 +48,8 @@ export default function NewLocationModal({
   } | null>(null);
   const { roles } = useStoreUserEffect();
 
-  const appleMapsSearch = useAction(api.locations.appleMaps.search);
-  const locationCreate = useMutation(api.locations.locations.insert);
+  const appleMapsSearch = useAction(api.appleMaps.search);
+  const locationCreate = useMutation(api.locations.create);
 
   // Request location permissions and get user location
   useEffect(() => {
@@ -103,12 +103,10 @@ export default function NewLocationModal({
     try {
       setIsSearching(true);
       const results = await appleMapsSearch({
-        params: {
-          q: query,
-          userLocation: userLocation
-            ? `${userLocation.latitude},${userLocation.longitude}`
-            : `${mapRegion.latitude || 0},${mapRegion.longitude || 0}`,
-        },
+        q: query,
+        userLocation: userLocation
+          ? `${userLocation.latitude},${userLocation.longitude}`
+          : `${mapRegion.latitude || 0},${mapRegion.longitude || 0}`,
       });
 
       setSearchResults(results || []);
