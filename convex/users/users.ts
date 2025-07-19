@@ -1,11 +1,26 @@
 import { v } from "convex/values";
+import { internal } from "../_generated/api";
+import { DataModel } from "../_generated/dataModel";
 import { internalQuery, mutation, query } from "../_generated/server";
+
+export const setTimeZone = mutation({
+  args: { timezone: v.optional(v.string()) },
+  handler: async (ctx, { timezone }) => {
+    const user: DataModel["users"]["document"] = await ctx.runQuery(
+      internal.users.users.getUser,
+    );
+
+    await ctx.db.patch(user._id, { timezone });
+
+    return { ...user, timezone };
+  },
+});
 
 export const getUser = internalQuery({
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new Error("Called getSettings without authentication present");
+      throw new Error("Called getUser internal without authentication present");
     }
 
     const user = await ctx.db
@@ -52,15 +67,11 @@ export const store = mutation({
 });
 
 export const get = query({
-  args: { id: v.optional(v.id("users")) },
-  handler: async (ctx, { id }) => {
-    if (!id) {
-      return await ctx.db.query("users").collect();
-    }
-    const user = await ctx.db.get(id);
-    if (!user) {
-      throw new Error(`User with id ${id} not found`);
-    }
+  handler: async (ctx) => {
+    const user: DataModel["users"]["document"] = await ctx.runQuery(
+      internal.users.users.getUser,
+    );
+
     return user;
   },
 });
