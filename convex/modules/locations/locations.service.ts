@@ -1,8 +1,15 @@
-import { v } from "convex/values";
-import { MutationCtx, query } from "../../_generated/server";
+import { Id } from "../../_generated/dataModel";
+import { MutationCtx, QueryCtx } from "../../_generated/server";
+import { insertGeospatialData } from "./geospatial";
 import { LocationInsertPayloadType } from "./models";
 
-export const create = async (
+/**
+ * Creates a new location.
+ * @param ctx - The mutation context.
+ * @param args - The location data.
+ * @returns The ID of the created location.
+ */
+export const createLocation = async (
   ctx: MutationCtx,
   args: LocationInsertPayloadType,
 ) => {
@@ -79,7 +86,80 @@ export const create = async (
     reviewStatus: args.reviewStatus, // Default to pending if not provided
   });
 
+  // insert geospatial data
+  await insertGeospatialData(ctx, {
+    locationId,
+    latitude: args.appleMaps.coordinate.latitude,
+    longitude: args.appleMaps.coordinate.longitude,
+    eastLongitude: args.appleMaps.displayMapRegion.eastLongitude,
+    northLatitude: args.appleMaps.displayMapRegion.northLatitude,
+    southLatitude: args.appleMaps.displayMapRegion.southLatitude,
+    westLongitude: args.appleMaps.displayMapRegion.westLongitude,
+  });
+
   return locationId;
+};
+
+/**
+ * Searches for locations based on a search term and optional filters.
+ * @param ctx - The query context.
+ * @param args - The search parameters.
+ * @returns A list of matching locations.
+ */
+export const searchLocations = async (
+  ctx: QueryCtx,
+  {
+    searchTerm,
+    showPending = false,
+    showRejected = false,
+  }: {
+    searchTerm?: string;
+    showPending?: boolean;
+    showRejected?: boolean;
+  },
+) => {
+  const statusFilter = (q: any) =>
+    buildStatusFilter(q, showPending, showRejected);
+
+  if (!searchTerm) {
+    return ctx.db.query("locations").filter(statusFilter).take(10);
+  }
+
+  return ctx.db
+    .query("locations")
+    .withSearchIndex("location_search", (q) =>
+      q.search("searchIdentifiers", searchTerm),
+    )
+    .filter(statusFilter)
+    .take(10);
+};
+
+/**
+ * Retrieves a location by its ID.
+ * @param ctx - The query context.
+ * @param id - The ID of the location to retrieve.
+ * @returns The location object if found, or an error if not found.
+ */
+export const getLocationById = async (ctx: QueryCtx, id: Id<"locations">) => {
+  const location = await ctx.db.get(id);
+  if (!location) {
+    throw new Error(`Location with id ${id} not found`);
+  }
+  return location;
+};
+
+export const listLocations = async (
+  ctx: QueryCtx,
+  {
+    limit = 100,
+    includePending = false,
+    showRejected = false,
+  }: { limit?: number; includePending?: boolean; showRejected?: boolean },
+) => {
+  const statusFilter = (q: any) =>
+    buildStatusFilter(q, includePending, showRejected);
+
+  return await ctx.db.query("locations").filter(statusFilter).take(limit);
 };
 
 // Helper function to build status filter based on optional parameters
@@ -100,54 +180,3 @@ const buildStatusFilter = (
   // Default: show only approved
   return q.eq(q.field("reviewStatus"), "approved");
 };
-
-// https://github.com/get-convex/convex-demos/tree/main/search
-export const search = query({
-  args: {
-    searchTerm: v.string(),
-    showPending: v.optional(v.boolean()),
-    showRejected: v.optional(v.boolean()),
-  },
-  handler: async (ctx, args) => {
-    const statusFilter = (q: any) =>
-      buildStatusFilter(q, args.showPending, args.showRejected);
-
-    if (!args.searchTerm) {
-      return ctx.db.query("locations").filter(statusFilter).take(10);
-    }
-
-    return ctx.db
-      .query("locations")
-      .withSearchIndex("location_search", (q) =>
-        q.search("searchIdentifiers", args.searchTerm),
-      )
-      .filter(statusFilter)
-      .take(10);
-  },
-});
-
-export const getById = query({
-  args: { id: v.id("locations") },
-  handler: async (ctx, args) => {
-    const location = await ctx.db.get(args.id);
-    if (!location) {
-      throw new Error(`Location with id ${args.id} not found`);
-    }
-    return location;
-  },
-});
-
-export const list = query({
-  args: {
-    limit: v.optional(v.number()),
-    includePending: v.optional(v.boolean()),
-    showRejected: v.optional(v.boolean()),
-  },
-  handler: async (ctx, args) => {
-    const limit = args.limit || 100; // Default to 100 if no limit is provided
-    const statusFilter = (q: any) =>
-      buildStatusFilter(q, args.includePending, args.showRejected);
-
-    return await ctx.db.query("locations").filter(statusFilter).take(limit);
-  },
-});

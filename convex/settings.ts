@@ -9,6 +9,10 @@ import {
   updateSettings,
 } from "./modules/settings/settings.service";
 
+/**
+ * GET /settings
+ * Retrieves the current settings document.
+ */
 export const get = query({
   handler: async (
     ctx,
@@ -17,6 +21,12 @@ export const get = query({
   },
 });
 
+/**
+ * PATCH /settings
+ * Updates the settings document with the provided fields.
+ * @param args - Partial settings fields to update.
+ * @returns {WithoutSystemFields<DataModel["settings"]["document"]>} - The updated settings document.
+ */
 export const update = mutation({
   args: partial(settingsSchema),
   handler: async (ctx, args) => {
