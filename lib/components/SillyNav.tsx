@@ -1,7 +1,11 @@
+import { api } from "@/convex/_generated/api";
+import { convexQuery } from "@convex-dev/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { ScrollView, View } from "react-native";
 import { SheetManager } from "react-native-actions-sheet";
 import { useStoreUserEffect } from "../hooks/useStoreUserEffect";
 import { Button } from "../ui/Button";
+import { Text } from "../ui/Text";
 
 interface SillyNavProps {
   pageName: string;
@@ -9,6 +13,8 @@ interface SillyNavProps {
 
 export default function SillyNav({ pageName }: SillyNavProps) {
   const { roles } = useStoreUserEffect();
+
+  const serverUser = useQuery(convexQuery(api.users.users.get, {}));
 
   return (
     <ScrollView
@@ -56,6 +62,7 @@ export default function SillyNav({ pageName }: SillyNavProps) {
             symbol="map"
           />
         )}
+        <Text>{JSON.stringify(serverUser.data, null, 2)}</Text>
       </View>
     </ScrollView>
   );

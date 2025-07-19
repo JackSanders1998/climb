@@ -5,21 +5,28 @@ import { useStoreUserEffect } from "@/lib/hooks/useStoreUserEffect";
 import { Button } from "@/lib/ui/Button";
 import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
-import { ConvexQueryClient } from "@convex-dev/react-query";
+import {
+  convexQuery,
+  ConvexQueryClient,
+  useConvexMutation,
+} from "@convex-dev/react-query";
 import { sand, sandA } from "@radix-ui/colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { ConvexReactClient } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { Link, Stack, useRouter } from "expo-router";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { SheetProvider } from "react-native-actions-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import "./sheets.tsx";
+
+import { api } from "@/convex/_generated/api.js";
+import { useCalendars } from "expo-localization";
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
   unsavedChangesWarning: false,
@@ -111,6 +118,29 @@ const WeekButton = () => {
   );
 };
 
+const TimeZoneSetter = () => {
+  const { mutate: setTimezone } = useMutation({
+    mutationFn: useConvexMutation(api.users.users.setTimeZone),
+  });
+
+  const user = useQuery(convexQuery(api.users.users.get, {}));
+
+  const [calendar] = useCalendars();
+
+  useEffect(() => {
+    if (
+      user.data &&
+      calendar.timeZone &&
+      user.data.timezone !== calendar.timeZone
+    ) {
+      setTimezone({ timezone: calendar.timeZone });
+      console.log("SETTING TIMEZONE", calendar.timeZone);
+    }
+  }, [calendar.timeZone, user.data?.timezone]);
+
+  return undefined;
+};
+
 export default function RootLayout() {
   return (
     <GestureHandlerRootView>
@@ -126,6 +156,7 @@ export default function RootLayout() {
             client={queryClient}
           >
             <WrapWithAuth>
+              <TimeZoneSetter />
               <SheetProvider>
                 <Stack
                   screenOptions={{
