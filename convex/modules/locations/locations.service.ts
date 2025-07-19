@@ -13,20 +13,6 @@ export const createLocation = async (
   ctx: MutationCtx,
   args: LocationInsertPayloadType,
 ) => {
-  const identity = await ctx.auth.getUserIdentity();
-  if (!identity) {
-    throw new Error("Must be signed in to create a location");
-  }
-  const user = await ctx.db
-    .query("users")
-    .withIndex("by_token", (q) =>
-      q.eq("tokenIdentifier", identity.tokenIdentifier),
-    )
-    .unique();
-  if (!user) {
-    throw new Error("Unauthenticated call to mutation");
-  }
-
   // Check if a record with the same appleMapsId already exists
   const appleMapsId = args.appleMaps.appleMapsMetadata.appleMapsId;
   if (appleMapsId) {
@@ -40,7 +26,6 @@ export const createLocation = async (
       );
     }
   }
-
   const generateSearchIdentifiers = () => {
     const identifiers = [
       args.appleMaps.appleMapsMetadata.name.toLowerCase(),
@@ -54,7 +39,8 @@ export const createLocation = async (
   };
 
   const locationId = await ctx.db.insert("locations", {
-    author: user._id,
+    // @ts-ignore
+    author: ctx.user._id,
     description: args.description,
     images: args.images,
     metadata: args.metadata,
@@ -154,7 +140,11 @@ export const listLocations = async (
     limit = 100,
     includePending = false,
     showRejected = false,
-  }: { limit?: number; includePending?: boolean; showRejected?: boolean },
+  }: {
+    limit?: number;
+    includePending?: boolean;
+    showRejected?: boolean;
+  },
 ) => {
   const statusFilter = (q: any) =>
     buildStatusFilter(q, includePending, showRejected);

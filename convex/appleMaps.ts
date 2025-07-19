@@ -1,11 +1,11 @@
-import { action } from "./_generated/server";
 import { searchAppleMaps } from "./modules/appleMaps/appleMaps.service";
 import { appleMapsSearchParams } from "./modules/appleMaps/models";
+import { actionWithRLS } from "./utils/rowLevelSecurity";
 
 /**
  * Action to search Apple Maps.
  */
-export const search = action({
+export const search = actionWithRLS({
   args: appleMapsSearchParams,
   handler: async (ctx, args) => {
     return searchAppleMaps(ctx, args);
@@ -15,7 +15,7 @@ export const search = action({
 /**
  * Action to get autocomplete suggestions for Apple Maps search.
  */
-export const autocomplete = action({
+export const autocomplete = actionWithRLS({
   args: appleMapsSearchParams,
   handler: async (ctx, args) => {
     return searchAppleMaps(ctx, args, true);

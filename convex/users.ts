@@ -1,16 +1,15 @@
-import { mutation, query } from "./_generated/server";
 import {
   createUser,
-  getCurrentUser,
   getCurrentUserWithSettings,
 } from "./modules/users/users.service";
+import { mutationWithRLS, queryWithRLS } from "./utils/rowLevelSecurity";
 
 /**
  * POST /users
  * Creates a new user document in the database.
  * @returns {WithoutSystemFields<DataModel["users"]["document"]>} - The created user document.
  */
-export const create = mutation({
+export const create = mutationWithRLS({
   handler: async (ctx) => {
     return createUser(ctx);
   },
@@ -21,9 +20,9 @@ export const create = mutation({
  * Retrieves the current user document.
  * @returns {User} - The current user document.
  */
-export const get = query({
+export const get = queryWithRLS({
   handler: async (ctx) => {
-    return getCurrentUser(ctx);
+    return ctx.user;
   },
 });
 
@@ -32,7 +31,7 @@ export const get = query({
  * Retrieves the current user document along with settings.
  * @returns {UserWithSettings} - The current user document with settings.
  */
-export const getWithSettings = query({
+export const getWithSettings = queryWithRLS({
   handler: async (ctx) => {
     return getCurrentUserWithSettings(ctx);
   },

@@ -19,6 +19,7 @@ import type * as modules_locations_models from "../modules/locations/models.js";
 import type * as settings from "../settings.js";
 import type * as users from "../users.js";
 import type * as utils_mapKitToken from "../utils/mapKitToken.js";
+import type * as utils_rowLevelSecurity from "../utils/rowLevelSecurity.js";
 
 import type {
   ApiFromModules,
@@ -46,6 +47,7 @@ declare const fullApi: ApiFromModules<{
   settings: typeof settings;
   users: typeof users;
   "utils/mapKitToken": typeof utils_mapKitToken;
+  "utils/rowLevelSecurity": typeof utils_rowLevelSecurity;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

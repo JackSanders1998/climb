@@ -1,16 +1,14 @@
 import { getOneFrom } from "convex-helpers/server/relationships";
-import { MutationCtx, QueryCtx } from "../../_generated/server";
 import { defaultSettings, SettingsType } from "./settings.models";
 
 import { WithoutSystemFields } from "convex/server";
 import { DataModel } from "../../_generated/dataModel";
-import { getCurrentUser } from "../users/users.service";
 
 export const getSettings = async (
-  ctx: QueryCtx,
+  ctx: any,
 ): Promise<WithoutSystemFields<DataModel["settings"]["document"]>> => {
-  const user = await getCurrentUser(ctx);
-  const settings = await getOneFrom(ctx.db, "settings", "userId", user._id);
+  // @ts-ignore
+  const settings = await getOneFrom(ctx.db, "settings", "userId", ctx.user._id);
 
   if (!settings) {
     return defaultSettings;
@@ -19,25 +17,10 @@ export const getSettings = async (
   return settings;
 };
 
-export const updateSettings = async (
-  ctx: MutationCtx,
-  args: Partial<SettingsType>,
-) => {
-  const identity = await ctx.auth.getUserIdentity();
-  if (!identity) {
-    throw new Error("Called updateSettings without authentication present");
-  }
+export const updateSettings = async (ctx: any, args: Partial<SettingsType>) => {
+  const user = ctx.user;
 
-  const user = await ctx.db
-    .query("users")
-    .withIndex("by_token", (q) =>
-      q.eq("tokenIdentifier", identity.tokenIdentifier),
-    )
-    .unique();
-  if (!user) {
-    throw new Error("Unauthenticated call to mutation");
-  }
-
+  // @ts-ignore
   const settings = await getOneFrom(ctx.db, "settings", "userId", user._id);
 
   if (!settings) {

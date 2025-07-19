@@ -2,14 +2,14 @@ import { GeospatialIndex } from "@convex-dev/geospatial";
 import { v } from "convex/values";
 import { components } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
-import { mutation } from "./_generated/server";
 import { DisplayMapRegionType } from "./modules/locations/models";
+import { mutationWithRLS } from "./utils/rowLevelSecurity";
 
 const geospatial = new GeospatialIndex<Id<"locations">, DisplayMapRegionType>(
   components.geospatial,
 );
 
-export const insert = mutation({
+export const insert = mutationWithRLS({
   args: {
     locationId: v.id("locations"),
     latitude: v.number(),
@@ -36,26 +36,3 @@ export const insert = mutation({
     );
   },
 });
-
-// convex/index.ts
-// export const example = query({
-//   handler: async (ctx) => {
-//     const maxResults = 16;
-//     const maxDistance = 10000;
-//     const result = await geospatial.queryNearest(
-//       ctx,
-//       { latitude: 45.52, longitude: -122.681944 },
-//       maxResults,
-//       maxDistance,
-//     );
-//     // get location using result.key
-//     // and return the distance and coordinates
-//     // Note: The result will be an array of objects with keys: key, distance,
-//     // coordinates, and region.
-//     // You can map it to your desired format.
-//     // For example:
-//     const location = await getById(ctx, result[0].key);
-
-//     return location;
-//   },
-// });
