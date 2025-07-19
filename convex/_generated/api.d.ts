@@ -16,7 +16,6 @@ import type * as modules_appleMaps_models from "../modules/appleMaps/models.js";
 import type * as modules_images_models from "../modules/images/models.js";
 import type * as modules_locations_geospatial from "../modules/locations/geospatial.js";
 import type * as modules_locations_models from "../modules/locations/models.js";
-import type * as modules_locations_review from "../modules/locations/review.js";
 import type * as settings from "../settings.js";
 import type * as users from "../users.js";
 import type * as utils_mapKitToken from "../utils/mapKitToken.js";
@@ -44,7 +43,6 @@ declare const fullApi: ApiFromModules<{
   "modules/images/models": typeof modules_images_models;
   "modules/locations/geospatial": typeof modules_locations_geospatial;
   "modules/locations/models": typeof modules_locations_models;
-  "modules/locations/review": typeof modules_locations_review;
   settings: typeof settings;
   users: typeof users;
   "utils/mapKitToken": typeof utils_mapKitToken;

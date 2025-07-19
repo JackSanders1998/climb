@@ -1,6 +1,5 @@
-import { v } from "convex/values";
 import { Id } from "../../_generated/dataModel";
-import { mutation } from "../../_generated/server";
+import { MutationCtx } from "../../_generated/server";
 
 // Helper function to authenticate and get user
 const authenticateUser = async (ctx: any) => {
@@ -38,16 +37,13 @@ const updateReviewStatus = async (
   });
 };
 
-export const approve = mutation({
-  args: { id: v.id("locations") },
-  handler: async (ctx, args) => {
-    await updateReviewStatus(ctx, args.id, "approved");
-  },
-});
+export const approveLocation = async (
+  ctx: MutationCtx,
+  id: Id<"locations">,
+) => {
+  await updateReviewStatus(ctx, id, "approved");
+};
 
-export const reject = mutation({
-  args: { id: v.id("locations") },
-  handler: async (ctx, args) => {
-    await updateReviewStatus(ctx, args.id, "rejected");
-  },
-});
+export const rejectLocation = async (ctx: MutationCtx, id: Id<"locations">) => {
+  await updateReviewStatus(ctx, id, "rejected");
+};

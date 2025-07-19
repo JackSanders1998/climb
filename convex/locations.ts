@@ -7,6 +7,10 @@ import {
   searchLocations,
 } from "./modules/locations/locations.service";
 import { locationInsertPayload } from "./modules/locations/models";
+import {
+  approveLocation,
+  rejectLocation,
+} from "./modules/locations/review.service";
 
 /**
  * POST /locations
@@ -77,5 +81,19 @@ export const list = query({
       includePending,
       showRejected,
     });
+  },
+});
+
+export const approve = mutation({
+  args: { id: v.id("locations") },
+  handler: async (ctx, { id }) => {
+    return approveLocation(ctx, id);
+  },
+});
+
+export const reject = mutation({
+  args: { id: v.id("locations") },
+  handler: async (ctx, { id }) => {
+    return rejectLocation(ctx, id);
   },
 });

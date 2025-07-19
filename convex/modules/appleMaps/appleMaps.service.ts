@@ -18,7 +18,7 @@ export const searchAppleMaps = async (
   });
 
   const response = await fetch(
-    `https://maps-api.apple.com/v1/search${useAutoComplete && "AutoComplete"}?${params.toString()}`,
+    `https://maps-api.apple.com/v1/search${useAutoComplete ? "AutoComplete" : ""}?${params.toString()}`,
     {
       method: "GET",
       headers: {
