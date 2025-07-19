@@ -3,7 +3,7 @@ import { v } from "convex/values";
 import { components } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
 import { mutation } from "./_generated/server";
-import { DisplayMapRegionType } from "./locations/models";
+import { DisplayMapRegionType } from "./modules/locations/models";
 
 const geospatial = new GeospatialIndex<Id<"locations">, DisplayMapRegionType>(
   components.geospatial,

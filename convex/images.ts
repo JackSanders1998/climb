@@ -1,18 +1,10 @@
 import { v } from "convex/values";
 import { mutation } from "./_generated/server";
+import { createImage } from "./modules/images/images.service";
 
-export const generateUploadUrl = mutation(async (ctx) => {
-  return await ctx.storage.generateUploadUrl();
-});
-
-export const insert = mutation({
+export const create = mutation({
   args: { storageId: v.id("_storage"), author: v.id("users") },
-  handler: async (ctx, args) => {
-    await ctx.db.insert("images", {
-      body: args.storageId,
-      format: "image",
-      caption: "A sweet caption!",
-      author: args.author,
-    });
+  handler: async (ctx, { storageId, author }) => {
+    return createImage(ctx, { storageId, author });
   },
 });

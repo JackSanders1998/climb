@@ -1,21 +1,14 @@
-import { api } from "@/convex/_generated/api";
 import NewLocationModal from "@/lib/components/NewLocationModal";
 import { Button } from "@/lib/ui/Button";
 import { Card } from "@/lib/ui/Card";
-import { useMutation } from "convex/react";
 import { AppleMaps } from "expo-maps";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
-import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function LocationDetail() {
   const params = useLocalSearchParams();
-  const router = useRouter();
   const [showNewLocationModal, setShowNewLocationModal] = useState(false);
-
-  // Convex mutations
-  const approveLocation = useMutation(api.locations.review.approve);
-  const rejectLocation = useMutation(api.locations.review.reject);
 
   // Parse the parameters
   const location = {
@@ -27,43 +20,6 @@ export default function LocationDetail() {
     category: params.category as string,
     country: params.country as string,
     reviewStatus: params.reviewStatus as string,
-  };
-
-  // Handle approval
-  const handleApprove = async () => {
-    try {
-      await approveLocation({ id: location.id as any });
-      Alert.alert("Success", "Location approved successfully", [
-        { text: "OK", onPress: () => router.back() },
-      ]);
-    } catch {
-      Alert.alert("Error", "Failed to approve location");
-    }
-  };
-
-  // Handle rejection
-  const handleReject = async () => {
-    Alert.alert(
-      "Reject Location",
-      "Are you sure you want to reject this location?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Reject",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await rejectLocation({ id: location.id as any });
-              Alert.alert("Success", "Location rejected successfully", [
-                { text: "OK", onPress: () => router.back() },
-              ]);
-            } catch {
-              Alert.alert("Error", "Failed to reject location");
-            }
-          },
-        },
-      ],
-    );
   };
 
   return (
@@ -196,35 +152,6 @@ export default function LocationDetail() {
             {location.reviewStatus === "rejected" &&
               "This location has been reviewed and rejected."}
           </Text>
-
-          {/* Review Action Buttons */}
-          {location.reviewStatus === "pending" && (
-            <View style={styles.reviewActions}>
-              <Button
-                title="Approve"
-                variant="primary"
-                onPress={handleApprove}
-                style={styles.actionButton}
-              />
-              <Button
-                title="Reject"
-                variant="destructive"
-                onPress={handleReject}
-                style={[styles.actionButton, { backgroundColor: "#FF4444" }]}
-              />
-            </View>
-          )}
-
-          {location.reviewStatus === "rejected" && (
-            <View style={styles.reviewActions}>
-              <Button
-                title="Approve"
-                variant="primary"
-                onPress={handleApprove}
-                style={styles.actionButtonSingle}
-              />
-            </View>
-          )}
         </Card>
       </View>
 
@@ -238,12 +165,6 @@ export default function LocationDetail() {
 }
 
 const styles = StyleSheet.create({
-  actionButton: {
-    flex: 1,
-  },
-  actionButtonSingle: {
-    width: "100%",
-  },
   addressLine: {
     color: "#666",
     fontSize: 14,
@@ -301,11 +222,6 @@ const styles = StyleSheet.create({
     height: 300,
     margin: 15,
     overflow: "hidden",
-  },
-  reviewActions: {
-    flexDirection: "row",
-    gap: 12,
-    marginTop: 16,
   },
   reviewDescription: {
     color: "#666",

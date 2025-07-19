@@ -1,24 +1,31 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
-import { images } from "./images/models";
-import { locations } from "./locations/models";
-import { users } from "./users/models";
+import { images } from "./modules/images/models";
+import { locations } from "./modules/locations/models";
+import { settingsSchema } from "./modules/settings/settings.models";
+import { users } from "./modules/users/users.models";
 
 export default defineSchema({
   users,
   locations,
   climbs: defineTable({
+    user: v.id("users"),
+    location: v.id("locations"),
+    images: v.array(v.id("images")),
+    sessionn: v.id("sessions"),
+
     body: v.string(),
   }),
   sessions: defineTable({
     user: v.id("users"),
     location: v.id("locations"),
     images: v.array(v.id("images")),
-    // climb: v.array(v.id("climbs")),
-
-    created_at: v.number(),
-  }).index("created_at", ["created_at"]),
+    notes: v.optional(v.string()),
+    climbs: v.array(v.id("climbs")), // to be updated via trigger
+    endedAt: v.optional(v.number()), // timestamp of when the session ended
+  }),
   images,
+  settings: defineTable(settingsSchema.fields).index("userId", ["userId"]),
 });
 
 // start using Triggers, with table types from schema.ts
